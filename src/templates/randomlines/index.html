@@ -1,0 +1,471 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Random Lines - GeniusGsm{% endblock %}
+
+{% block extra_css %}
+<style>
+    .randomlines-container {
+        max-width: 900px;
+        margin: 40px auto;
+        padding: 20px;
+    }
+    
+    .randomlines-header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+    
+    .randomlines-header h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 10px;
+    }
+    
+    .randomlines-header p {
+        font-size: 1.1rem;
+        color: #7f8c8d;
+    }
+    
+    .textarea-wrapper {
+        position: relative;
+        margin-bottom: 30px;
+    }
+    
+    #linesInput {
+        width: 100%;
+        min-height: 300px;
+        padding: 15px;
+        border: 2px solid #ecf0f1;
+        border-radius: 8px;
+        font-family: 'Courier New', monospace;
+        font-size: 14px;
+        resize: vertical;
+        transition: border-color 0.3s ease;
+    }
+    
+    #linesInput:focus {
+        outline: none;
+        border-color: #3498db;
+        box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+    }
+    
+    .line-counter {
+        position: absolute;
+        top: 12px;
+        right: 15px;
+        font-size: 12px;
+        color: #95a5a6;
+        background: white;
+        padding: 4px 8px;
+        border-radius: 4px;
+        border: 1px solid #ecf0f1;
+    }
+    
+    .buttons-section {
+        margin-bottom: 30px;
+    }
+    
+    .btn-group-section {
+        margin-bottom: 20px;
+    }
+    
+    .btn-group-title {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #34495e;
+        margin-bottom: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .btn-group {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 10px;
+        margin-bottom: 0;
+    }
+    
+    .btn-action {
+        padding: 10px 16px;
+        border: none;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 13px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .btn-primary-action {
+        background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+        color: white;
+    }
+    
+    .btn-primary-action:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
+    }
+    
+    .btn-secondary-action {
+        background: #ecf0f1;
+        color: #34495e;
+    }
+    
+    .btn-secondary-action:hover {
+        background: #d5dbdb;
+        transform: translateY(-2px);
+    }
+    
+    .btn-danger-action {
+        background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        color: white;
+    }
+    
+    .btn-danger-action:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4);
+    }
+    
+    .btn-success-action {
+        background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+        color: white;
+    }
+    
+    .btn-success-action:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(39, 174, 96, 0.4);
+    }
+    
+    .btn-action:active {
+        transform: translateY(0);
+    }
+    
+    .btn-action:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+    }
+    
+    .toast-notification {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        padding: 15px 20px;
+        background: #27ae60;
+        color: white;
+        border-radius: 6px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        animation: slideIn 0.4s ease;
+        z-index: 1000;
+        font-size: 14px;
+        font-weight: 500;
+    }
+    
+    .toast-notification.error {
+        background: #e74c3c;
+    }
+    
+    @keyframes slideIn {
+        from {
+            transform: translateX(400px);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+    
+    @keyframes slideOut {
+        from {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        to {
+            transform: translateX(400px);
+            opacity: 0;
+        }
+    }
+    
+    .toast-notification.hide {
+        animation: slideOut 0.4s ease forwards;
+    }
+    
+    .info-section {
+        background: #ecf0f1;
+        padding: 20px;
+        border-radius: 8px;
+        margin-top: 30px;
+        border-left: 4px solid #3498db;
+    }
+    
+    .info-section h3 {
+        color: #2c3e50;
+        font-size: 1.1rem;
+        margin-bottom: 10px;
+        margin-top: 0;
+    }
+    
+    .info-section ul {
+        margin: 0;
+        padding-left: 20px;
+        color: #34495e;
+        font-size: 14px;
+        line-height: 1.8;
+    }
+    
+    @media (max-width: 768px) {
+        .randomlines-header h1 {
+            font-size: 2rem;
+        }
+        
+        .btn-group {
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        }
+        
+        #linesInput {
+            min-height: 250px;
+            padding: 12px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="randomlines-container">
+    <div class="randomlines-header">
+        <h1>✨ Random Lines Tool</h1>
+        <p>Manipulate, sort, and randomize your lines with ease</p>
+    </div>
+    
+    <form id="randomlinesForm">
+        {% csrf_token %}
+        
+        <div class="textarea-wrapper">
+            <textarea 
+                id="linesInput" 
+                placeholder="Paste your lines here (one item per line)...
+                
+Example:
++1234567890
++0987654321
++1111111111"
+                autocomplete="off"
+                spellcheck="false"
+            ></textarea>
+            <div class="line-counter">
+                Lines: <span id="lineCount">0</span>
+            </div>
+        </div>
+        
+        <div class="buttons-section">
+            <div class="btn-group-section">
+                <div class="btn-group-title">🎲 Core Actions</div>
+                <div class="btn-group">
+                    <button type="button" class="btn-action btn-primary-action" id="randomizeBtn">
+                        🔀 Randomize
+                    </button>
+                    <button type="button" class="btn-action btn-secondary-action" id="reverseBtn">
+                        ↩️ Reverse
+                    </button>
+                    <button type="button" class="btn-action btn-success-action" id="copyBtn">
+                        📋 Copy
+                    </button>
+                </div>
+            </div>
+            
+            <div class="btn-group-section">
+                <div class="btn-group-title">🧹 Clean & Organize</div>
+                <div class="btn-group">
+                    <button type="button" class="btn-action btn-secondary-action" id="removeEmptyBtn">
+                        🧹 Remove Empty
+                    </button>
+                    <button type="button" class="btn-action btn-secondary-action" id="removeDuplicatesBtn">
+                        ✂️ Remove Duplicates
+                    </button>
+                </div>
+            </div>
+            
+            <div class="btn-group-section">
+                <div class="btn-group-title">📊 Sort</div>
+                <div class="btn-group">
+                    <button type="button" class="btn-action btn-secondary-action" id="sortAscBtn">
+                        ↑ A → Z
+                    </button>
+                    <button type="button" class="btn-action btn-secondary-action" id="sortDescBtn">
+                        ↓ Z → A
+                    </button>
+                </div>
+            </div>
+            
+            <div class="btn-group-section">
+                <div class="btn-group-title">⚙️ Utility</div>
+                <div class="btn-group">
+                    <button type="button" class="btn-action btn-danger-action" id="clearBtn">
+                        🗑️ Clear All
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+    
+    <div class="info-section">
+        <h3>📚 How to Use:</h3>
+        <ul>
+            <li><strong>Randomize:</strong> Shuffle all lines in random order</li>
+            <li><strong>Reverse:</strong> Flip the order of all lines</li>
+            <li><strong>Copy:</strong> Copy all lines to clipboard</li>
+            <li><strong>Remove Empty:</strong> Delete all empty/blank lines</li>
+            <li><strong>Remove Duplicates:</strong> Keep only unique lines (maintains order)</li>
+            <li><strong>Sort A→Z:</strong> Alphabetically sort lines ascending</li>
+            <li><strong>Sort Z→A:</strong> Alphabetically sort lines descending</li>
+        </ul>
+    </div>
+</div>
+
+<script>
+const textarea = document.getElementById('linesInput');
+const lineCountSpan = document.getElementById('lineCount');
+const randomizeBtn = document.getElementById('randomizeBtn');
+const reverseBtn = document.getElementById('reverseBtn');
+const copyBtn = document.getElementById('copyBtn');
+const removeEmptyBtn = document.getElementById('removeEmptyBtn');
+const removeDuplicatesBtn = document.getElementById('removeDuplicatesBtn');
+const sortAscBtn = document.getElementById('sortAscBtn');
+const sortDescBtn = document.getElementById('sortDescBtn');
+const clearBtn = document.getElementById('clearBtn');
+
+// Update line counter
+function updateLineCount() {
+    const text = textarea.value.trim();
+    const count = text.length === 0 ? 0 : text.split('\n').length;
+    lineCountSpan.textContent = count;
+}
+
+textarea.addEventListener('input', updateLineCount);
+
+// Show toast notification
+function showToast(message, isError = false) {
+    const toast = document.createElement('div');
+    toast.className = `toast-notification ${isError ? 'error' : ''}`;
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.classList.add('hide');
+        setTimeout(() => toast.remove(), 400);
+    }, 2000);
+}
+
+// API call helper
+async function processLines(endpoint, text) {
+    try {
+        const response = await fetch(`{% url 'randomlines:index' %}api/${endpoint}/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+            },
+            body: JSON.stringify({ text: text })
+        });
+        
+        if (!response.ok) {
+            throw new Error('Failed to process lines');
+        }
+        
+        const data = await response.json();
+        textarea.value = data.result;
+        updateLineCount();
+        showToast('✅ Lines processed successfully!');
+    } catch (error) {
+        showToast('❌ Error processing lines', true);
+        console.error(error);
+    }
+}
+
+// Button event listeners
+randomizeBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (!textarea.value.trim()) {
+        showToast('⚠️ Please enter some lines first', true);
+        return;
+    }
+    processLines('randomize', textarea.value);
+});
+
+reverseBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (!textarea.value.trim()) {
+        showToast('⚠️ Please enter some lines first', true);
+        return;
+    }
+    processLines('reverse', textarea.value);
+});
+
+copyBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (!textarea.value.trim()) {
+        showToast('⚠️ Nothing to copy', true);
+        return;
+    }
+    navigator.clipboard.writeText(textarea.value).then(() => {
+        showToast('✅ Copied to clipboard!');
+    }).catch(() => {
+        showToast('❌ Failed to copy', true);
+    });
+});
+
+removeEmptyBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (!textarea.value.trim()) {
+        showToast('⚠️ Please enter some lines first', true);
+        return;
+    }
+    processLines('remove-empty', textarea.value);
+});
+
+removeDuplicatesBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (!textarea.value.trim()) {
+        showToast('⚠️ Please enter some lines first', true);
+        return;
+    }
+    processLines('remove-duplicates', textarea.value);
+});
+
+sortAscBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (!textarea.value.trim()) {
+        showToast('⚠️ Please enter some lines first', true);
+        return;
+    }
+    processLines('sort-ascending', textarea.value);
+});
+
+sortDescBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (!textarea.value.trim()) {
+        showToast('⚠️ Please enter some lines first', true);
+        return;
+    }
+    processLines('sort-descending', textarea.value);
+});
+
+clearBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (!textarea.value.trim()) {
+        showToast('ℹ️ Text area is already empty', true);
+        return;
+    }
+    textarea.value = '';
+    updateLineCount();
+    showToast('🗑️ Text cleared!');
+});
+
+// Initialize line count on page load
+updateLineCount();
+</script>
+{% endblock %}

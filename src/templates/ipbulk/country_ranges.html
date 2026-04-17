@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+
+{% block title %}البحث عن نطاقات حسب البلد — GeniusGsm{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="search-hero">
+        <h1 class="hero-title">🌍 البحث عن نطاقات حسب البلد</h1>
+        <p class="lead text-muted">اختر مجموعة وبلد لعرض جميع النطاقات الخاصة بك</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- نموذج البحث -->
+  <div class="row mb-4">
+    <div class="col-lg-8 mx-auto">
+      <form method="get" class="card bg-dark border-primary">
+        <div class="card-body">
+          <div class="row g-2">
+            <div class="col-md-6">
+              <label for="id_group" class="form-label">{{ form.group.label }}</label>
+              {{ form.group }}
+            </div>
+            <div class="col-md-6">
+              <label for="id_country" class="form-label">{{ form.country.label }}</label>
+              {{ form.country }}
+            </div>
+            <div class="col-12">
+              <button type="submit" class="btn btn-primary w-100">
+                🔍 بحث
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- النتائج -->
+  {% if ranges %}
+    <div class="row mb-4">
+      <div class="col-12">
+        <div class="alert alert-info">
+          <strong>📊 النتائج:</strong>
+          {% if selected_country %}
+            تم العثور على <strong>{{ ranges_count }}</strong> نطاق في البلد <strong>
+              {% for code, name in country_choices %}
+                {% if code == selected_country %}{{ name }}{% endif %}
+              {% endfor %}
+            </strong>
+          {% else %}
+            تم العثور على <strong>{{ ranges_count }}</strong> نطاق في المجموعة <strong>{{ selected_group.name }}</strong>
+          {% endif %}
+          <br>
+          <span class="badge bg-primary">{{ total_ips }} عنوان IP</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- جدول النطاقات -->
+    <div class="table-responsive">
+      <table class="table table-dark table-hover">
+        <thead class="table-dark">
+          <tr>
+            <th>البلد</th>
+            <th>CIDR</th>
+            <th>نسخة IP</th>
+            <th>عدد IPs</th>
+            <th>من - إلى</th>
+            <th>التاريخ</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for range in ranges %}
+            <tr>
+              <td>
+                <span class="badge bg-success">{{ range.get_country_display }}</span>
+              </td>
+              <td>
+                <code>{{ range.cidr }}</code>
+              </td>
+              <td>
+                <span class="badge {% if range.ip_version == 4 %}bg-primary{% else %}bg-warning text-dark{% endif %}">
+                  IPv{{ range.ip_version }}
+                </span>
+              </td>
+              <td>
+                <strong>{{ range.get_ip_count }}</strong>
+              </td>
+              <td>
+                <small class="text-muted">{{ range.start_ip }} → {{ range.end_ip }}</small>
+              </td>
+              <td>
+                <small class="text-muted">{{ range.created_at|date:"d/m/Y H:i" }}</small>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ملخص إحصائي -->
+    <div class="row mt-4">
+      <div class="col-md-4 mb-3">
+        <div class="card bg-dark border-primary">
+          <div class="card-body text-center">
+            <h5 class="card-title text-primary">النطاقات</h5>
+            <h2 class="text-primary">{{ ranges_count }}</h2>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 mb-3">
+        <div class="card bg-dark border-cyan">
+          <div class="card-body text-center">
+            <h5 class="card-title text-primary">عناوين IP</h5>
+            <h2 class="text-primary">{{ total_ips }}</h2>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 mb-3">
+        <div class="card bg-dark border-success">
+          <div class="card-body text-center">
+            <h5 class="card-title text-success">البلد</h5>
+            <h2 class="text-success">
+              {% if selected_country %}
+                {% for code, name in country_choices %}
+                  {% if code == selected_country %}{{ name }}{% endif %}
+                {% endfor %}
+              {% else %}
+                الكل
+              {% endif %}
+            </h2>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% elif selected_group and request.GET %}
+    <div class="alert alert-warning">
+      <i class="bi bi-exclamation-triangle"></i>
+      لم يتم العثور على نطاقات في {% if selected_country %} البلد <strong>
+        {% for code, name in country_choices %}
+          {% if code == selected_country %}{{ name }}{% endif %}
+        {% endfor %}
+      </strong>{% else %} المجموعة <strong>{{ selected_group.name }}</strong>{% endif %}
+    </div>
+  {% else %}
+    <div class="alert alert-info">
+      <i class="bi bi-info-circle"></i> اختر مجموعة وبلد ثم اضغط على بحث
+    </div>
+  {% endif %}
+
+  <div class="mt-4">
+    <a href="{% url 'ipbulk:group_list' %}" class="btn btn-outline-secondary">
+      ← Back
+    </a>
+    <a href="{% url 'ipbulk:bulk_lookup' %}" class="btn btn-outline-primary ms-2">
+      🔍 Bulk IP Lookup
+    </a>
+  </div>
+</div>
+
+<style>
+  code {
+    background: rgba(0, 150, 255, 0.1);
+    color: #00d4ff;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+  }
+
+  .table-dark {
+    background: rgba(20, 25, 50, 0.8);
+  }
+
+  .border-cyan {
+    border-color: #00d4ff !important;
+  }
+
+  .card-body h2 {
+    margin: 0;
+    font-weight: 900;
+  }
+</style>
+{% endblock %}

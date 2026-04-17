@@ -1,0 +1,316 @@
+{% extends 'base.html' %}
+
+{% block title %}Link Preview Generator - See URLs Before Clicking{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h2 class="mb-0">👁️ Link Preview Generator</h2>
+                    <p class="text-light mb-0 small">Preview any link before visiting - see title, description, images, and more</p>
+                </div>
+                <div class="card-body">
+                    <!-- Preview Form -->
+                    <form id="previewForm" class="mb-4">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="previewUrl" class="font-weight-bold">Enter URL to Preview</label>
+                            <div class="input-group">
+                                <input type="url" class="form-control form-control-lg" id="previewUrl" 
+                                       placeholder="https://example.com"
+                                       required>
+                                <div class="input-group-append">
+                                    <button class="btn btn-success btn-lg" type="submit">
+                                        <i class="fas fa-eye"></i> Preview
+                                    </button>
+                                </div>
+                            </div>
+                            <small class="form-text text-muted">
+                                No need to visit the link - see everything here instantly!
+                            </small>
+                        </div>
+                    </form>
+
+                    <!-- Loading Spinner -->
+                    <div id="loadingSpinner" class="text-center d-none">
+                        <div class="spinner-border text-success" role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                        <p class="mt-2">Generating preview...</p>
+                    </div>
+
+                    <!-- Results Container -->
+                    <div id="resultsContainer"></div>
+                </div>
+            </div>
+
+            <!-- Recent Previews -->
+            <div class="card mt-4">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0">📊 Recent Previews</h5>
+                </div>
+                <div class="card-body">
+                    {% if recent_previews %}
+                    <div class="row">
+                        {% for preview in recent_previews %}
+                        <div class="col-md-6 mb-3">
+                            <div class="card border-success" style="cursor: pointer;">
+                                {% if preview.image_url %}
+                                <img src="{{ preview.image_url }}" class="card-img-top" alt="{{ preview.title }}" style="height: 150px; object-fit: cover;">
+                                {% else %}
+                                <div class="card-img-top bg-secondary" style="height: 150px; display: flex; align-items: center; justify-content: center;">
+                                    <span class="text-white">No Image</span>
+                                </div>
+                                {% endif %}
+                                <div class="card-body">
+                                    <h6 class="card-title">{{ preview.title|truncatewords:10 }}</h6>
+                                    <p class="card-text small">{{ preview.domain }}</p>
+                                    <div class="small text-muted">
+                                        <i class="fas fa-eye"></i> {{ preview.view_count }} views
+                                        <span class="float-right">{{ preview.load_time }}s</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted text-center">No previews yet. Generate one above!</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Preview Card Template -->
+<template id="previewTemplate">
+    <div class="preview-result mt-4">
+        <div class="card border-success">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">✓ Preview Generated</h5>
+            </div>
+            
+            <!-- Image Section -->
+            <div id="imageSection" class="d-none">
+                <img id="previewImage" src="" class="card-img-top" style="height: 300px; object-fit: cover;">
+            </div>
+            
+            <div class="card-body">
+                <!-- Domain & Favicon -->
+                <div class="mb-3">
+                    {% if preview.favicon_url %}<img id="favicon" src="" width="20" height="20" class="mr-2">{% endif %}
+                    <strong id="domainDisplay"></strong>
+                </div>
+                
+                <!-- Title -->
+                <h4 id="titleDisplay" class="mb-2"></h4>
+                
+                <!-- Description -->
+                <p id="descriptionDisplay" class="text-muted"></p>
+                
+                <!-- Page Stats -->
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <div class="alert alert-info text-center py-2">
+                            <small>Load Time</small>
+                            <div id="loadTimeDisplay" class="h5 mb-0"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="alert alert-info text-center py-2">
+                            <small>Page Size</small>
+                            <div id="pageSizeDisplay" class="h5 mb-0"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="alert alert-info text-center py-2">
+                            <small>Content Type</small>
+                            <div id="contentTypeDisplay" class="h5 mb-0"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Open Graph Data -->
+                <div id="ogSection" class="mb-3 d-none">
+                    <h6>📊 Open Graph Data:</h6>
+                    <div id="ogDisplay" class="bg-light p-2 rounded"></div>
+                </div>
+                
+                <!-- Twitter Card Data -->
+                <div id="twitterSection" class="mb-3 d-none">
+                    <h6>🐦 Twitter Card Data:</h6>
+                    <div id="twitterDisplay" class="bg-light p-2 rounded"></div>
+                </div>
+                
+                <!-- Actions -->
+                <div class="mt-3">
+                    <a id="visitBtn" href="#" target="_blank" class="btn btn-success btn-sm">
+                        <i class="fas fa-external-link-alt"></i> Visit Link
+                    </a>
+                    <button class="btn btn-secondary btn-sm" onclick="copyPreviewUrl()">
+                        <i class="fas fa-copy"></i> Copy URL
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<style>
+.preview-result {
+    animation: slideIn 0.3s ease-out;
+}
+
+.card-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.card-text {
+    margin-bottom: 0.5rem;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.bg-success {
+    background-color: #27ae60 !important;
+}
+
+.btn-success {
+    background-color: #27ae60;
+    border-color: #27ae60;
+}
+
+.btn-success:hover {
+    background-color: #229954;
+    border-color: #229954;
+}
+</style>
+
+<script>
+document.getElementById('previewForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const url = document.getElementById('previewUrl').value.trim();
+    
+    if (!url) {
+        alert('Please enter a URL');
+        return;
+    }
+    
+    // Show loading
+    const spinner = document.getElementById('loadingSpinner');
+    spinner.classList.remove('d-none');
+    document.getElementById('resultsContainer').innerHTML = '';
+    
+    // Send request
+    fetch('{% url "linkpreview:api_preview" %}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('[name="csrfmiddlewaretoken"]').value
+        },
+        body: JSON.stringify({ url: url })
+    })
+    .then(response => response.json())
+    .then(data => {
+        spinner.classList.add('d-none');
+        
+        if (data.success) {
+            displayPreview(data.result);
+            document.getElementById('previewUrl').value = '';
+        } else {
+            showError(data.result?.error || 'Failed to generate preview');
+        }
+    })
+    .catch(error => {
+        spinner.classList.add('d-none');
+        showError('Error: ' + error.message);
+    });
+});
+
+function displayPreview(preview) {
+    const template = document.getElementById('previewTemplate');
+    const clone = template.content.cloneNode(true);
+    
+    // Image
+    if (preview.image_url) {
+        clone.getElementById('imageSection').classList.remove('d-none');
+        clone.getElementById('previewImage').src = preview.image_url;
+    }
+    
+    // Favicon
+    if (preview.favicon_url) {
+        clone.getElementById('favicon').src = preview.favicon_url;
+    }
+    
+    // Domain & Title
+    clone.getElementById('domainDisplay').textContent = preview.domain;
+    clone.getElementById('titleDisplay').textContent = preview.title || 'No Title';
+    clone.getElementById('descriptionDisplay').textContent = preview.description || 'No description available';
+    
+    // Stats
+    clone.getElementById('loadTimeDisplay').textContent = preview.load_time + 's';
+    clone.getElementById('pageSizeDisplay').textContent = preview.page_size + ' KB';
+    clone.getElementById('contentTypeDisplay').textContent = preview.content_type;
+    
+    // OG Data
+    if (Object.keys(preview.og_data).length > 0) {
+        clone.getElementById('ogSection').classList.remove('d-none');
+        const ogHtml = Object.entries(preview.og_data)
+            .map(([k, v]) => `<div class="small"><strong>${k}:</strong> ${v}</div>`)
+            .join('');
+        clone.getElementById('ogDisplay').innerHTML = ogHtml;
+    }
+    
+    // Twitter Data
+    if (Object.keys(preview.twitter_data).length > 0) {
+        clone.getElementById('twitterSection').classList.remove('d-none');
+        const twitterHtml = Object.entries(preview.twitter_data)
+            .map(([k, v]) => `<div class="small"><strong>${k}:</strong> ${v}</div>`)
+            .join('');
+        clone.getElementById('twitterDisplay').innerHTML = twitterHtml;
+    }
+    
+    // Visit button
+    clone.getElementById('visitBtn').href = preview.url;
+    clone.querySelector('.preview-result').dataset.url = preview.url;
+    
+    document.getElementById('resultsContainer').appendChild(clone);
+}
+
+function showError(message) {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = 'alert alert-danger alert-dismissible fade show';
+    alertDiv.innerHTML = `
+        <strong>Error!</strong> ${message}
+        <button type="button" class="close" data-dismiss="alert">
+            <span>&times;</span>
+        </button>
+    `;
+    document.getElementById('resultsContainer').innerHTML = '';
+    document.getElementById('resultsContainer').appendChild(alertDiv);
+}
+
+function copyPreviewUrl() {
+    const url = document.querySelector('.preview-result')?.dataset.url;
+    if (url) {
+        navigator.clipboard.writeText(url).then(() => {
+            alert('URL copied to clipboard');
+        });
+    }
+}
+</script>
+{% endblock %}

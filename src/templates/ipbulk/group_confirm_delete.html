@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}تأكيد الDelete — GeniusGsm{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col-lg-6 mx-auto">
+      <div class="card bg-danger border-danger">
+        <div class="card-body">
+          <h4 class="card-title text-white">⚠️ تأكيد الDelete</h4>
+          <p class="card-text">
+            هل تريد Delete المجموعة <strong>{{ object.name }}</strong>؟
+          </p>
+          <p class="card-text text-warning small">
+            هذا الإجراء لا يمكن التراجع عنه. سيتم Delete جميع النطاقات والبيانات المرتبطة.
+          </p>
+
+          <form method="post" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-outline-light">نعم، Delete المجموعة</button>
+          </form>
+          <a href="{% url 'ipbulk:group_detail' object.id %}" class="btn btn-outline-secondary">إلغاء</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

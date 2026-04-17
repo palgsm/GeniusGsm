@@ -1,0 +1,617 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}TempMail API Documentation — GeniusGsm{% endblock %}
+
+{% block extra_css %}
+<style>
+  .api-container {
+    max-width: 1000px;
+    margin: 2rem auto;
+    padding: 2rem;
+  }
+
+  .api-header {
+    background: rgba(20, 25, 50, 0.8);
+    border: 2px solid rgba(0, 150, 255, 0.3);
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+
+  .api-header h1 {
+    color: #ffffff;
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .api-header p {
+    color: #a0aab9;
+    font-size: 1.1rem;
+  }
+
+  .endpoint-section {
+    background: rgba(20, 25, 50, 0.8);
+    border: 2px solid rgba(0, 150, 255, 0.2);
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    transition: all 0.3s ease;
+  }
+
+  .endpoint-section:hover {
+    border-color: rgba(0, 150, 255, 0.5);
+    box-shadow: 0 8px 32px rgba(0, 150, 255, 0.15);
+  }
+
+  .endpoint-title {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .method-badge {
+    padding: 0.4rem 1rem;
+    border-radius: 6px;
+    font-weight: bold;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+  }
+
+  .method-post {
+    background: rgba(0, 100, 200, 0.3);
+    color: #0096ff;
+    border: 1px solid #0096ff;
+  }
+
+  .method-get {
+    background: rgba(0, 200, 100, 0.3);
+    color: #00ff88;
+    border: 1px solid #00ff88;
+  }
+
+  .endpoint-path {
+    color: #00d4ff;
+    font-family: 'Courier New', monospace;
+    font-size: 1.1rem;
+    font-weight: bold;
+  }
+
+  .description {
+    color: #c0c6d1;
+    margin: 1.5rem 0;
+    line-height: 1.6;
+  }
+
+  .code-block {
+    background: rgba(10, 14, 39, 0.8);
+    border: 1px solid rgba(0, 150, 255, 0.2);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin: 1rem 0;
+    overflow-x: auto;
+  }
+
+  .code-block code {
+    color: #00ff88;
+    font-family: 'Courier New', monospace;
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+
+  .param-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+  }
+
+  .param-table th {
+    background: rgba(0, 150, 255, 0.2);
+    color: #00d4ff;
+    padding: 0.8rem;
+    text-align: left;
+    border: 1px solid rgba(0, 150, 255, 0.2);
+    font-weight: bold;
+  }
+
+  .param-table td {
+    padding: 0.8rem;
+    border: 1px solid rgba(0, 150, 255, 0.1);
+    color: #c0c6d1;
+  }
+
+  .param-table tr:nth-child(even) {
+    background: rgba(0, 150, 255, 0.05);
+  }
+
+  .response-example {
+    background: rgba(10, 14, 39, 0.8);
+    border-left: 4px solid rgba(0, 200, 100, 0.5);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+
+  .response-label {
+    color: #00ff88;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+  }
+
+  .example-label {
+    color: #0096ff;
+    font-weight: bold;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .base-url {
+    background: rgba(0, 150, 255, 0.1);
+    border: 1px solid rgba(0, 150, 255, 0.3);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 2rem;
+    color: #e0e6ed;
+  }
+
+  .base-url label {
+    color: #00d4ff;
+    font-weight: bold;
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+
+  .base-url code {
+    color: #00ff88;
+    font-family: 'Courier New', monospace;
+    font-size: 1rem;
+  }
+
+  .note {
+    background: rgba(255, 150, 0, 0.1);
+    border-left: 4px solid rgba(255, 150, 0, 0.5);
+    border-radius: 8px;
+    padding: 1rem;
+    margin: 1.5rem 0;
+    color: #ffa500;
+  }
+
+  .success {
+    background: rgba(0, 200, 100, 0.1);
+    border-left: 4px solid rgba(0, 200, 100, 0.5);
+    border-radius: 8px;
+    padding: 1rem;
+    margin: 1.5rem 0;
+    color: #00ff88;
+  }
+
+  .copy-btn {
+    background: rgba(0, 150, 255, 0.2);
+    color: #0096ff;
+    border: 1px solid #0096ff;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+    transition: all 0.3s ease;
+  }
+
+  .copy-btn:hover {
+    background: rgba(0, 150, 255, 0.3);
+    box-shadow: 0 4px 12px rgba(0, 150, 255, 0.2);
+  }
+
+  .status-code {
+    display: inline-block;
+    padding: 0.3rem 0.8rem;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 0.85rem;
+    margin-right: 0.5rem;
+  }
+
+  .status-201 {
+    background: rgba(0, 200, 100, 0.3);
+    color: #00ff88;
+    border: 1px solid #00ff88;
+  }
+
+  .status-200 {
+    background: rgba(0, 100, 200, 0.3);
+    color: #0096ff;
+    border: 1px solid #0096ff;
+  }
+
+  .status-400 {
+    background: rgba(200, 100, 0, 0.3);
+    color: #ffa500;
+    border: 1px solid #ffa500;
+  }
+
+  .toc {
+    background: rgba(20, 25, 50, 0.8);
+    border: 2px solid rgba(0, 150, 255, 0.2);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .toc h3 {
+    color: #00d4ff;
+    margin-bottom: 1rem;
+  }
+
+  .toc ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .toc li {
+    margin: 0.5rem 0;
+  }
+
+  .toc a {
+    color: #0096ff;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .toc a:hover {
+    color: #00d4ff;
+  }
+
+  @media (max-width: 768px) {
+    .api-container {
+      padding: 1rem;
+    }
+
+    .endpoint-section {
+      padding: 1rem;
+    }
+
+    .api-header h1 {
+      font-size: 1.8rem;
+    }
+
+    .code-block {
+      font-size: 0.85rem;
+      padding: 1rem;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="api-container">
+  <!-- Header -->
+  <div class="api-header">
+    <h1>📧 TempMail API Documentation</h1>
+    <p>Comprehensive guide to using the TempMail API</p>
+  </div>
+
+  <!-- Base URL -->
+  <div class="base-url">
+    <label>Base URL</label>
+    <code>https://geniusgsm.com/tempmail</code>
+  </div>
+
+  <!-- Table of Contents -->
+  <div class="toc">
+    <h3>📋 Table of Contents</h3>
+    <ul>
+      <li><a href="#create-email">Create a new temporary email</a></li>
+      <li><a href="#get-mailbox">Get emails from mailbox</a></li>
+      <li><a href="#get-email">Get single email</a></li>
+      <li><a href="#mark-read">Mark as read</a></li>
+      <li><a href="#delete-email">Delete email</a></li>
+      <li><a href="#examples">Practical examples</a></li>
+    </ul>
+  </div>
+
+  <!-- Create Email Endpoint -->
+  <div class="endpoint-section" id="create-email">
+    <div class="endpoint-title">
+      <span class="method-badge method-post">POST</span>
+      <span class="endpoint-path">/api/create-temp-email/</span>
+    </div>
+
+    <p class="description">Create a new temporary email and save it to the database</p>
+
+    <h4 style="color: #00d4ff; margin-top: 1.5rem;">📤 Request Body (اختياري)</h4>
+    <div class="code-block">
+      <code>{
+  "email_name": "optional_email_name"
+}</code>
+    </div>
+
+    <h4 style="color: #00d4ff; margin-top: 1.5rem;">📥 Response</h4>
+    <span class="status-code status-201">201 Created</span>
+    <div class="response-example">
+      <div class="response-label">✓ Success Response</div>
+      <div class="code-block">
+        <code>{
+  "success": true,
+  "email": "q83621vdqwz5@geniusgsm.com",
+  "inbox_id": "550e8400-e29b-41d4-a716-446655440000",
+  "created_at": "2026-04-08T10:30:45.123456Z"
+}</code>
+      </div>
+    </div>
+
+    <h4 style="color: #ffa500; margin-top: 1.5rem;">⚠️ Error Responses</h4>
+    <span class="status-code status-400">400 Bad Request</span>
+    <div class="code-block">
+      <code>{
+  "error": "No domains available"
+}</code>
+    </div>
+
+    <div class="example-label">💡 Example cURL</div>
+    <div class="code-block">
+      <code>curl -X POST https://geniusgsm.com/tempmail/api/create-temp-email/ \
+  -H "Content-Type: application/json" \
+  -d '{"email_name": "myusername"}'</code>
+    </div>
+  </div>
+
+  <!-- Get Mailbox Endpoint -->
+  <div class="endpoint-section" id="get-mailbox">
+    <div class="endpoint-title">
+      <span class="method-badge method-get">GET</span>
+      <span class="endpoint-path">/api/dovecot/mailbox/&lt;username&gt;/</span>
+    </div>
+
+    <p class="description">Get all emails from a mailbox</p>
+
+    <h4 style="color: #00d4ff; margin-top: 1.5rem;">📋 Parameters</h4>
+    <table class="param-table">
+      <tr>
+        <th>Parameter</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Example</th>
+      </tr>
+      <tr>
+        <td>username</td>
+        <td>string</td>
+        <td>Username from email (without @geniusgsm.com)</td>
+        <td>q83621vdqwz5</td>
+      </tr>
+    </table>
+
+    <h4 style="color: #00d4ff; margin-top: 1.5rem;">📥 Response</h4>
+    <span class="status-code status-200">200 OK</span>
+    <div class="response-example">
+      <div class="response-label">✓ Success Response</div>
+      <div class="code-block">
+        <code>{
+  "emails": [
+    {
+      "filename": "message.eml",
+      "from": "ghassan@example.com",
+      "from_name": "Ghassan Mohammed",
+      "to": "q83621vdqwz5@geniusgsm.com",
+      "subject": "Hello User",
+      "date": "2026-04-08T09:30:00Z",
+      "size": 2048,
+      "headers": { ... },
+      "body": "Email body content...",
+      "attachments": []
+    }
+  ],
+  "total": 1
+}</code>
+      </div>
+    </div>
+
+    <div class="example-label">💡 Example cURL</div>
+    <div class="code-block">
+      <code>curl -X GET https://geniusgsm.com/tempmail/api/dovecot/mailbox/q83621vdqwz5/</code>
+    </div>
+  </div>
+
+  <!-- Get Single Email Endpoint -->
+  <div class="endpoint-section" id="get-email">
+    <div class="endpoint-title">
+      <span class="method-badge method-get">GET</span>
+      <span class="endpoint-path">/api/dovecot/mailbox/&lt;username&gt;/&lt;filename&gt;/</span>
+    </div>
+
+    <p class="description">الحصول على رسالة واحدة معينة</p>
+
+    <h4 style="color: #00d4ff; margin-top: 1.5rem;">📋 Parameters</h4>
+    <table class="param-table">
+      <tr>
+        <th>Parameter</th>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+      <tr>
+        <td>username</td>
+        <td>string</td>
+        <td>اسم المستخدم</td>
+      </tr>
+      <tr>
+        <td>filename</td>
+        <td>string</td>
+        <td>اسم ملف الرسالة</td>
+      </tr>
+    </table>
+
+    <div class="example-label">💡 Example cURL</div>
+    <div class="code-block">
+      <code>curl -X GET https://geniusgsm.com/tempmail/api/dovecot/mailbox/q83621vdqwz5/message.eml/</code>
+    </div>
+  </div>
+
+  <!-- Mark as Read Endpoint -->
+  <div class="endpoint-section" id="mark-read">
+    <div class="endpoint-title">
+      <span class="method-badge method-post">POST</span>
+      <span class="endpoint-path">/api/dovecot/mailbox/&lt;username&gt;/&lt;filename&gt;/</span>
+    </div>
+
+    <p class="description">وضع علامة على الرسالة كـ مقروء</p>
+
+    <div class="example-label">💡 Example cURL</div>
+    <div class="code-block">
+      <code>curl -X POST https://geniusgsm.com/tempmail/api/dovecot/mailbox/q83621vdqwz5/message.eml/ \
+  -H "Content-Type: application/json" \
+  -d '{}'</code>
+    </div>
+  </div>
+
+  <!-- Delete Email Endpoint -->
+  <div class="endpoint-section" id="delete-email">
+    <div class="endpoint-title">
+      <span class="method-badge method-post">DELETE</span>
+      <span class="endpoint-path">/api/dovecot/mailbox/&lt;username&gt;/&lt;filename&gt;/delete/</span>
+    </div>
+
+    <p class="description">Delete an email from mailbox</p>
+
+    <h4 style="color: #00d4ff; margin-top: 1.5rem;">📥 Response</h4>
+    <span class="status-code status-200">200 OK</span>
+    <div class="response-example">
+      <div class="response-label">✓ Success Response</div>
+      <div class="code-block">
+        <code>{
+  "message": "Email deleted successfully"
+}</code>
+      </div>
+    </div>
+
+    <div class="example-label">💡 Example cURL</div>
+    <div class="code-block">
+      <code>curl -X DELETE https://geniusgsm.com/tempmail/api/dovecot/mailbox/q83621vdqwz5/message.eml/delete/</code>
+    </div>
+  </div>
+
+  <!-- Practical Examples -->
+  <div class="endpoint-section" id="examples">
+    <h2 style="color: #00d4ff; margin-bottom: 1.5rem;">💻 أمثلة عملية</h2>
+
+    <h3 style="color: #0096ff; margin-top: 2rem; margin-bottom: 1rem;">🐍 Python Example</h3>
+    <div class="code-block">
+      <code>import requests
+import json
+
+# Create a new temporary email
+response = requests.post(
+    'https://geniusgsm.com/tempmail/api/create-temp-email/',
+    json={'email_name': 'myemail'}
+)
+data = response.json()
+email = data['email']
+username = data['email'].split('@')[0]
+
+print(f"Email: {email}")
+
+# الانتظار قليلاً لاستقبال الرسالة
+import time
+time.sleep(5)
+
+# الحصول على الرسائل
+mailbox = requests.get(
+    f'https://geniusgsm.com/tempmail/api/dovecot/mailbox/{username}/'
+).json()
+
+for email_msg in mailbox.get('emails', []):
+    print(f"From: {email_msg.get('from')}")
+    print(f"Subject: {email_msg.get('subject')}")
+    print(f"Body: {email_msg.get('body')}")</code>
+    </div>
+
+    <h3 style="color: #0096ff; margin-top: 2rem; margin-bottom: 1rem;">JavaScript/Node.js Example</h3>
+    <div class="code-block">
+      <code>// Create a new temporary email
+fetch('https://geniusgsm.com/tempmail/api/create-temp-email/', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ email_name: 'myemail' })
+})
+.then(r => r.json())
+.then(data => {
+  const email = data.email;
+  const username = email.split('@')[0];
+  
+  console.log('Email created:', email);
+  
+  // الانتظار ثم الحصول على الرسائل
+  setTimeout(() => {
+    fetch(`https://geniusgsm.com/tempmail/api/dovecot/mailbox/${username}/`)
+      .then(r => r.json())
+      .then(mailbox => {
+        mailbox.emails.forEach(msg => {
+          console.log('From:', msg.from);
+          console.log('Subject:', msg.subject);
+          console.log('Body:', msg.body);
+        });
+      });
+  }, 5000);
+});</code>
+    </div>
+
+    <h3 style="color: #0096ff; margin-top: 2rem; margin-bottom: 1rem;">cURL Script Example</h3>
+    <div class="code-block">
+      <code>#!/bin/bash
+
+# إنشاء بريد مؤقت
+response=$(curl -s -X POST https://geniusgsm.com/tempmail/api/create-temp-email/ \
+  -H "Content-Type: application/json" \
+  -d '{"email_name": "bashuser"}')
+
+# Extract email and username
+email=$(echo $response | grep -o '"email":"[^"]*' | cut -d'"' -f4)
+username=$(echo $email | cut -d'@' -f1)
+
+echo "Email: $email"
+
+# الانتظار للرسائل
+sleep 5
+
+# الحصول على الرسائل
+curl -s -X GET https://geniusgsm.com/tempmail/api/dovecot/mailbox/$username/ | jq '.emails'</code>
+    </div>
+  </div>
+
+  <!-- Important Notes -->
+  <div class="endpoint-section">
+    <h2 style="color: #ffa500; margin-bottom: 1.5rem;">⚡ مهم</h2>
+
+    <div class="note">
+      <strong>✓ معلومات مهمة:</strong>
+      <ul style="margin-top: 0.5rem; padding-left: 1.5rem;">
+        <li>Email belongs to the <code>geniusgsm.com</code> domain only</li>
+        <li>صناديق البريد محفوظة في قاعدة البيانات <strong>إلى الأبد</strong></li>
+        <li>الرسائل تُحذف تلقائياً بعد <strong>90 يوم</strong></li>
+        <li>لا توجد حدود على عدد البريد المؤقت الذي يمكنك إنشاؤه</li>
+        <li>جميع الـ APIs مفتوحة ولا تحتاج لـ Authentication</li>
+      </ul>
+    </div>
+
+    <div class="success">
+      <strong>✓ ملاحظات الأداء:</strong>
+      <ul style="margin-top: 0.5rem; padding-left: 1.5rem;">
+        <li>البريد الوارد يتم استقباله فوراً عند الإرسال</li>
+        <li>قد يستغرق ظهور الرسائل في الـ API من 1-5 ثوان بعد الاستقبال</li>
+        <li>يمكنك استخدام Polling كل 3 ثواني للتحقق من الرسائل الجديدة</li>
+        <li>يوصى باستخدام Webhooks للحصول على إشعارات فورية (قريباً)</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Contact Section -->
+  <div class="endpoint-section" style="text-align: center; margin-top: 3rem;">
+    <h3 style="color: #00d4ff; margin-bottom: 1rem;">📞 هل تحتاج مساعدة؟</h3>
+    <p style="color: #c0c6d1; margin-bottom: 1.5rem;">
+      للمزيد من المعلومات أو الإبلاغ عن مشكلة، يمكنك التواصل معنا
+    </p>
+    <a href="/" class="btn btn-primary" style="margin-right: 0.5rem;">← العودة للبيت</a>
+    <a href="{% url 'tempmail:home' %}" class="btn btn-secondary">الذهاب إلى TempMail →</a>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,8 @@
+requests>=2.0
+psycopg2-binary>=2.8
+django-adminlte3>=0.1.6
+dnspython>=2.0.0
+geoip2>=4.6
+ipwhois>=1.2
+python-whois>=0.7
+djangorestframework>=3.14.0

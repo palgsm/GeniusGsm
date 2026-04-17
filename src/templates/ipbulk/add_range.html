@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}Add Range IP — GeniusGsm{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="search-hero">
+        <h1 class="hero-title">➕ Add Range IP</h1>
+        <p class="lead text-muted">أضف نطاق IP جديد إلى مجموعة <strong>{{ group.name }}</strong></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-6 mx-auto">
+      <form method="post">
+        {% csrf_token %}
+        
+        <div class="mb-3">
+          <label for="id_cidr" class="form-label">{{ form.cidr.label }}</label>
+          {{ form.cidr }}
+          <small class="form-text text-muted d-block mt-1">
+            أمثلة: 192.168.0.0/24 أو 10.0.0.0/8 أو 2001:db8::/32
+          </small>
+          {% if form.cidr.errors %}
+            <div class="alert alert-danger mt-2">{{ form.cidr.errors }}</div>
+          {% endif %}
+        </div>
+
+        <div class="mb-3">
+          <label for="id_country" class="form-label">{{ form.country.label }}</label>
+          {{ form.country }}
+          {% if form.country.errors %}
+            <div class="alert alert-danger mt-2">{{ form.country.errors }}</div>
+          {% endif %}
+        </div>
+
+        <div class="mb-3">
+          <label for="id_description" class="form-label">{{ form.description.label }}</label>
+          {{ form.description }}
+          <small class="form-text text-muted">اختياري - وصف النطاق</small>
+          {% if form.description.errors %}
+            <div class="alert alert-danger mt-2">{{ form.description.errors }}</div>
+          {% endif %}
+        </div>
+
+        <div class="d-flex gap-2">
+          <button type="submit" class="btn btn-success btn-lg flex-grow-1">
+            ✓ إضافة النطاق
+          </button>
+          <a href="{% url 'ipbulk:group_detail' group.id %}" class="btn btn-outline-secondary btn-lg">
+            إلغاء
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

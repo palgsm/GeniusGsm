@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}IP Groups — GeniusGsm{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="search-hero">
+        <h1 class="hero-title">📦 IP Groups</h1>
+        <p class="lead text-muted">Manage IP ranges and custom lists</p>
+        <div style="margin-top: 1.5rem;">
+          <a href="{% url 'ipbulk:group_create' %}" class="btn btn-primary">+ Create New Group</a>
+          <a href="{% url 'ipbulk:bulk_import' %}" class="btn btn-success ms-2">⬆️ Import IPs Now</a>
+          <a href="{% url 'ipbulk:bulk_lookup' %}" class="btn btn-info ms-2">🔍 Bulk IP Lookup</a>
+          <a href="{% url 'ipbulk:by_country' %}" class="btn btn-warning ms-2">🌍 Filter by Country</a>
+          <a href="{% url 'ipbulk:check_ip' %}" class="btn btn-secondary ms-2">✓ Check IP</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% if groups %}
+    <div class="row">
+      {% for group in groups %}
+        <div class="col-md-6 col-lg-4 mb-4">
+          <div class="card card-cyber h-100">
+            <div class="card-body">
+              <h5 class="card-title">{{ group.name }}</h5>
+              <p class="card-text text-muted small">{{ group.description }}</p>
+              
+              <div class="group-stats">
+                <span class="badge bg-primary">{{ group.ranges_count }} ranges</span>
+                <span class="badge bg-cyan">{{ group.total_ips|default:"∞" }} IPs</span>
+              </div>
+            </div>
+            <div class="card-footer bg-transparent">
+              <a href="{% url 'ipbulk:group_detail' group.id %}" class="btn btn-sm btn-outline-primary w-100">View Details</a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="alert alert-info">
+      <i class="bi bi-info-circle"></i> No groups found. <a href="{% url 'ipbulk:group_create' %}">Create a new group</a>
+    </div>
+  {% endif %}
+
+  <!-- Pagination -->
+  {% if is_paginated %}
+    <nav class="mt-5">
+      <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+          <li class="page-item">
+            <a class="page-link" href="?page=1">أول</a>
+          </li>
+          <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">السابق</a>
+          </li>
+        {% endif %}
+
+        <li class="page-item active">
+          <span class="page-link">{{ page_obj.number }} من {{ page_obj.paginator.num_pages }}</span>
+        </li>
+
+        {% if page_obj.has_next %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.next_page_number }}">التالي</a>
+          </li>
+          <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">آخر</a>
+          </li>
+        {% endif %}
+      </ul>
+    </nav>
+  {% endif %}
+</div>
+
+<style>
+  .group-stats {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(0, 150, 255, 0.2);
+  }
+  
+  .card-cyber {
+    background: rgba(20, 25, 50, 0.8) !important;
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(0, 150, 255, 0.2);
+    transition: all 0.3s ease;
+  }
+  
+  .card-cyber:hover {
+    border-color: rgba(0, 150, 255, 0.6);
+    box-shadow: 0 8px 32px rgba(0, 150, 255, 0.2);
+  }
+
+  .bg-cyan {
+    background-color: #00d4ff !important;
+    color: #000 !important;
+  }
+</style>
+{% endblock %}

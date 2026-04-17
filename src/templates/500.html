@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}Server Error - GeniusGsm{% endblock %}
+
+{% block meta_description %}An error occurred on GeniusGsm. Our team is working to fix it. Please try again later.{% endblock %}
+
+{% block content %}
+<style>
+    .error-container {
+        max-width: 600px;
+        margin: 100px auto;
+        padding: 40px 20px;
+        text-align: center;
+    }
+
+    .error-code {
+        font-size: 5rem;
+        font-weight: 900;
+        background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin: 20px 0;
+    }
+
+    .error-title {
+        font-size: 2rem;
+        color: #00d4ff;
+        margin: 20px 0;
+    }
+
+    .error-description {
+        color: #a0aab9;
+        font-size: 1.1rem;
+        margin: 20px 0;
+        line-height: 1.6;
+    }
+
+    .error-actions {
+        margin: 40px 0;
+    }
+
+    .error-actions a {
+        display: inline-block;
+        padding: 12px 30px;
+        margin: 10px;
+        background: linear-gradient(135deg, #0096ff 0%, #0076cc 100%);
+        color: white;
+        text-decoration: none;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .error-actions a:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0, 150, 255, 0.3);
+    }
+</style>
+
+<div class="error-container">
+    <div class="error-code">500</div>
+    <div class="error-title">Server Error</div>
+    <p class="error-description">
+        Something went wrong on our end. Our team has been notified and is working to resolve the issue.
+        Please try again in a few moments.
+    </p>
+    
+    <div class="error-actions">
+        <a href="{% url 'home' %}"><i class="fas fa-home"></i> Back to Home</a>
+        <a href="javascript:location.reload()"><i class="fas fa-redo"></i> Refresh Page</a>
+    </div>
+</div>
+{% endblock %}

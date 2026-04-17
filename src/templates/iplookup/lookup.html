@@ -1,0 +1,470 @@
+{% extends 'base.html' %}
+
+{% block title %}IP & Domain Lookup - Geolocation, ISP & Reputation Check - GeniusGsm{% endblock %}
+
+{% block meta_description %}Find detailed information about any IP address or domain including geolocation, ISP, country, city, and security reputation data.{% endblock %}
+
+{% block meta_keywords %}IP lookup, domain lookup, IP geolocation, ISP lookup, IP reputation, whois lookup, domain information{% endblock %}
+
+{% block og_title %}IP & Domain Lookup - GeniusGsm{% endblock %}
+
+{% block og_description %}Get comprehensive IP and domain information including geolocation, ISP details, and security reputation.{% endblock %}
+
+{% block canonical_url %}https://geniusgsm.com/iplookup/{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="rounded search-hero" data-aos="fade-down">
+        <h1 class="hero-title">IP / Domain Lookup</h1>
+        <p class="lead text-muted">Enter an IP address or domain and press SEARCH to view details.</p>
+        <form class="row g-2" method="get" action="">
+          <div class="col-md-9">
+            <input class="form-control form-control-lg" type="text" name="ip" placeholder="e.g. 8.8.8.8 or example.com" value="{{ query_ip }}">
+          </div>
+          <div class="col-md-3">
+            <button class="btn btn-primary btn-lg w-100" type="submit">SEARCH</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  {% if query_ip %}
+    <div class="container mt-5">
+      <!-- Main Results Card -->
+      <div class="row mb-4">
+        <div class="col-12">
+          <div style="background: rgba(20, 25, 50, 0.95); border: 2px solid rgba(0, 150, 255, 0.3); border-radius: 12px; box-shadow: 0 8px 32px rgba(0, 150, 255, 0.25); overflow: hidden;">
+            <!-- Header -->
+            <div style="background: linear-gradient(90deg, rgba(10, 14, 39, 0.9) 0%, rgba(0, 100, 180, 0.4) 100%); border-bottom: 2px solid rgba(0, 212, 255, 0.3); padding: 1.5rem;">
+              <h4 style="color: #e0e6ed; margin: 0;">
+                <i class="bi bi-globe me-2" style="color: #00d4ff;"></i>
+                {% if is_domain %}
+                  Domain: <code style="color: #00ff88;">{{ query_ip }}</code>
+                {% else %}
+                  IP Address: <code style="color: #00ff88;">{{ query_ip }}</code>
+                {% endif %}
+              </h4>
+            </div>
+            
+            <!-- Main Results -->
+            <div style="padding: 1.5rem; color: #e0e6ed;">
+              <!-- Geolocation Information -->
+              <div style="margin-bottom: 2rem;">
+                <h5 style="color: #00d4ff; border-bottom: 2px solid #0096ff; padding-bottom: 10px; margin-bottom: 1rem;">
+                  <i class="bi bi-geo-alt me-2"></i>Geolocation
+                </h5>
+              {% if result.ip %}
+                <div style="display: flex; padding: 1rem; border-bottom: 1px solid rgba(0, 212, 255, 0.2); background: rgba(0, 150, 255, 0.08);">
+                  <div style="min-width: 180px; color: #00d4ff;"><strong>🌐 IP Address</strong></div>
+                  <div><code style="background: rgba(0, 255, 136, 0.15); color: #00ff88; padding: 0.5rem; border-radius: 4px;">{{ result.ip }}</code></div>
+                </div>
+              {% endif %}
+              
+              {% if result.country %}
+                <div style="display: flex; padding: 1rem; border-bottom: 1px solid rgba(0, 212, 255, 0.2); background: rgba(0, 150, 255, 0.04);">
+                  <div style="min-width: 180px; color: #00d4ff;"><strong>🗺️ Country</strong></div>
+                  <div><span class="badge" style="background: linear-gradient(90deg, #0096ff, #00d4ff); color: #fff;">{{ result.country }}</span></div>
+                </div>
+              {% endif %}
+              
+              {% if result.city %}
+                <div style="display: flex; padding: 1rem; border-bottom: 1px solid rgba(0, 212, 255, 0.2); background: rgba(0, 150, 255, 0.08);">
+                  <div style="min-width: 180px; color: #00d4ff;"><strong>🏙️ City</strong></div>
+                  <div style="color: #e0e6ed;">{{ result.city }}</div>
+                </div>
+              {% endif %}
+              
+              {% if result.region %}
+                <div style="display: flex; padding: 1rem; border-bottom: 1px solid rgba(0, 212, 255, 0.2); background: rgba(0, 150, 255, 0.04);">
+                  <div style="min-width: 180px; color: #00d4ff;"><strong>📍 Region/State</strong></div>
+                  <div style="color: #e0e6ed;">{{ result.region }}</div>
+                </div>
+              {% endif %}
+              
+              {% if result.postal %}
+                <div style="display: flex; padding: 1rem; border-bottom: 1px solid rgba(0, 212, 255, 0.2); background: rgba(0, 150, 255, 0.08);">
+                  <div style="min-width: 180px; color: #00d4ff;"><strong>📮 Postal Code</strong></div>
+                  <div style="color: #e0e6ed;">{{ result.postal }}</div>
+                </div>
+              {% endif %}
+              
+              {% if result.org %}
+                <div style="display: flex; padding: 1rem; border-bottom: 1px solid rgba(0, 212, 255, 0.2); background: rgba(0, 150, 255, 0.04);">
+                  <div style="min-width: 180px; color: #00d4ff;"><strong>🔗 Organization</strong></div>
+                  <div style="color: #e0e6ed;">{{ result.org }}</div>
+                </div>
+              {% endif %}
+              
+              {% if result.asn %}
+                <div style="display: flex; padding: 1rem; border-bottom: 1px solid rgba(0, 212, 255, 0.2); background: rgba(0, 150, 255, 0.08);">
+                  <div style="min-width: 180px; color: #00d4ff;"><strong>ASN</strong></div>
+                  <div><code style="background: rgba(0, 255, 136, 0.15); color: #00ff88; padding: 0.5rem; border-radius: 4px;">{{ result.asn }}</code></div>
+                </div>
+              {% endif %}
+              
+              {% if result.timezone %}
+                <div style="display: flex; padding: 1rem; border-bottom: 1px solid rgba(0, 212, 255, 0.2); background: rgba(0, 150, 255, 0.04);">
+                  <div style="min-width: 180px; color: #00d4ff;"><strong>⏰ Timezone</strong></div>
+                  <div style="color: #e0e6ed;">{{ result.timezone }}</div>
+                </div>
+              {% endif %}
+              
+              {% if result.latitude and result.longitude %}
+                <div style="display: flex; padding: 1rem; border-bottom: 1px solid rgba(0, 212, 255, 0.2); background: rgba(0, 150, 255, 0.08);">
+                  <div style="min-width: 180px; color: #00d4ff;"><strong>📌 Coordinates</strong></div>
+                  <div>
+                    <code style="background: rgba(0, 255, 136, 0.15); color: #00ff88; padding: 0.5rem; border-radius: 4px;">{{ result.latitude }}, {{ result.longitude }}</code>
+                    <a href="https://maps.google.com/?q={{ result.latitude }},{{ result.longitude }}" target="_blank" style="color: #0096ff; margin-left: 10px; text-decoration: none;">
+                      <i class="bi bi-map"></i> View Map
+                    </a>
+                  </div>
+                </div>
+              {% endif %}
+              
+              {% if result.isp %}
+                <div style="display: flex; padding: 1rem; border-bottom: 1px solid rgba(0, 212, 255, 0.2); background: rgba(0, 150, 255, 0.04);">
+                  <div style="min-width: 180px; color: #00d4ff;"><strong>🔗 ISP</strong></div>
+                  <div style="color: #e0e6ed;">{{ result.isp }}</div>
+                </div>
+              {% endif %}
+              
+              {% if result.reverse_dns %}
+                <div style="display: flex; padding: 1rem; border-bottom: 1px solid rgba(0, 212, 255, 0.2); background: rgba(0, 150, 255, 0.08);">
+                  <div style="min-width: 180px; color: #00d4ff;"><strong>DNS</strong></div>
+                  <div><code style="background: rgba(0, 255, 136, 0.15); color: #00ff88; padding: 0.5rem; border-radius: 4px;">{{ result.reverse_dns }}</code></div>
+                </div>
+              {% endif %}
+              </div>
+              
+              <!-- Network Information -->
+              <div style="margin-bottom: 2rem;">
+                <h5 style="color: #00d4ff; border-bottom: 2px solid #0096ff; padding-bottom: 10px; margin-bottom: 1rem;">
+                  <i class="bi bi-diagram-3 me-2"></i>Network Information
+                </h5>
+                
+                {% if result.asn_name or result.org %}
+                  <div style="display: flex; padding: 1rem; border-bottom: 1px solid rgba(0, 212, 255, 0.2); background: rgba(0, 150, 255, 0.08);">
+                    <div style="min-width: 180px; color: #00d4ff;"><strong>🏢 ASN Organization</strong></div>
+                    <div style="color: #e0e6ed;">{{ result.asn_name|default:result.org|default:"N/A" }}</div>
+                  </div>
+                {% endif %}
+                
+                {% if result.carrier %}
+                  <div style="display: flex; padding: 1rem; border-bottom: 1px solid rgba(0, 212, 255, 0.2); background: rgba(0, 150, 255, 0.04);">
+                    <div style="min-width: 180px; color: #00d4ff;"><strong>📡 Carrier</strong></div>
+                    <div style="color: #e0e6ed;">{{ result.carrier }}</div>
+                  </div>
+                {% endif %}
+                
+                {% if result.utc_offset %}
+                  <div style="display: flex; padding: 1rem; border-bottom: 1px solid rgba(0, 212, 255, 0.2); background: rgba(0, 150, 255, 0.08);">
+                    <div style="min-width: 180px; color: #00d4ff;"><strong>🕐 UTC Offset</strong></div>
+                    <div style="color: #e0e6ed;">{{ result.utc_offset }}</div>
+                  </div>
+                {% endif %}
+              </div>
+              
+              <!-- Regional Information -->
+              <div style="margin-bottom: 2rem;">
+                <h5 style="color: #00d4ff; border-bottom: 2px solid #0096ff; padding-bottom: 10px; margin-bottom: 1rem;">
+                  <i class="bi bi-globe-americas me-2"></i>Regional Information
+                </h5>
+                
+                {% if result.continent_code or result.continent %}
+                  <div style="display: flex; padding: 1rem; border-bottom: 1px solid rgba(0, 212, 255, 0.2); background: rgba(0, 150, 255, 0.08);">
+                    <div style="min-width: 180px; color: #00d4ff;"><strong>🌍 Continent</strong></div>
+                    <div style="color: #e0e6ed;">{{ result.continent|default:result.continent_code|default:"N/A" }}</div>
+                  </div>
+                {% endif %}
+                
+                {% if result.currency %}
+                  <div style="display: flex; padding: 1rem; border-bottom: 1px solid rgba(0, 212, 255, 0.2); background: rgba(0, 150, 255, 0.04);">
+                    <div style="min-width: 180px; color: #00d4ff;"><strong>💱 Currency</strong></div>
+                    <div style="color: #e0e6ed;">{{ result.currency }}{% if result.currency_name %} ({{ result.currency_name }}){% endif %}</div>
+                  </div>
+                {% endif %}
+                
+                {% if result.language or result.language_name %}
+                  <div style="display: flex; padding: 1rem; border-bottom: 1px solid rgba(0, 212, 255, 0.2); background: rgba(0, 150, 255, 0.08);">
+                    <div style="min-width: 180px; color: #00d4ff;"><strong>🗣️ Language</strong></div>
+                    <div style="color: #e0e6ed;">{{ result.language_name|default:result.language|default:"N/A" }}</div>
+                  </div>
+                {% endif %}
+                
+                {% if result.country_calling_code %}
+                  <div style="display: flex; padding: 1rem; border-bottom: 1px solid rgba(0, 212, 255, 0.2); background: rgba(0, 150, 255, 0.04);">
+                    <div style="min-width: 180px; color: #00d4ff;"><strong>📞 Calling Code</strong></div>
+                    <div style="color: #e0e6ed;">{{ result.country_calling_code }}</div>
+                  </div>
+                {% endif %}
+              </div>
+              
+              <!-- Security & Detection -->
+              <div style="margin-bottom: 2rem;">
+                <h5 style="color: #00d4ff; border-bottom: 2px solid #0096ff; padding-bottom: 10px; margin-bottom: 1rem;">
+                  <i class="bi bi-shield-check me-2"></i>Security & Detection
+                </h5>
+                
+                {% if result.is_vpn or result.vpn %}
+                  <div style="display: flex; padding: 1rem; border-bottom: 1px solid rgba(0, 212, 255, 0.2); background: rgba(0, 150, 255, 0.08);">
+                    <div style="min-width: 180px; color: #00d4ff;"><strong>🔐 VPN</strong></div>
+                    <div>
+                      <span class="badge" style="background: {% if result.is_vpn or result.vpn == 'true' %}#ff4444{% else %}#44ff44{% endif %}; color: #fff;">
+                        {% if result.is_vpn or result.vpn == 'true' %}YES - DETECTED{% else %}No{% endif %}
+                      </span>
+                    </div>
+                  </div>
+                {% endif %}
+                
+                {% if result.is_proxy or result.proxy %}
+                  <div style="display: flex; padding: 1rem; border-bottom: 1px solid rgba(0, 212, 255, 0.2); background: rgba(0, 150, 255, 0.04);">
+                    <div style="min-width: 180px; color: #00d4ff;"><strong>🛡️ Proxy</strong></div>
+                    <div>
+                      <span class="badge" style="background: {% if result.is_proxy or result.proxy == 'true' %}#ff4444{% else %}#44ff44{% endif %}; color: #fff;">
+                        {% if result.is_proxy or result.proxy == 'true' %}YES - DETECTED{% else %}No{% endif %}
+                      </span>
+                    </div>
+                  </div>
+                {% endif %}
+                
+                {% if result.is_tor or result.tor %}
+                  <div style="display: flex; padding: 1rem; border-bottom: 1px solid rgba(0, 212, 255, 0.2); background: rgba(0, 150, 255, 0.08);">
+                    <div style="min-width: 180px; color: #00d4ff;"><strong>🧅 Tor Network</strong></div>
+                    <div>
+                      <span class="badge" style="background: {% if result.is_tor or result.tor == 'true' %}#ff4444{% else %}#44ff44{% endif %}; color: #fff;">
+                        {% if result.is_tor or result.tor == 'true' %}YES - DETECTED{% else %}No{% endif %}
+                      </span>
+                    </div>
+                  </div>
+                {% endif %}
+                
+                {% if result.is_relay or result.relay %}
+                  <div style="display: flex; padding: 1rem; border-bottom: 1px solid rgba(0, 212, 255, 0.2); background: rgba(0, 150, 255, 0.04);">
+                    <div style="min-width: 180px; color: #00d4ff;"><strong>🔄 Relay</strong></div>
+                    <div>
+                      <span class="badge" style="background: {% if result.is_relay or result.relay == 'true' %}#ff4444{% else %}#44ff44{% endif %}; color: #fff;">
+                        {% if result.is_relay or result.relay == 'true' %}YES - DETECTED{% else %}No{% endif %}
+                      </span>
+                    </div>
+                  </div>
+                {% endif %}
+                
+                {% if result.is_mobile or result.mobile %}
+                  <div style="display: flex; padding: 1rem; border-bottom: 1px solid rgba(0, 212, 255, 0.2); background: rgba(0, 150, 255, 0.08);">
+                    <div style="min-width: 180px; color: #00d4ff;"><strong>📱 Mobile</strong></div>
+                    <div>
+                      <span class="badge" style="background: {% if result.is_mobile or result.mobile == 'true' %}#0096ff{% else %}#666666{% endif %}; color: #fff;">
+                        {% if result.is_mobile or result.mobile == 'true' %}YES{% else %}No{% endif %}
+                      </span>
+                    </div>
+                  </div>
+                {% endif %}
+                
+                {% if result.is_business or result.business %}
+                  <div style="display: flex; padding: 1rem; border-bottom: 1px solid rgba(0, 212, 255, 0.2); background: rgba(0, 150, 255, 0.04);">
+                    <div style="min-width: 180px; color: #00d4ff;"><strong>💼 Business</strong></div>
+                    <div>
+                      <span class="badge" style="background: {% if result.is_business or result.business == 'true' %}#0096ff{% else %}#666666{% endif %}; color: #fff;">
+                        {% if result.is_business or result.business == 'true' %}YES{% else %}No{% endif %}
+                      </span>
+                    </div>
+                  </div>
+                {% endif %}
+              </div>
+              
+              {% if is_domain and resolved_ips %}
+                <div style="display: flex; flex-wrap: wrap; padding: 1rem; border-bottom: 1px solid rgba(0, 212, 255, 0.2); background: rgba(0, 150, 255, 0.04);">
+                  <div style="min-width: 180px; color: #00d4ff; margin-right: 1rem;"><strong>✅ Resolved IPs</strong></div>
+                  <div>
+                    {% for ip in resolved_ips %}
+                      <code style="background: rgba(0, 255, 136, 0.15); color: #00ff88; padding: 0.5rem; border-radius: 4px; margin-right: 5px; display: inline-block;">{{ ip }}</code>
+                    {% endfor %}
+                  </div>
+                </div>
+              {% endif %}
+              
+              <!-- AbuseIPDB Section -->
+              {% if abuseipdb_data and not abuseipdb_data.error %}
+                <div style="margin-bottom: 2rem;">
+                  <h5 style="color: #ff6b6b; border-bottom: 2px solid #ff4444; padding-bottom: 10px; margin-bottom: 1rem;">
+                    <i class="bi bi-exclamation-triangle me-2"></i>AbuseIPDB Report
+                  </h5>
+                  
+                  {% if abuseipdb_data.data %}
+                    {% if abuseipdb_data.data.abuseConfidenceScore %}
+                      <div style="display: flex; padding: 1rem; border-bottom: 1px solid rgba(0, 212, 255, 0.2); background: rgba(0, 150, 255, 0.08);">
+                        <div style="min-width: 180px; color: #00d4ff;"><strong>⚠️ Abuse Score</strong></div>
+                        <div>
+                          <span class="badge" style="background: {% if abuseipdb_data.data.abuseConfidenceScore > 75 %}#ff4444{% elif abuseipdb_data.data.abuseConfidenceScore > 25 %}#ffaa00{% else %}#44ff44{% endif %}; color: #fff;">
+                            {{ abuseipdb_data.data.abuseConfidenceScore }}%
+                          </span>
+                        </div>
+                      </div>
+                    {% endif %}
+                    
+                    {% if abuseipdb_data.data.totalReports %}
+                      <div style="display: flex; padding: 1rem; border-bottom: 1px solid rgba(0, 212, 255, 0.2); background: rgba(0, 150, 255, 0.04);">
+                        <div style="min-width: 180px; color: #00d4ff;"><strong>📊 Total Reports</strong></div>
+                        <div style="color: #e0e6ed;">{{ abuseipdb_data.data.totalReports }}</div>
+                      </div>
+                    {% endif %}
+                    
+                    {% if abuseipdb_data.data.lastReportedAt %}
+                      <div style="display: flex; padding: 1rem; border-bottom: 1px solid rgba(0, 212, 255, 0.2); background: rgba(0, 150, 255, 0.08);">
+                        <div style="min-width: 180px; color: #00d4ff;"><strong>🕐 Last Report</strong></div>
+                        <div style="color: #e0e6ed;">{{ abuseipdb_data.data.lastReportedAt }}</div>
+                      </div>
+                    {% endif %}
+                    
+                    {% if abuseipdb_data.data.isTor or abuseipdb_data.data.isVpn or abuseipdb_data.data.isProxy %}
+                      <div style="display: flex; flex-wrap: wrap; padding: 1rem; border-bottom: 1px solid rgba(0, 212, 255, 0.2); background: rgba(0, 150, 255, 0.04);">
+                        <div style="min-width: 180px; color: #00d4ff; margin-right: 1rem;"><strong>🔐 Flags</strong></div>
+                        <div>
+                          {% if abuseipdb_data.data.isTor %}
+                            <span class="badge" style="background: #ff4444; color: #fff; margin-right: 5px;">🧅 Tor</span>
+                          {% endif %}
+                          {% if abuseipdb_data.data.isVpn %}
+                            <span class="badge" style="background: #ff4444; color: #fff; margin-right: 5px;">🔐 VPN</span>
+                          {% endif %}
+                          {% if abuseipdb_data.data.isProxy %}
+                            <span class="badge" style="background: #ff4444; color: #fff; margin-right: 5px;">🛡️ Proxy</span>
+                          {% endif %}
+                        </div>
+                      </div>
+                    {% endif %}
+                  {% endif %}
+                </div>
+              {% endif %}
+              
+              <!-- Shodan Section -->
+              {% if shodan_data and not shodan_data.error and shodan_data.org %}
+                <div style="margin-bottom: 2rem;">
+                  <h5 style="color: #00d4ff; border-bottom: 2px solid #0096ff; padding-bottom: 10px; margin-bottom: 1rem;">
+                    <i class="bi bi-server me-2"></i>Shodan Services
+                  </h5>
+                  
+                  {% if shodan_data.org %}
+                    <div style="display: flex; padding: 1rem; border-bottom: 1px solid rgba(0, 212, 255, 0.2); background: rgba(0, 150, 255, 0.08);">
+                      <div style="min-width: 180px; color: #00d4ff;"><strong>🏢 Organization</strong></div>
+                      <div style="color: #e0e6ed;">{{ shodan_data.org }}</div>
+                    </div>
+                  {% endif %}
+                  
+                  {% if shodan_data.ports %}
+                    <div style="display: flex; flex-wrap: wrap; padding: 1rem; border-bottom: 1px solid rgba(0, 212, 255, 0.2); background: rgba(0, 150, 255, 0.04);">
+                      <div style="min-width: 180px; color: #00d4ff; margin-right: 1rem;"><strong>🔌 Open Ports</strong></div>
+                      <div>
+                        {% for port in shodan_data.ports %}
+                          <code style="background: rgba(0, 255, 136, 0.15); color: #00ff88; padding: 0.5rem; border-radius: 4px; margin-right: 5px; display: inline-block;">{{ port }}</code>
+                        {% endfor %}
+                      </div>
+                    </div>
+                  {% endif %}
+                  
+                  {% if shodan_data.hostnames %}
+                    <div style="display: flex; flex-wrap: wrap; padding: 1rem; border-bottom: 1px solid rgba(0, 212, 255, 0.2); background: rgba(0, 150, 255, 0.08);">
+                      <div style="min-width: 180px; color: #00d4ff; margin-right: 1rem;"><strong>🌐 Hostnames</strong></div>
+                      <div>
+                        {% for hostname in shodan_data.hostnames %}
+                          <code style="background: rgba(0, 255, 136, 0.15); color: #00ff88; padding: 0.5rem; border-radius: 4px; margin-right: 5px; display: inline-block;">{{ hostname }}</code>
+                        {% endfor %}
+                      </div>
+                    </div>
+                  {% endif %}
+                </div>
+              {% endif %}
+
+              <!-- DNS Records Section (Domain only) -->
+              {% if is_domain and dns_details %}
+                <div style="border-top: 2px solid rgba(0, 212, 255, 0.2); padding-top: 1rem; margin-top: 1rem;">
+                  <h5 style="color: #00d4ff; border-bottom: 2px solid #0096ff; padding-bottom: 10px; margin-bottom: 1rem;">
+                    <i class="bi bi-hdd-network me-2"></i>DNS Records
+                  </h5>
+                  {% for rtype, records in dns_details.items %}
+                    {% if records %}
+                      <div style="display: flex; padding: 1rem; border-bottom: 1px solid rgba(0, 212, 255, 0.2); background: rgba(0, 150, 255, 0.05);">
+                        <div style="min-width: 100px; color: #00d4ff;">
+                          <span class="badge" style="background: linear-gradient(90deg, #0096ff, #00d4ff); color: #fff;">{{ rtype }}</span>
+                        </div>
+                        <div style="color: #e0e6ed; flex: 1;">
+                          {% for rec in records %}
+                            <code style="background: rgba(0, 255, 136, 0.15); color: #00ff88; padding: 0.5rem; border-radius: 4px; margin-right: 5px; display: inline-block;">{{ rec }}</code>
+                          {% endfor %}
+                        </div>
+                      </div>
+                    {% endif %}
+                  {% endfor %}
+                </div>
+              {% endif %}
+
+              <!-- WHOIS Section (Domain only) -->
+              {% if is_domain and parsed_whois %}
+                <div style="border-top: 2px solid rgba(0, 212, 255, 0.2); padding-top: 1rem; margin-top: 1rem;">
+                  <h5 style="color: #00d4ff; border-bottom: 2px solid #0096ff; padding-bottom: 10px; margin-bottom: 1rem;">
+                    <i class="bi bi-file-person me-2"></i>WHOIS Information
+                  </h5>
+                  {% if parsed_whois.registrar %}
+                    <div style="display: flex; padding: 1rem; border-bottom: 1px solid rgba(0, 212, 255, 0.2); background: rgba(0, 150, 255, 0.05);">
+                      <div style="min-width: 150px; color: #00d4ff;"><strong>Registrar</strong></div>
+                      <div style="color: #e0e6ed;">{{ parsed_whois.registrar }}</div>
+                    </div>
+                  {% endif %}
+                  
+                  {% if parsed_whois.creation_date %}
+                    <div style="display: flex; padding: 1rem; border-bottom: 1px solid rgba(0, 212, 255, 0.2);">
+                      <div style="min-width: 150px; color: #00d4ff;"><strong>Created</strong></div>
+                      <div style="color: #e0e6ed;">{{ parsed_whois.creation_date }}</div>
+                    </div>
+                  {% endif %}
+                  
+                  {% if parsed_whois.updated_date %}
+                    <div style="display: flex; padding: 1rem; border-bottom: 1px solid rgba(0, 212, 255, 0.2); background: rgba(0, 150, 255, 0.05);">
+                      <div style="min-width: 150px; color: #00d4ff;"><strong>Updated</strong></div>
+                      <div style="color: #e0e6ed;">{{ parsed_whois.updated_date }}</div>
+                    </div>
+                  {% endif %}
+                  
+                  {% if parsed_whois.expiry_date %}
+                    <div style="display: flex; padding: 1rem; border-bottom: 1px solid rgba(0, 212, 255, 0.2);">
+                      <div style="min-width: 150px; color: #00d4ff;"><strong>Expires</strong></div>
+                      <div style="color: #e0e6ed;">{{ parsed_whois.expiry_date }}</div>
+                    </div>
+                  {% endif %}
+                  
+                  {% if parsed_whois.registrant_org %}
+                    <div style="display: flex; padding: 1rem; border-bottom: 1px solid rgba(0, 212, 255, 0.2); background: rgba(0, 150, 255, 0.05);">
+                      <div style="min-width: 150px; color: #00d4ff;"><strong>Registrant Org</strong></div>
+                      <div style="color: #e0e6ed;">{{ parsed_whois.registrant_org }}</div>
+                    </div>
+                  {% endif %}
+                  
+                  {% if parsed_whois.admin_email %}
+                    <div style="display: flex; padding: 1rem; border-bottom: 1px solid rgba(0, 212, 255, 0.2);">
+                      <div style="min-width: 150px; color: #00d4ff;"><strong>Admin Email</strong></div>
+                      <div style="color: #e0e6ed;"><a href="mailto:{{ parsed_whois.admin_email }}" style="color: #0096ff; text-decoration: none;">{{ parsed_whois.admin_email }}</a></div>
+                    </div>
+                  {% endif %}
+                  
+                  {% if parsed_whois.abuse_contact %}
+                    <div style="display: flex; padding: 1rem; border-bottom: 1px solid rgba(0, 212, 255, 0.2); background: rgba(0, 150, 255, 0.05);">
+                      <div style="min-width: 150px; color: #00d4ff;"><strong>Abuse Contact</strong></div>
+                      <div style="color: #e0e6ed;"><a href="mailto:{{ parsed_whois.abuse_contact }}" style="color: #0096ff; text-decoration: none;">{{ parsed_whois.abuse_contact }}</a></div>
+                    </div>
+                  {% endif %}
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% else %}
+    <div class="alert alert-info mt-4">
+      <i class="bi bi-info-circle"></i> Enter an IP address or domain to view details.
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

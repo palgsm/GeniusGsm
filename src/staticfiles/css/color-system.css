@@ -1,0 +1,506 @@
+/* ========================================
+   UNIFIED COLOR SYSTEM - Homepage Match
+   Matching exactly to home.html styling
+   ======================================== */
+
+:root {
+  /* Primary Colors (Homepage Blue) */
+  --color-primary-dark: #0096ff;        /* Main title/accent color */
+  --color-primary-light: #00d4ff;       /* Lighter variant */
+  --color-primary-cyan: #00ff88;        /* Gradient end */
+
+  /* Background Colors */
+  --color-bg-dark: rgba(20, 25, 50, 0.8);      /* Main card background */
+  --color-bg-darker: rgba(20, 25, 50, 0.95);   /* Deeper cards */
+  --color-bg-light: rgba(20, 25, 50, 0.5);     /* Lighter variant */
+
+  /* Border Colors */
+  --color-border-primary: rgba(0, 150, 255, 0.2);      /* Default border */
+  --color-border-hover: rgba(0, 150, 255, 0.6);        /* Hover border */
+  --color-border-light: rgba(0, 150, 255, 0.3);        /* Section borders */
+
+  /* Text Colors */
+  --color-text-primary: #ffffff;        /* Main text */
+  --color-text-secondary: #a0aab9;      /* Description/muted text */
+  --color-text-light: #e0e7ff;          /* Body text */
+  --color-text-muted: #6b7280;          /* Meta/small text */
+
+  /* Shadow Colors */
+  --color-shadow: rgba(0, 150, 255, 0.2);      /* Default shadow */
+  --color-shadow-hover: rgba(0, 150, 255, 0.3);   /* Hover shadow */
+
+  /* Spacing (matching home.html) */
+  --spacing-xs: 0.5rem;
+  --spacing-sm: 0.75rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-xxl: 3rem;
+
+  /* Transitions */
+  --transition-fast: 0.2s ease;
+  --transition-normal: 0.3s ease;
+  --transition-slow: 0.5s ease;
+
+  /* Border Radius */
+  --border-radius-sm: 4px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 12px;
+  --border-radius-full: 20px;
+}
+
+/* ========================================
+   BASE STYLES
+   ======================================== */
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: linear-gradient(135deg, rgba(10, 15, 30, 0.9) 0%, rgba(20, 25, 50, 0.8) 100%) !important;
+  color: var(--color-text-light) !important;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+a {
+  color: var(--color-primary-light);
+  transition: all var(--transition-normal);
+}
+
+a:hover {
+  color: var(--color-primary-dark);
+}
+
+/* ========================================
+   HEADINGS
+   ======================================== */
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--color-primary-dark) !important;
+  font-weight: 700;
+}
+
+h1 { font-size: 2.5rem; }
+h2 { font-size: 2rem; }
+h3 { font-size: 1.5rem; }
+h4 { font-size: 1.25rem; }
+h5 { font-size: 1.1rem; }
+h6 { font-size: 1rem; }
+
+/* ========================================
+   CARDS & CONTAINERS
+   ======================================== */
+
+.card {
+  background: var(--color-bg-dark) !important;
+  border: 2px solid var(--color-border-primary) !important;
+  border-radius: var(--border-radius-lg) !important;
+  backdrop-filter: blur(10px);
+  transition: all var(--transition-normal);
+}
+
+.card:hover {
+  border-color: var(--color-border-hover) !important;
+  box-shadow: 0 8px 32px var(--color-shadow-hover) !important;
+  transform: translateY(-5px);
+}
+
+.card-body {
+  padding: var(--spacing-lg);
+}
+
+.card-title {
+  color: var(--color-primary-dark) !important;
+  font-weight: 700;
+}
+
+.card-text {
+  color: var(--color-text-secondary) !important;
+}
+
+/* ========================================
+   BUTTONS
+   ======================================== */
+
+.btn {
+  border: None;
+  border-radius: var(--border-radius-md);
+  font-weight: 600;
+  transition: all var(--transition-normal);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--color-primary-light) 0%, var(--color-primary-cyan) 100%) !important;
+  color: #000 !important;
+  font-weight: 700;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(0, 213, 255, 0.3) !important;
+  color: #000 !important;
+}
+
+.btn-secondary {
+  background: transparent !important;
+  border: 2px solid var(--color-border-primary) !important;
+  color: var(--color-primary-dark) !important;
+}
+
+.btn-secondary:hover {
+  background: rgba(0, 150, 255, 0.05) !important;
+  border-color: var(--color-border-hover) !important;
+  color: var(--color-primary-light) !important;
+}
+
+/* ========================================
+   FORMS & INPUTS
+   ======================================== */
+
+.form-control,
+.form-select {
+  background: var(--color-bg-darker) !important;
+  border: 2px solid var(--color-border-primary) !important;
+  color: var(--color-text-light) !important;
+  border-radius: var(--border-radius-md) !important;
+  padding: var(--spacing-sm) var(--spacing-md) !important;
+  transition: all var(--transition-normal);
+}
+
+.form-control:focus,
+.form-select:focus {
+  background: var(--color-bg-darker) !important;
+  border-color: var(--color-border-hover) !important;
+  color: var(--color-text-light) !important;
+  box-shadow: 0 0 0 0.2rem rgba(0, 150, 255, 0.25) !important;
+}
+
+.form-control::placeholder {
+  color: var(--color-text-muted) !important;
+}
+
+.form-label {
+  color: var(--color-primary-dark) !important;
+  font-weight: 600;
+  margin-bottom: var(--spacing-sm);
+}
+
+/* ========================================
+   BADGES & TAGS
+   ======================================== */
+
+.badge {
+  background: rgba(0, 150, 255, 0.1) !important;
+  color: var(--color-primary-light) !important;
+  border: 1px solid var(--color-border-primary) !important;
+  padding: var(--spacing-xs) var(--spacing-md) !important;
+  border-radius: var(--border-radius-full);
+  font-weight: 600;
+}
+
+/* ========================================
+   ALERTS
+   ======================================== */
+
+.alert {
+  background: rgba(0, 150, 255, 0.05) !important;
+  border: 2px solid var(--color-border-primary) !important;
+  color: var(--color-text-light) !important;
+  border-radius: var(--border-radius-md) !important;
+}
+
+.alert-warning {
+  background: rgba(255, 193, 7, 0.05) !important;
+  border-color: rgba(255, 193, 7, 0.3) !important;
+}
+
+.alert-danger {
+  background: rgba(244, 67, 54, 0.05) !important;
+  border-color: rgba(244, 67, 54, 0.3) !important;
+}
+
+.alert-success {
+  background: rgba(76, 175, 80, 0.05) !important;
+  border-color: rgba(76, 175, 80, 0.3) !important;
+}
+
+/* ========================================
+   PAGINATION
+   ======================================== */
+
+.pagination {
+  gap: var(--spacing-sm);
+}
+
+.page-link {
+  background: transparent !important;
+  border: 2px solid var(--color-border-primary) !important;
+  color: var(--color-text-secondary) !important;
+  transition: all var(--transition-normal);
+}
+
+.page-link:hover {
+  background: rgba(0, 150, 255, 0.05) !important;
+  border-color: var(--color-border-hover) !important;
+  color: var(--color-primary-dark) !important;
+}
+
+.page-link.active {
+  background: rgba(0, 150, 255, 0.1) !important;
+  border-color: var(--color-border-hover) !important;
+  color: var(--color-primary-dark) !important;
+}
+
+/* ========================================
+   TABLES
+   ======================================== */
+
+.table {
+  color: var(--color-text-light) !important;
+  border-color: var(--color-border-primary) !important;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+  background-color: rgba(0, 150, 255, 0.05) !important;
+}
+
+.table-hover tbody tr:hover {
+  background-color: rgba(0, 150, 255, 0.1) !important;
+  color: var(--color-primary-light) !important;
+}
+
+/* ========================================
+   DROPDOWN MENUS
+   ======================================== */
+
+.dropdown-menu {
+  background: var(--color-bg-dark) !important;
+  border: 2px solid var(--color-border-primary) !important;
+  border-radius: var(--border-radius-md) !important;
+  backdrop-filter: blur(10px);
+}
+
+.dropdown-item {
+  color: var(--color-text-secondary) !important;
+  transition: all var(--transition-normal);
+}
+
+.dropdown-item:hover {
+  background: rgba(0, 150, 255, 0.1) !important;
+  color: var(--color-primary-dark) !important;
+}
+
+/* ========================================
+   MODALS
+   ======================================== */
+
+.modal-content {
+  background: var(--color-bg-dark) !important;
+  border: 2px solid var(--color-border-primary) !important;
+  border-radius: var(--border-radius-lg) !important;
+  backdrop-filter: blur(10px);
+}
+
+.modal-header {
+  border-bottom: 1px solid var(--color-border-primary) !important;
+}
+
+.modal-title {
+  color: var(--color-primary-dark) !important;
+  font-weight: 700;
+}
+
+.btn-close {
+  filter: brightness(1.5);
+}
+
+/* ========================================
+   NAVBAR
+   ======================================== */
+
+.navbar {
+  background: var(--color-bg-dark) !important;
+  backdrop-filter: blur(10px);
+  border-bottom: 2px solid var(--color-border-light) !important;
+}
+
+.navbar-brand {
+  color: var(--color-primary-dark) !important;
+  font-weight: 700;
+  font-size: 1.5rem;
+}
+
+.nav-link {
+  color: var(--color-text-secondary) !important;
+  transition: all var(--transition-normal);
+}
+
+.nav-link:hover {
+  color: var(--color-primary-light) !important;
+}
+
+.nav-link.active {
+  color: var(--color-primary-dark) !important;
+}
+
+/* ========================================
+   CUSTOM UTILITIES
+   ======================================== */
+
+.text-primary-dark {
+  color: var(--color-primary-dark) !important;
+}
+
+.text-secondary {
+  color: var(--color-text-secondary) !important;
+}
+
+.bg-card {
+  background: var(--color-bg-dark) !important;
+  border: 2px solid var(--color-border-primary) !important;
+  border-radius: var(--border-radius-lg) !important;
+}
+
+.border-primary {
+  border-color: var(--color-border-primary) !important;
+}
+
+.border-left-primary {
+  border-left: 4px solid var(--color-primary-dark) !important;
+}
+
+/* ========================================
+   ANIMATIONS
+   ======================================== */
+
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-slide-down {
+  animation: slideInDown 0.8s ease;
+}
+
+.animate-fade-up {
+  animation: fadeInUp 0.6s ease;
+}
+
+.animate-fade {
+  animation: fadeIn 0.5s ease;
+}
+
+/* ========================================
+   SCROLLBAR STYLING
+   ======================================== */
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(20, 25, 50, 0.5);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 150, 255, 0.5);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 150, 255, 0.8);
+}
+
+/* ========================================
+   RESPONSIVE DESIGN
+   ======================================== */
+
+@media (max-width: 768px) {
+  :root {
+    --spacing-xxl: 2rem;
+  }
+
+  h1 { font-size: 1.8rem; }
+  h2 { font-size: 1.6rem; }
+  h3 { font-size: 1.3rem; }
+
+  .card {
+    padding: var(--spacing-md) !important;
+  }
+
+  .btn {
+    padding: var(--spacing-sm) var(--spacing-lg) !important;
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --spacing-xxl: 1.5rem;
+  }
+
+  h1 { font-size: 1.5rem; }
+  h2 { font-size: 1.3rem; }
+  h3 { font-size: 1.1rem; }
+
+  .card {
+    padding: var(--spacing-sm) !important;
+  }
+}
+
+/* ========================================
+   FIREFOX & EDGE SPECIFIC
+   ======================================== */
+
+@supports (-moz-appearance: none) {
+  .form-control,
+  .form-select {
+    padding: var(--spacing-sm) var(--spacing-md) !important;
+  }
+}
+
+/* ========================================
+   LIGHT MODE SUPPORT (Optional)
+   ======================================== */
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --color-text-primary: #1a1a2e;
+    --color-text-light: #16213e;
+    --color-text-secondary: #555555;
+    --color-text-muted: #999999;
+  }
+
+  body {
+    background: #f5f5f5 !important;
+    color: var(--color-text-light) !important;
+  }
+}

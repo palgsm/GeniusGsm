@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}تأكيد الDelete — GeniusGsm{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row">
+    <div class="col-lg-6 mx-auto">
+      <div class="card bg-warning border-warning">
+        <div class="card-body">
+          <h4 class="card-title text-dark">⚠️ تأكيد الDelete</h4>
+          <p class="card-text">
+            هل تريد Delete النطاق <strong><code>{{ range.cidr }}</code></strong>؟
+          </p>
+          <p class="card-text text-dark small">
+            عدد IPs: {{ range.get_ip_count }} | النوع: IPv{{ range.ip_version }}
+          </p>
+
+          <form method="post" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Delete النطاق</button>
+          </form>
+          <a href="{% url 'ipbulk:group_detail' range.group.id %}" class="btn btn-outline-secondary">إلغاء</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  code {
+    background: rgba(0, 0, 0, 0.2);
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    color: #0a0e27;
+  }
+</style>
+{% endblock %}

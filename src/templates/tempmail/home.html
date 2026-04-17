@@ -1,0 +1,1246 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}TempMail - Temporary Disposable Email {% endblock %}
+
+{% block extra_css %}
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    .tempmail-wrapper {
+        background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+        min-height: 100vh;
+        padding: 2rem 1rem;
+    }
+
+    .tempmail-container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    /* ===== HERO SECTION ===== */
+    .hero {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+
+    .hero h1 {
+        font-size: 3rem;
+        color: #ffffff;
+        margin-bottom: 0.5rem;
+        font-weight: 800;
+        letter-spacing: -1px;
+    }
+
+    .hero p {
+        font-size: 1.2rem;
+        color: #8f9bb4;
+        margin-bottom: 2rem;
+    }
+
+    /* ===== EMAIL DISPLAY SECTION ===== */
+    .email-display-section {
+        background: linear-gradient(135deg, rgba(0, 150, 255, 0.1) 0%, rgba(0, 212, 255, 0.05) 100%);
+        border: 2px solid rgba(0, 150, 255, 0.3);
+        border-radius: 16px;
+        padding: 2.5rem;
+        margin-bottom: 2rem;
+        backdrop-filter: blur(10px);
+    }
+
+    .email-label {
+        color: #7a8ba3;
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .email-box-wrapper {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    .email-display-input {
+        flex: 1;
+        background: rgba(20, 25, 50, 0.8);
+        border: 2px solid rgba(0, 150, 255, 0.4);
+        border-radius: 10px;
+        padding: 1rem 1.5rem;
+        color: #00ff88;
+        font-size: 1.1rem;
+        font-weight: 600;
+        font-family: 'Courier New', monospace;
+        transition: all 0.3s ease;
+        min-width: 250px;
+    }
+
+    .email-display-input:hover {
+        border-color: #0096ff;
+        box-shadow: 0 0 16px rgba(0, 150, 255, 0.2);
+    }
+
+    .btn-copy {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: #ffffff;
+        border: none;
+        padding: 0.95rem 2rem;
+        border-radius: 10px;
+        font-weight: 700;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        white-space: nowrap;
+        min-width: 120px;
+        justify-content: center;
+    }
+
+    .btn-copy:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
+    }
+
+    .btn-copy:active {
+        transform: translateY(-1px);
+    }
+
+    .btn-copy.copied {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        animation: copyPulse 0.5s ease;
+    }
+
+    .previous-emails-select {
+        transition: all 0.3s ease;
+    }
+
+    .previous-emails-select:hover {
+        border-color: rgba(0, 150, 255, 0.6) !important;
+        box-shadow: 0 4px 12px rgba(0, 150, 255, 0.2);
+        background: rgba(0, 150, 255, 0.2) !important;
+    }
+
+    .previous-emails-select:focus {
+        outline: none;
+        border-color: rgba(0, 212, 255, 0.8) !important;
+        box-shadow: 0 4px 16px rgba(0, 212, 255, 0.3);
+        background: rgba(0, 150, 255, 0.25) !important;
+    }
+
+    .previous-emails-select option {
+        background: #0a0e27;
+        color: #e0e6ed;
+        padding: 0.5rem;
+    }
+
+    #load-email-input {
+        transition: all 0.3s ease;
+    }
+
+    #load-email-input:focus {
+        outline: none;
+        border-color: rgba(0, 212, 255, 0.8) !important;
+        box-shadow: 0 4px 16px rgba(0, 212, 255, 0.3);
+        background: rgba(0, 150, 255, 0.25) !important;
+    }
+
+    #load-email-btn {
+        transition: all 0.3s ease;
+    }
+
+    #load-email-btn:hover {
+        background: rgba(0, 200, 100, 0.3) !important;
+        box-shadow: 0 4px 12px rgba(0, 200, 100, 0.2);
+        transform: translateY(-2px);
+    }
+
+    #load-email-btn:active {
+        transform: translateY(0);
+    }
+
+    @keyframes copyPulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+
+    /* ===== EMAIL ACTIONS ===== */
+    .email-actions {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin-bottom: 1.5rem;
+    }
+
+    .btn-action {
+        flex: 1;
+        min-width: 140px;
+        padding: 0.8rem 1.2rem;
+        border: 1px solid rgba(0, 150, 255, 0.4);
+        background: rgba(0, 150, 255, 0.1);
+        color: #0096ff;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .btn-action:hover {
+        background: rgba(0, 150, 255, 0.2);
+        border-color: #0096ff;
+        transform: translateY(-2px);
+    }
+
+    .btn-action.primary {
+        background: linear-gradient(135deg, #0096ff 0%, #00d4ff 100%);
+        border: none;
+        color: #0a0e27;
+        font-weight: 700;
+    }
+
+    /* ===== STATS ===== */
+    .email-stats {
+        display: flex;
+        gap: 2rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid rgba(0, 150, 255, 0.2);
+        flex-wrap: wrap;
+    }
+
+    .stat {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .stat-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #00ff88;
+    }
+
+    .stat-label {
+        color: #7a8ba3;
+        font-size: 0.9rem;
+    }
+
+    .auto-refresh-indicator {
+        color: #8f9bb4;
+        font-size: 0.9rem;
+    }
+
+    .auto-refresh-timer {
+        color: #00d4ff;
+        font-weight: 600;
+    }
+
+    .btn-pause-refresh {
+        background: rgba(0, 150, 255, 0.2);
+        color: #0096ff;
+        border: 1px solid #0096ff;
+        padding: 0.4rem 0.8rem;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.85rem;
+        font-weight: bold;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+
+    .btn-pause-refresh:hover {
+        background: rgba(0, 150, 255, 0.3);
+        box-shadow: 0 4px 12px rgba(0, 150, 255, 0.2);
+        transform: translateY(-1px);
+    }
+
+    .btn-pause-refresh.paused {
+        background: rgba(0, 200, 100, 0.2);
+        color: #00ff88;
+        border-color: #00ff88;
+    }
+
+    .btn-pause-refresh.paused:hover {
+        background: rgba(0, 200, 100, 0.3);
+        box-shadow: 0 4px 12px rgba(0, 200, 100, 0.2);
+    }
+
+    /* ===== INBOX SECTION ===== */
+    .inbox-section {
+        background: linear-gradient(135deg, rgba(0, 150, 255, 0.08) 0%, rgba(0, 150, 255, 0.02) 100%);
+        border: 2px solid rgba(0, 150, 255, 0.2);
+        border-radius: 16px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .inbox-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 2px solid rgba(0, 150, 255, 0.2);
+    }
+
+    .inbox-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #ffffff;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .inbox-counter {
+        background: rgba(0, 212, 255, 0.2);
+        padding: 0.4rem 1rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #00d4ff;
+    }
+
+    .btn-refresh {
+        background: rgba(0, 150, 255, 0.2);
+        border: 1px solid rgba(0, 150, 255, 0.4);
+        color: #0096ff;
+        padding: 0.7rem 1.2rem;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-refresh:hover {
+        background: rgba(0, 150, 255, 0.3);
+        border-color: #0096ff;
+        transform: translateY(-2px);
+    }
+
+    .btn-refresh.spinning {
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    .emails-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .email-item {
+        background: rgba(20, 25, 50, 0.6);
+        border: 1px solid rgba(0, 150, 255, 0.2);
+        border-radius: 10px;
+        padding: 1.2rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .email-item::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 100%;
+        background: linear-gradient(180deg, #0096ff 0%, #00d4ff 100%);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .email-item.new::before {
+        opacity: 1;
+    }
+
+    .email-item:hover {
+        border-color: rgba(0, 150, 255, 0.6);
+        background: rgba(20, 25, 50, 0.8);
+        transform: translateX(5px);
+        box-shadow: 0 4px 16px rgba(0, 150, 255, 0.1);
+    }
+
+    .email-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 0.75rem;
+    }
+
+    .email-from {
+        color: #0096ff;
+        font-weight: 700;
+        font-size: 1.1rem;
+        margin-bottom: 0.25rem;
+        word-break: break-word;
+    }
+
+    .email-sender-address {
+        color: #00d4ff;
+        font-size: 0.95rem;
+        margin-bottom: 0.5rem;
+        font-family: 'Courier New', monospace;
+        word-break: break-all;
+    }
+
+    .email-time {
+        color: #7a8ba3;
+        font-size: 0.85rem;
+        white-space: nowrap;
+    }
+
+    .email-badge {
+        background: #10b981;
+        color: #ffffff;
+        padding: 0.3rem 0.8rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 700;
+    }
+
+    .email-subject {
+        color: #ffffff;
+        font-weight: 600;
+        font-size: 1rem;
+        margin-bottom: 0.75rem;
+        word-break: break-word;
+    }
+
+    .email-preview {
+        color: #8f9bb4;
+        font-size: 0.9rem;
+        max-height: 2.2em;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+    }
+
+    details {
+        cursor: pointer;
+        user-select: none;
+    }
+
+    summary {
+        outline: none;
+        cursor: pointer;
+    }
+
+    details[open] summary {
+        border-bottom: 2px solid #0096ff;
+    }
+
+    .email-body {
+        max-height: 600px;
+        overflow-y: auto;
+        margin-top: 1rem;
+        padding: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid rgba(0, 150, 255, 0.2);
+        color: #d0d8e0;
+        line-height: 1.6;
+        white-space: pre-wrap;
+        word-break: break-word;
+        background: rgba(0, 100, 200, 0.2);
+        border-radius: 8px;
+        animation: slideDown 0.3s ease-out;
+    }
+
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            max-height: 0;
+        }
+        to {
+            opacity: 1;
+            max-height: 600px;
+        }
+    }
+
+    .empty-message {
+        text-align: center;
+        padding: 3rem 1rem;
+        color: #7a8ba3;
+    }
+
+    .empty-message-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+
+    .empty-message-text {
+        font-size: 1.1rem;
+        font-weight: 500;
+    }
+
+    /* ===== FEATURES SECTION ===== */
+    .features-section {
+        margin-top: 4rem;
+    }
+
+    .section-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #ffffff;
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 3rem;
+    }
+
+    .feature-card {
+        background: rgba(0, 150, 255, 0.05);
+        border: 1px solid rgba(0, 212, 255, 0.3);
+        border-radius: 12px;
+        padding: 2rem;
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+
+    .feature-card:hover {
+        border-color: rgba(0, 212, 255, 0.6);
+        background: rgba(0, 150, 255, 0.1);
+        transform: translateY(-5px);
+        box-shadow: 0 8px 24px rgba(0, 150, 255, 0.1);
+    }
+
+    .feature-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .feature-name {
+        color: #0096ff;
+        font-size: 1.1rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    .feature-desc {
+        color: #8f9bb4;
+        font-size: 0.95rem;
+        line-height: 1.5;
+    }
+
+    /* ===== LOADING ===== */
+    .loading {
+        text-align: center;
+        padding: 2rem;
+        color: #7a8ba3;
+    }
+
+    .spinner {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 3px solid rgba(0, 150, 255, 0.3);
+        border-top-color: #0096ff;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-right: 0.5rem;
+    }
+
+    /* ===== TOAST ===== */
+    .toast {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        background: rgba(16, 185, 129, 0.9);
+        color: #ffffff;
+        padding: 1rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+        display: none;
+        animation: slideIn 0.3s ease;
+        z-index: 1000;
+        max-width: 300px;
+    }
+
+    .toast.show {
+        display: block;
+    }
+
+    @keyframes slideIn {
+        from {
+            transform: translateX(400px);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+        .hero h1 {
+            font-size: 2rem;
+        }
+
+        .email-box-wrapper {
+            flex-direction: column;
+        }
+
+        .email-display-input {
+            min-width: unset;
+        }
+
+        .btn-copy {
+            width: 100%;
+        }
+
+        .email-actions {
+            flex-direction: column;
+        }
+
+        .btn-action {
+            width: 100%;
+        }
+
+        .inbox-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+        }
+
+        .features-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .toast {
+            left: 1rem;
+            right: 1rem;
+            bottom: 1rem;
+            max-width: unset;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="tempmail-wrapper">
+    {% csrf_token %}
+    <div class="tempmail-container">
+        <!-- HERO -->
+        <div class="hero">
+            <h1>📧 TempMail</h1>
+            <p>Free Temporary Disposable Email Address</p>
+        </div>
+
+        <!-- EMAIL DISPLAY SECTION -->
+        <div class="email-display-section">
+            <div class="email-label">Your Temporary Email</div>
+            
+            <div class="email-box-wrapper">
+                <input type="text" id="generated-email" class="email-display-input" readonly placeholder="Click 'Create Email' to generate">
+                <button class="btn-copy" id="copy-btn" style="display: none;">
+                    <i class="fas fa-copy"></i> Copy
+                </button>
+            </div>
+
+            <!-- ACTIONS -->
+            <div class="email-actions" id="email-actions" style="display: none;">
+                <button class="btn-action primary" id="regenerate-btn">
+                    <i class="fas fa-sync-alt"></i> Generate New Email
+                </button>
+                <button class="btn-action" id="create-btn" style="display: none;">
+                    <i class="fas fa-envelope"></i> Create Email
+                </button>
+            </div>
+
+            <!-- STATS -->
+            <div class="email-stats" id="email-stats" style="display: none;">
+                <div class="stat">
+                    <div class="stat-value" id="email-count">0</div>
+                    <div class="stat-label">Emails</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="unread-count">0</div>
+                    <div class="stat-label">Unread</div>
+                </div>
+                <div class="auto-refresh-indicator" style="display: flex; align-items: center; gap: 1rem;">
+                    <span>
+                        Auto-refresh in <span class="auto-refresh-timer" id="refresh-timer">10</span>s
+                    </span>
+                    <button id="pause-refresh-btn" class="btn-pause-refresh" title="Pause auto-refresh">
+                        <i class="fas fa-pause"></i> Pause
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- CREATE EMAIL BUTTON (INITIAL) -->
+        <div style="text-align: center; margin-bottom: 2rem;" id="initial-create">
+            <!-- PREVIOUS EMAILS DROPDOWN -->
+            <div id="previous-emails-section" style="display: none; margin-bottom: 1.5rem;">
+                <div style="color: #8f9bb4; font-size: 0.95rem; margin-bottom: 0.8rem;">📧 Or access your previous email:</div>
+                <select id="previous-emails-select" class="previous-emails-select" style="width: 100%; max-width: 400px; padding: 0.8rem; background: rgba(0, 150, 255, 0.15); color: #e0e6ed; border: 2px solid rgba(0, 150, 255, 0.3); border-radius: 8px; font-size: 1rem; cursor: pointer;">
+                    <option value="">-- Select a previous email --</option>
+                </select>
+            </div>
+
+            <!-- LOAD EXISTING EMAIL -->
+            <div style="margin-bottom: 1.5rem;">
+                <div style="color: #8f9bb4; font-size: 0.95rem; margin-bottom: 0.8rem;">🔍 Or load an existing email:</div>
+                <div style="display: flex; gap: 0.8rem; justify-content: center; flex-wrap: wrap;">
+                    <input type="text" id="load-email-input" placeholder="Enter your email (e.g., q83621vdqwz5@geniusgsm.com)" style="flex: 1; min-width: 250px; max-width: 400px; padding: 0.8rem; background: rgba(0, 150, 255, 0.15); color: #e0e6ed; border: 2px solid rgba(0, 150, 255, 0.3); border-radius: 8px; font-size: 1rem;">
+                    <button id="load-email-btn" class="btn-action" style="padding: 0.8rem 1.5rem; background: rgba(0, 200, 100, 0.2); color: #00ff88; border: 2px solid #00ff88; border-radius: 8px; cursor: pointer; font-weight: bold; transition: all 0.3s ease;">
+                        <i class="fas fa-arrow-right"></i> Load
+                    </button>
+                </div>
+            </div>
+
+            <button class="btn-copy" id="initial-create-btn" style="background: linear-gradient(135deg, #0096ff 0%, #00d4ff 100%); color: #0a0e27; width: auto; min-width: 200px;">
+                <i class="fas fa-envelope"></i> Create Email Address
+            </button>
+        </div>
+
+        <!-- INBOX SECTION -->
+        <div class="inbox-section" id="inbox-section" style="display: none;">
+            <div class="inbox-header">
+                <div>
+                    <div class="inbox-title">
+                        <i class="fas fa-inbox"></i> Inbox
+                        <span class="inbox-counter" id="total-count">0 emails</span>
+                    </div>
+                </div>
+                <button class="btn-refresh" id="refresh-btn">
+                    <i class="fas fa-sync-alt"></i> Refresh Now
+                </button>
+            </div>
+
+            <div id="emails-container" class="emails-list"></div>
+        </div>
+
+        <!-- FEATURES -->
+        <div class="features-section">
+            <h2 class="section-title">Why TempMail?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🛡️</div>
+                    <div class="feature-name">Secure & Private</div>
+                    <div class="feature-desc">Your privacy is protected. No registration required, no data stored.</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <div class="feature-name">Instant Email</div>
+                    <div class="feature-desc">Get a temporary email address instantly. No waiting, no hassle.</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔄</div>
+                    <div class="feature-name">Auto Refresh</div>
+                    <div class="feature-desc">Emails update automatically. Stay connected without manual refresh.</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🗑️</div>
+                    <div class="feature-name">Auto Delete</div>
+                    <div class="feature-desc">Emails are automatically deleted after 90 days. Complete cleanup.</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <div class="feature-name">Works Everywhere</div>
+                    <div class="feature-desc">Access from any device, anywhere. Responsive design for all screens.</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔗</div>
+                    <div class="feature-name">Easy to Share</div>
+                    <div class="feature-desc">Copy your email with one click. Share with anyone anonymously.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- API DOCUMENTATION SECTION -->
+        <div style="background: rgba(0, 150, 255, 0.1); border: 2px solid rgba(0, 150, 255, 0.3); border-radius: 16px; padding: 2rem; margin-top: 3rem; text-align: center;">
+            <h3 style="color: #00d4ff; margin-bottom: 1rem; font-size: 1.5rem;">💻 Developers?</h3>
+            <p style="color: #c0c6d1; margin-bottom: 1.5rem; font-size: 1.05rem;">
+                Want to integrate TempMail into your application or script? Check out our comprehensive API documentation to get started.
+            </p>
+            <a href="{% url 'tempmail:api_docs' %}" class="btn btn-primary" style="display: inline-block; padding: 0.8rem 2rem; background: linear-gradient(135deg, #0096ff, #0076cc); color: white; text-decoration: none; border-radius: 8px; font-weight: bold; transition: all 0.3s ease;">
+                📖 View API Documentation
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- TOAST NOTIFICATION -->
+<div class="toast" id="toast"></div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const API_BASE = '/tempmail/api/dovecot';
+    const CREATE_API = '/tempmail/api/create-temp-email/';
+    
+    let currentEmail = null;
+    let autoRefreshInterval = null;
+    let refreshCountdown = 10;
+    let isAutoRefreshPaused = false;
+    const MAX_PREVIOUS_EMAILS = 5;
+
+    console.log('TempMail script loaded');
+
+    // Show toast
+    function showToast(message) {
+        const toast = document.getElementById('toast');
+        if (toast) {
+            toast.textContent = message;
+            toast.classList.add('show');
+            console.log('Toast:', message);
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+    }
+
+    // Copy to clipboard
+    function copyToClipboard() {
+        const email = document.getElementById('generated-email');
+        if (email) {
+            email.select();
+            document.execCommand('copy');
+            
+            const btn = document.getElementById('copy-btn');
+            if (btn) {
+                btn.classList.add('copied');
+                btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                setTimeout(() => {
+                    btn.classList.remove('copied');
+                    btn.innerHTML = '<i class="fas fa-copy"></i> Copy';
+                }, 2000);
+            }
+            
+            showToast('✅ Email copied to clipboard');
+        }
+    }
+
+    // Create new email
+    async function createNewEmail(e) {
+        console.log('createNewEmail called', e);
+        const btn = e && e.target ? e.target : document.getElementById('initial-create-btn');
+        if (!btn) {
+            console.error('Button not found');
+            return;
+        }
+        
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating...';
+
+        try {
+            console.log('Fetching from:', CREATE_API);
+            const response = await fetch(CREATE_API, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCsrfToken()
+                },
+                body: JSON.stringify({})
+            });
+
+            console.log('Response status:', response.status);
+            if (!response.ok) throw new Error('Failed to create email: ' + response.status);
+            const data = await response.json();
+            
+            console.log('Data received:', data);
+            if (!data.success) throw new Error(data.error || 'Unknown error');
+            
+            currentEmail = data.email;
+            displayEmail(currentEmail);
+            savePreviousEmail(currentEmail);
+            showToast('✅ Email created successfully');
+            loadMailbox();
+            startAutoRefresh();
+            
+        } catch (error) {
+            showToast('❌ ' + error.message);
+            console.error('Error:', error);
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-envelope"></i> Create Email Address';
+        }
+    }
+
+    // Display email
+    function displayEmail(email) {
+        console.log('Displaying email:', email);
+        document.getElementById('generated-email').value = email;
+        document.getElementById('copy-btn').style.display = 'block';
+        document.getElementById('initial-create').style.display = 'none';
+        document.getElementById('email-actions').style.display = 'flex';
+        document.getElementById('email-stats').style.display = 'flex';
+        document.getElementById('inbox-section').style.display = 'block';
+    }
+
+    // Regenerate email
+    async function regenerateEmail() {
+        console.log('Regenerating email');
+        await createNewEmail();
+    }
+
+    // Save email to previous emails list
+    function savePreviousEmail(email) {
+        let previousEmails = JSON.parse(localStorage.getItem('tempmail_previous_emails') || '[]');
+        
+        // Remove if already exists to avoid duplicates
+        previousEmails = previousEmails.filter(e => e !== email);
+        
+        // Add to beginning of list
+        previousEmails.unshift(email);
+        
+        // Keep only last 5 emails
+        previousEmails = previousEmails.slice(0, MAX_PREVIOUS_EMAILS);
+        
+        localStorage.setItem('tempmail_previous_emails', JSON.stringify(previousEmails));
+        updatePreviousEmailsList();
+    }
+
+    // Load and display previous emails list
+    function updatePreviousEmailsList() {
+        const previousEmails = JSON.parse(localStorage.getItem('tempmail_previous_emails') || '[]');
+        const select = document.getElementById('previous-emails-select');
+        const section = document.getElementById('previous-emails-section');
+        
+        if (previousEmails.length === 0) {
+            section.style.display = 'none';
+            return;
+        }
+        
+        section.style.display = 'block';
+        
+        // Clear options except first one
+        while (select.options.length > 1) {
+            select.remove(1);
+        }
+        
+        // Add options
+        previousEmails.forEach(email => {
+            const option = document.createElement('option');
+            option.value = email;
+            option.textContent = email;
+            select.appendChild(option);
+        });
+    }
+
+    // Load email from previous emails
+    function loadPreviousEmail() {
+        const select = document.getElementById('previous-emails-select');
+        const email = select.value;
+        
+        if (email) {
+            currentEmail = email;
+            displayEmail(email);
+            loadMailbox();
+            startAutoRefresh();
+            select.value = ''; // Reset select
+        }
+    }
+
+    // Load existing email from input
+    function loadExistingEmail() {
+        const input = document.getElementById('load-email-input');
+        const email = input.value.trim();
+        
+        if (!email) {
+            showToast('❌ Please enter an email address');
+            return;
+        }
+        
+        // Validate email format
+        if (!email.includes('@')) {
+            showToast('❌ Invalid email format');
+            return;
+        }
+        
+        currentEmail = email;
+        displayEmail(email);
+        loadMailbox();
+        startAutoRefresh();
+        
+        // Add to previous emails if valid
+        if (email.endsWith('@geniusgsm.com')) {
+            savePreviousEmail(email);
+        }
+        
+        input.value = ''; // Clear input
+        showToast(`✅ Loaded: ${email}`);
+    }
+
+    // Load mailbox
+    async function loadMailbox() {
+        if (!currentEmail) return;
+        
+        const container = document.getElementById('emails-container');
+        const username = currentEmail.split('@')[0];
+
+        try {
+            console.log('Loading mailbox for:', username);
+            const response = await fetch(`${API_BASE}/mailbox/${username}/`);
+            const data = await response.json();
+
+            if (!data.success || !data.mailbox) {
+                container.innerHTML = '<div class="empty-message"><div class="empty-message-icon">📭</div><div class="empty-message-text">No emails yet. Waiting for incoming messages...</div></div>';
+                return;
+            }
+
+            const total = data.mailbox.emails.length;
+            const unread = data.mailbox.unread_count || 0;
+
+            document.getElementById('email-count').textContent = total;
+            document.getElementById('unread-count').textContent = unread;
+            document.getElementById('total-count').textContent = `${total} email${total !== 1 ? 's' : ''}`;
+
+            if (total > 0) {
+                renderEmails(data.mailbox.emails);
+            } else {
+                container.innerHTML = '<div class="empty-message"><div class="empty-message-icon">📭</div><div class="empty-message-text">No emails yet. Waiting for incoming messages...</div></div>';
+            }
+        } catch (error) {
+            console.error('Error loading mailbox:', error);
+            container.innerHTML = `<div class="empty-message">Error loading emails</div>`;
+        }
+    }
+
+    // Render emails
+    function renderEmails(emails) {
+        const container = document.getElementById('emails-container');
+        container.innerHTML = '';
+        
+        console.log('renderEmails called with', emails.length, 'emails');
+
+        emails.forEach((email, index) => {
+            const item = document.createElement('div');
+            item.className = `email-item ${email.is_new ? 'new' : ''}`;
+            item.id = `email-item-${index}`;
+            item.setAttribute('data-expanded', 'false');
+            
+            // Extract name and email from the from field
+            const fromField = email.from || 'Unknown';
+            let senderName = fromField;
+            let senderEmail = '';
+            
+            const emailMatch = fromField.match(/<(.+?)>/);
+            if (emailMatch) {
+                senderEmail = emailMatch[1];
+                senderName = fromField.split('<')[0].trim();
+            } else if (fromField.includes('@')) {
+                senderEmail = fromField;
+                senderName = fromField.split('@')[0];
+            }
+            
+            const subjectText = email.subject || '(No Subject)';
+            const previewText = (email.body_text || email.body_html || '').substring(0, 100);
+            
+            item.innerHTML = `
+                <details>
+                    <summary style="cursor: pointer; padding: 0.5rem 0; outline: none;">
+                        <div class="email-header">
+                            <div style="flex: 1;">
+                                <div class="email-from">👤 ${senderName}</div>
+                                ${senderEmail ? `<div class="email-sender-address">📬 ${senderEmail}</div>` : ''}
+                                <div class="email-subject">📝 ${subjectText}</div>
+                                ${previewText ? `<div class="email-preview">${previewText}</div>` : ''}
+                            </div>
+                            <div style="text-align: right;">
+                                <div class="email-time">${new Date(email.received_at).toLocaleString()}</div>
+                                ${!email.is_new ? '<span class="email-badge" style="display: block; margin-top: 0.5rem;">Read</span>' : '<span class="email-badge" style="background: #3b82f6; display: block; margin-top: 0.5rem;">NEW</span>'}
+                            </div>
+                        </div>
+                    </summary>
+                    <div class="email-body">${email.body_text || email.body_html || '(Empty message)'}</div>
+                </details>
+            `;
+            
+            container.appendChild(item);
+            
+            console.log('Processed email-item-' + index);
+        });
+        console.log('renderEmails finished with', emails.length, 'emails');
+    }
+
+    // Auto refresh
+    function startAutoRefresh() {
+        if (autoRefreshInterval) clearInterval(autoRefreshInterval);
+        refreshCountdown = 10;
+        isAutoRefreshPaused = false;
+        updatePauseButton();
+        updateRefreshTimer();
+        autoRefreshInterval = setInterval(() => {
+            if (isAutoRefreshPaused) {
+                return; // Don't refresh if paused
+            }
+            refreshCountdown--;
+            updateRefreshTimer();
+            if (refreshCountdown <= 0) {
+                loadMailbox();
+                refreshCountdown = 10;
+            }
+        }, 1000);
+    }
+
+    function updateRefreshTimer() {
+        const timer = document.getElementById('refresh-timer');
+        if (timer) {
+            if (isAutoRefreshPaused) {
+                timer.parentElement.style.opacity = '0.5';
+            } else {
+                timer.textContent = refreshCountdown;
+                timer.parentElement.style.opacity = '1';
+            }
+        }
+    }
+
+    function toggleAutoRefresh() {
+        isAutoRefreshPaused = !isAutoRefreshPaused;
+        updatePauseButton();
+        if (!isAutoRefreshPaused) {
+            refreshCountdown = 3;
+            updateRefreshTimer();
+        }
+    }
+
+    function updatePauseButton() {
+        const btn = document.getElementById('pause-refresh-btn');
+        if (btn) {
+            if (isAutoRefreshPaused) {
+                btn.classList.add('paused');
+                btn.innerHTML = '<i class="fas fa-play"></i> Resume';
+            } else {
+                btn.classList.remove('paused');
+                btn.innerHTML = '<i class="fas fa-pause"></i> Pause';
+            }
+        }
+    }
+
+    // Refresh now
+    async function refreshNow() {
+        const btn = document.getElementById('refresh-btn');
+        if (btn) {
+            btn.classList.add('spinning');
+            try {
+                await loadMailbox();
+            } finally {
+                btn.classList.remove('spinning');
+                refreshCountdown = 10;
+                updateRefreshTimer();
+            }
+        }
+    }
+
+    // CSRF token
+    function getCsrfToken() {
+        // Try to get from input field first
+        let csrfToken = document.querySelector('[name=csrfmiddlewaretoken]');
+        if (csrfToken) return csrfToken.value;
+        
+        // Then try meta tag
+        csrfToken = document.querySelector('[name="csrf-token"]');
+        if (csrfToken) return csrfToken.getAttribute('content');
+        
+        // Finally try cookies
+        const name = 'csrftoken';
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let cookie of cookies) {
+                cookie = cookie.trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    return decodeURIComponent(cookie.substring(name.length + 1));
+                }
+            }
+        }
+        return '';
+    }
+
+    // Event listeners
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOMContentLoaded fired');
+        
+        const initialCreateBtn = document.getElementById('initial-create-btn');
+        const copyBtn = document.getElementById('copy-btn');
+        const regenerateBtn = document.getElementById('regenerate-btn');
+        const refreshBtn = document.getElementById('refresh-btn');
+        const pauseRefreshBtn = document.getElementById('pause-refresh-btn');
+        const previousEmailsSelect = document.getElementById('previous-emails-select');
+        const loadEmailBtn = document.getElementById('load-email-btn');
+        const loadEmailInput = document.getElementById('load-email-input');
+
+        console.log('Elements found:', {
+            initialCreateBtn: !!initialCreateBtn,
+            copyBtn: !!copyBtn,
+            regenerateBtn: !!regenerateBtn,
+            refreshBtn: !!refreshBtn,
+            pauseRefreshBtn: !!pauseRefreshBtn,
+            previousEmailsSelect: !!previousEmailsSelect,
+            loadEmailBtn: !!loadEmailBtn,
+            loadEmailInput: !!loadEmailInput
+        });
+
+        // Load and display previous emails on page load
+        updatePreviousEmailsList();
+
+        if (initialCreateBtn) {
+            initialCreateBtn.addEventListener('click', function(e) {
+                console.log('Initial create button clicked');
+                createNewEmail(e);
+            });
+        }
+        if (copyBtn) {
+            copyBtn.addEventListener('click', copyToClipboard);
+        }
+        if (regenerateBtn) {
+            regenerateBtn.addEventListener('click', regenerateEmail);
+        }
+        if (refreshBtn) {
+            refreshBtn.addEventListener('click', refreshNow);
+        }
+        if (pauseRefreshBtn) {
+            pauseRefreshBtn.addEventListener('click', toggleAutoRefresh);
+        }
+        if (previousEmailsSelect) {
+            previousEmailsSelect.addEventListener('change', loadPreviousEmail);
+        }
+        if (loadEmailBtn) {
+            loadEmailBtn.addEventListener('click', loadExistingEmail);
+        }
+        if (loadEmailInput) {
+            loadEmailInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    loadExistingEmail();
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}
+

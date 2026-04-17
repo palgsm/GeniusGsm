@@ -1,0 +1,436 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Dashboard — GeniusGsm{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+  <!-- Session & Token Info Card -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="info-card session-card">
+        <div class="card-header">
+          <h5><i class="bi bi-clock-history"></i> معلومات الجلسة والتوكن</h5>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-3">
+              <div class="stat-box">
+                <label>معرف الجلسة</label>
+                <code class="session-id">{{ request.session.session_key|truncatechars:20 }}</code>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="stat-box">
+                <label>مدة الجلسة المتبقية</label>
+                <div class="time-remaining">
+                  <span class="counter" id="sessionTimer">{{ session_timeout_minutes }}:00</span>
+                  <small>دقائق</small>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="stat-box">
+                <label>وقت انتهاء الجلسة</label>
+                <span class="expiry-time" id="expiryTime">--:--</span>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="stat-box">
+                <label>حالة التوكن</label>
+                <span class="badge bg-success token-status">
+                  <i class="bi bi-shield-check"></i> نشط
+                </span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Session Progress Bar -->
+          <div class="mt-4">
+            <label class="small text-muted">شريط التقدم</label>
+            <div class="progress" style="height: 8px;">
+              <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                   role="progressbar" 
+                   id="sessionProgress"
+                   style="width: 100%;" 
+                   aria-valuenow="100" 
+                   aria-valuemin="0" 
+                   aria-valuemax="100"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Statistics Cards -->
+  <div class="row mb-4">
+    <div class="col-md-3">
+      <div class="stat-card">
+        <div class="stat-icon bg-primary">
+          <i class="bi bi-globe"></i>
+        </div>
+        <div class="stat-content">
+          <h6>IP حالي</h6>
+          <p class="stat-value">{{ current_ip }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="stat-card">
+        <div class="stat-icon bg-info">
+          <i class="bi bi-file-text"></i>
+        </div>
+        <div class="stat-content">
+          <h6>الطلبات</h6>
+          <p class="stat-value">{{ total_requests }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="stat-card">
+        <div class="stat-icon bg-warning">
+          <i class="bi bi-exclamation-triangle"></i>
+        </div>
+        <div class="stat-content">
+          <h6>تقارير الإساءة</h6>
+          <p class="stat-value">{{ abuse_reports }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="stat-card">
+        <div class="stat-icon bg-success">
+          <i class="bi bi-check-circle"></i>
+        </div>
+        <div class="stat-content">
+          <h6>الخدمات النشطة</h6>
+          <p class="stat-value">{{ active_services }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tools & Features Section -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="tools-card">
+        <h5 class="mb-3"><i class="bi bi-tools"></i> أدوات العمل</h5>
+        
+        <!-- Search & Filter -->
+        <div class="tools-section mb-3">
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-search"></i></span>
+            <input type="text" class="form-control" id="searchInput" placeholder="ابحث عن IP أو نطاق...">
+            <button class="btn btn-outline-secondary" type="button" id="filterBtn">
+              <i class="bi bi-funnel"></i> تصفية
+            </button>
+          </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+          <button class="action-btn" id="autoSortBtn" title="خاصية الترتيب التلقائي">
+            <i class="bi bi-sort-down"></i>
+            <span>ترتيب تلقائي</span>
+          </button>
+          <button class="action-btn" id="refreshBtn" title="تحديث البيانات">
+            <i class="bi bi-arrow-clockwise"></i>
+            <span>تحديث</span>
+          </button>
+          <button class="action-btn" id="exportBtn" title="تصدير البيانات">
+            <i class="bi bi-download"></i>
+            <span>تصدير</span>
+          </button>
+          <button class="action-btn" id="settingsBtn" title="الإعدادات">
+            <i class="bi bi-gear"></i>
+            <span>الإعدادات</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Connected Devices & History -->
+  <div class="row mb-4">
+    <div class="col-md-6">
+      <div class="info-card">
+        <div class="card-header">
+          <h5><i class="bi bi-phone"></i> الأجهزة المتصلة</h5>
+        </div>
+        <div class="card-body">
+          <div class="device-list">
+            <div class="device-item">
+              <div class="device-info">
+                <span class="device-name">الجهاز الحالي</span>
+                <small class="text-muted">{{ request.META.HTTP_USER_AGENT|truncatechars:40 }}</small>
+              </div>
+              <span class="badge bg-success">متصل</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="info-card">
+        <div class="card-header">
+          <h5><i class="bi bi-history"></i> آخر الأنشطة</h5>
+        </div>
+        <div class="card-body">
+          <div class="activity-list">
+            <div class="activity-item">
+              <span class="activity-time">الآن</span>
+              <span class="activity-text">تسجيل الدخول إلى الداشبورد</span>
+            </div>
+            <div class="activity-item">
+              <span class="activity-time">منذ 5 دقائق</span>
+              <span class="activity-text">بداية جلسة جديدة</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Data Table with Auto-Sort -->
+  <div class="row">
+    <div class="col-12">
+      <div class="info-card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5><i class="bi bi-table"></i> تقارير الإساءة</h5>
+          <div class="sort-controls">
+            <select class="form-select form-select-sm w-auto" id="sortSelect">
+              <option value="date-desc">الأحدث أولاً</option>
+              <option value="date-asc">الأقدم أولاً</option>
+              <option value="category">حسب الفئة</option>
+              <option value="reporter">حسب المرسل</option>
+            </select>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-hover" id="reportsTable">
+              <thead>
+                <tr>
+                  <th>IP</th>
+                  <th>الفئة</th>
+                  <th>المرسل</th>
+                  <th>البريد الإلكتروني</th>
+                  <th>التاريخ</th>
+                  <th>الإجراءات</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for report in reports %}
+                <tr data-ip="{{ report.ip }}" data-category="{{ report.category }}">
+                  <td><code>{{ report.ip }}</code></td>
+                  <td>
+                    <span class="badge bg-danger">{{ report.category }}</span>
+                  </td>
+                  <td>{{ report.reporter|default:"مجهول" }}</td>
+                  <td>{{ report.email|default:"--" }}</td>
+                  <td>{{ report.created_at|date:"Y-m-d H:i" }}</td>
+                  <td>
+                    <button class="btn btn-sm btn-info" title="عرض التفاصيل">
+                      <i class="bi bi-eye"></i>
+                    </button>
+                  </td>
+                </tr>
+                {% empty %}
+                <tr>
+                  <td colspan="6" class="text-center text-muted">لا توجد تقارير</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Warning Modal for Session Expiry -->
+<div class="modal fade" id="sessionWarningModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-warning">
+        <h5 class="modal-title">تنبيه: انتهاء الجلسة</h5>
+      </div>
+      <div class="modal-body">
+        <p>جلستك ستنتهي قريباً!</p>
+        <p>يتبقى <strong id="warningCountdown">5:00</strong> دقائق</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">تسجيل الخروج</button>
+        <button type="button" class="btn btn-primary" id="extendSessionBtn">استمرار الجلسة</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/dashboard.js' %}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Session Timer
+  const SESSION_TIMEOUT = {{ session_timeout_minutes }} * 60; // في الثواني
+  let remainingTime = SESSION_TIMEOUT;
+  
+  function updateSessionTimer() {
+    remainingTime--;
+    const minutes = Math.floor(remainingTime / 60);
+    const seconds = remainingTime % 60;
+    
+    document.getElementById('sessionTimer').textContent = 
+      `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    
+    // Update progress bar
+    const progress = (remainingTime / SESSION_TIMEOUT) * 100;
+    document.getElementById('sessionProgress').style.width = progress + '%';
+    
+    // Update expiry time
+    const now = new Date();
+    const expiry = new Date(now.getTime() + remainingTime * 1000);
+    document.getElementById('expiryTime').textContent = 
+      expiry.toLocaleTimeString('ar-SA');
+    
+    // Warning at 5 minutes
+    if (remainingTime === 300) {
+      showSessionWarning();
+    }
+    
+    if (remainingTime > 0) {
+      setTimeout(updateSessionTimer, 1000);
+    } else {
+      handleSessionExpiry();
+    }
+  }
+  
+  function showSessionWarning() {
+    const modal = new bootstrap.Modal(document.getElementById('sessionWarningModal'));
+    modal.show();
+  }
+  
+  function handleSessionExpiry() {
+    alert('انتهت جلستك. يرجى تسجيل الدخول مرة أخرى.');
+    window.location.href = '/admin/login/';
+  }
+  
+  // Auto-sort functionality
+  document.getElementById('autoSortBtn').addEventListener('click', function() {
+    autoSortTable();
+  });
+  
+  document.getElementById('sortSelect').addEventListener('change', function(e) {
+    sortTable(e.target.value);
+  });
+  
+  // Refresh button
+  document.getElementById('refreshBtn').addEventListener('click', function() {
+    location.reload();
+  });
+  
+  // Export button
+  document.getElementById('exportBtn').addEventListener('click', function() {
+    exportTableToCSV('reports.csv');
+  });
+  
+  // Search & Filter
+  document.getElementById('searchInput').addEventListener('keyup', function(e) {
+    filterTable(e.target.value);
+  });
+  
+  // Extend session
+  document.getElementById('extendSessionBtn').addEventListener('click', function() {
+    remainingTime = SESSION_TIMEOUT; // Reset timer
+    bootstrap.Modal.getInstance(document.getElementById('sessionWarningModal')).hide();
+  });
+  
+  // Start timer
+  updateSessionTimer();
+  
+  // Functions
+  function autoSortTable() {
+    const table = document.getElementById('reportsTable').getElementsByTagName('tbody')[0];
+    const rows = Array.from(table.rows);
+    
+    rows.sort((a, b) => {
+      const dateA = new Date(a.getAttribute('data-date'));
+      const dateB = new Date(b.getAttribute('data-date'));
+      return dateB - dateA;
+    });
+    
+    rows.forEach(row => table.appendChild(row));
+  }
+  
+  function sortTable(sortBy) {
+    const table = document.getElementById('reportsTable').getElementsByTagName('tbody')[0];
+    const rows = Array.from(table.rows);
+    
+    rows.sort((a, b) => {
+      let aVal, bVal;
+      
+      switch(sortBy) {
+        case 'date-asc':
+          return new Date(a.cells[4].textContent) - new Date(b.cells[4].textContent);
+        case 'date-desc':
+          return new Date(b.cells[4].textContent) - new Date(a.cells[4].textContent);
+        case 'category':
+          aVal = a.cells[1].textContent;
+          bVal = b.cells[1].textContent;
+          return aVal.localeCompare(bVal, 'ar');
+        case 'reporter':
+          aVal = a.cells[2].textContent;
+          bVal = b.cells[2].textContent;
+          return aVal.localeCompare(bVal, 'ar');
+        default:
+          return 0;
+      }
+    });
+    
+    rows.forEach(row => table.appendChild(row));
+  }
+  
+  function filterTable(searchTerm) {
+    const table = document.getElementById('reportsTable');
+    const rows = table.getElementsByTagName('tbody')[0].rows;
+    
+    Array.from(rows).forEach(row => {
+      const text = row.textContent.toLowerCase();
+      row.style.display = text.includes(searchTerm.toLowerCase()) ? '' : 'none';
+    });
+  }
+  
+  function exportTableToCSV(filename) {
+    const table = document.getElementById('reportsTable');
+    let csv = [];
+    
+    // Headers
+    const headers = [];
+    Array.from(table.querySelectorAll('th')).forEach(th => {
+      headers.push(th.textContent);
+    });
+    csv.push(headers.join(','));
+    
+    // Rows
+    Array.from(table.querySelectorAll('tbody tr')).forEach(tr => {
+      const row = [];
+      Array.from(tr.querySelectorAll('td')).slice(0, -1).forEach(td => {
+        row.push('"' + td.textContent.trim() + '"');
+      });
+      csv.push(row.join(','));
+    });
+    
+    // Download
+    const csvContent = 'data:text/csv;charset=utf-8,' + csv.join('\n');
+    const link = document.createElement('a');
+    link.setAttribute('href', encodeURI(csvContent));
+    link.setAttribute('download', filename);
+    link.click();
+  }
+});
+</script>
+{% endblock %}

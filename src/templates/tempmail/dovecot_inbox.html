@@ -1,0 +1,412 @@
+{% extends 'base.html' %}
+
+{% block title %}GeniusGsm Mail - Dovecot Inbox{% endblock %}
+
+{% block content %}
+<style>
+    .dovecot-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    
+    .mailbox-selector {
+        padding: 20px;
+        margin-bottom: 20px;
+        background: linear-gradient(135deg, #0a0e27 0%, #1a1e37 100%);
+        border: 1px solid #00d4ff;
+        border-radius: 8px;
+    }
+    
+    .user-select {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+    
+    .user-select label {
+        color: #00ff88;
+        font-weight: bold;
+        margin-right: 10px;
+    }
+    
+    .user-option {
+        padding: 8px 16px;
+        background: rgba(0, 212, 255, 0.1);
+        border: 2px solid rgba(0, 212, 255, 0.3);
+        border-radius: 6px;
+        color: #00d4ff;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .user-option:hover {
+        background: rgba(0, 212, 255, 0.2);
+        border-color: #00d4ff;
+    }
+    
+    .user-option.active {
+        background: rgba(0, 212, 255, 0.3);
+        border-color: #00d4ff;
+        color: #00ff88;
+        font-weight: bold;
+    }
+    
+    .mailbox-header {
+        padding: 20px;
+        background: linear-gradient(135deg, #0a0e27 0%, #1a1e37 100%);
+        border: 1px solid #00d4ff;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .mailbox-title h2 {
+        color: #00ff88;
+        margin: 0;
+        font-size: 24px;
+    }
+    
+    .mailbox-stats {
+        display: flex;
+        gap: 20px;
+        color: #00d4ff;
+        font-size: 14px;
+    }
+    
+    .stat-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .stat-badge {
+        background: rgba(0, 212, 255, 0.2);
+        padding: 4px 12px;
+        border-radius: 4px;
+    }
+    
+    .emails-container {
+        background: linear-gradient(135deg, #0a0e27 0%, #1a1e37 100%);
+        border: 1px solid #00d4ff;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    
+    .email-item {
+        padding: 16px;
+        border-bottom: 1px solid rgba(0, 212, 255, 0.1);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: rgba(0, 212, 255, 0.02);
+    }
+    
+    .email-item:hover {
+        background: rgba(0, 212, 255, 0.08);
+        border-left: 4px solid #00ff88;
+        padding-left: 12px;
+    }
+    
+    .email-item.expanded {
+        background: rgba(0, 212, 255, 0.1);
+    }
+    
+    .email-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+    }
+    
+    .email-from {
+        color: #00ff88;
+        font-weight: bold;
+    }
+    
+    .email-subject {
+        color: #00d4ff;
+        font-size: 16px;
+        font-weight: 500;
+        margin-bottom: 8px;
+    }
+    
+    .email-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: #888;
+        font-size: 12px;
+    }
+    
+    .email-badge {
+        display: inline-block;
+        padding: 2px 8px;
+        background: rgba(0, 255, 136, 0.1);
+        border: 1px solid rgba(0, 255, 136, 0.3);
+        border-radius: 3px;
+        color: #00ff88;
+        margin-left: 8px;
+    }
+    
+    .email-body {
+        margin-top: 12px;
+        padding-top: 12px;
+        border-top: 1px solid rgba(0, 212, 255, 0.2);
+        color: #ccc;
+        line-height: 1.6;
+        max-height: 400px;
+        overflow-y: auto;
+    }
+    
+    .empty-state {
+        padding: 60px 20px;
+        text-align: center;
+        color: #666;
+    }
+    
+    .empty-state i {
+        font-size: 48px;
+        color: #444;
+        margin-bottom: 20px;
+    }
+    
+    .loading {
+        padding: 20px;
+        text-align: center;
+        color: #00d4ff;
+    }
+    
+    .btn-group {
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+        margin-top: 20px;
+    }
+    
+    .btn-action {
+        padding: 10px 20px;
+        background: linear-gradient(135deg, #00d4ff 0%, #0096ff 100%);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: bold;
+    }
+    
+    .btn-action:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 16px rgba(0, 212, 255, 0.3);
+    }
+    
+    .btn-secondary {
+        background: linear-gradient(135deg, #00ff88 0%, #00d4ff 100%);
+        color: #0a0e27;
+    }
+</style>
+
+<div class="dovecot-container">
+    <!-- Mailbox Selector -->
+    <div class="mailbox-selector">
+        <div class="user-select">
+            <label for="user-list">اختر صندوق البريد:</label>
+            <div id="users-list" style="display: flex; gap: 10px; flex-wrap: wrap;"></div>
+        </div>
+    </div>
+    
+    <!-- Mailbox Header -->
+    <div class="mailbox-header" id="mailbox-header" style="display: none;">
+        <div class="mailbox-title">
+            <h2 id="mailbox-email"></h2>
+        </div>
+        <div class="mailbox-stats">
+            <div class="stat-item">
+                <span>إجمالي الرسائل:</span>
+                <span class="stat-badge" id="total-emails">0</span>
+            </div>
+            <div class="stat-item">
+                <span>رسائل جديدة:</span>
+                <span class="stat-badge" id="unread-count">0</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Emails List -->
+    <div class="emails-container" id="emails-container" style="display: none;">
+        <div id="emails-list"></div>
+    </div>
+    
+    <!-- Empty State -->
+    <div class="empty-state" id="empty-state" style="display: none;">
+        <i class="fas fa-inbox"></i>
+        <p>لا توجد رسائل في هذا الصندوق</p>
+    </div>
+    
+    <!-- Loading -->
+    <div class="loading" id="loading" style="display: none;">
+        <i class="fas fa-spinner fa-spin"></i> جاري التحميل...
+    </div>
+    
+    <!-- Action Buttons -->
+    <div class="btn-group" id="btn-group" style="display: none;">
+        <button class="btn-action btn-secondary" onclick="refreshMailbox()">
+            <i class="fas fa-sync"></i> تحديث
+        </button>
+    </div>
+</div>
+
+<script>
+let currentUser = null;
+let cachedEmails = {};
+
+// Load users on page load
+document.addEventListener('DOMContentLoaded', function() {
+    loadUsers();
+});
+
+function loadUsers() {
+    const loading = document.getElementById('loading');
+    loading.style.display = 'block';
+    
+    fetch('/tempmail/api/dovecot/users/')
+        .then(r => r.json())
+        .then(data => {
+            loading.style.display = 'none';
+            
+            if (data.success) {
+                const usersList = document.getElementById('users-list');
+                usersList.innerHTML = '';
+                
+                data.users.forEach(user => {
+                    const btn = document.createElement('button');
+                    btn.className = 'user-option';
+                    btn.textContent = `${user}@geniusgsm.com`;
+                    btn.onclick = () => selectUser(user);
+                    usersList.appendChild(btn);
+                });
+                
+                // Auto-select first user
+                if (data.users.length > 0) {
+                    selectUser(data.users[0]);
+                }
+            }
+        })
+        .catch(err => {
+            loading.style.display = 'none';
+            console.error('Error loading users:', err);
+        });
+}
+
+function selectUser(username) {
+    currentUser = username;
+    
+    // Update button states
+    document.querySelectorAll('.user-option').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.textContent === `${username}@geniusgsm.com`) {
+            btn.classList.add('active');
+        }
+    });
+    
+    // Load mailbox
+    loadMailbox(username);
+}
+
+function loadMailbox(username) {
+    const loading = document.getElementById('loading');
+    const header = document.getElementById('mailbox-header');
+    const container = document.getElementById('emails-container');
+    const emptyState = document.getElementById('empty-state');
+    const btnGroup = document.getElementById('btn-group');
+    
+    loading.style.display = 'block';
+    header.style.display = 'none';
+    container.style.display = 'none';
+    emptyState.style.display = 'none';
+    btnGroup.style.display = 'none';
+    
+    fetch(`/tempmail/api/dovecot/mailbox/${username}/`)
+        .then(r => r.json())
+        .then(data => {
+            loading.style.display = 'none';
+            
+            if (data.success && data.mailbox) {
+                const mailbox = data.mailbox;
+                cachedEmails[username] = mailbox.emails;
+                
+                // Update header
+                document.getElementById('mailbox-email').textContent = mailbox.email;
+                document.getElementById('total-emails').textContent = mailbox.total_emails;
+                document.getElementById('unread-count').textContent = mailbox.unread_count;
+                header.style.display = 'flex';
+                btnGroup.style.display = 'flex';
+                
+                // Render emails
+                const emailsList = document.getElementById('emails-list');
+                if (mailbox.emails.length === 0) {
+                    emptyState.style.display = 'block';
+                } else {
+                    container.style.display = 'block';
+                    emailsList.innerHTML = '';
+                    
+                    mailbox.emails.forEach((email, index) => {
+                        const emailDiv = document.createElement('div');
+                        emailDiv.className = 'email-item';
+                        emailDiv.innerHTML = `
+                            <div class="email-header">
+                                <span class="email-from">${escapeHtml(email.from)}</span>
+                                <span class="email-meta">
+                                    ${new Date(email.received_at).toLocaleString('ar-SA')}
+                                    ${email.is_new ? '<span class="email-badge">جديدة</span>' : ''}
+                                </span>
+                            </div>
+                            <div class="email-subject">${escapeHtml(email.subject)}</div>
+                            <div style="color: #999; font-size: 12px;">
+                                To: ${escapeHtml(email.to)}
+                            </div>
+                        `;
+                        
+                        emailDiv.onclick = () => toggleEmailBody(emailDiv, email);
+                        emailsList.appendChild(emailDiv);
+                    });
+                }
+            }
+        })
+        .catch(err => {
+            loading.style.display = 'none';
+            console.error('Error loading mailbox:', err);
+            emptyState.style.display = 'block';
+            document.querySelector('.empty-state p').textContent = 'خطأ أثناء تحميل الرسائل';
+        });
+}
+
+function toggleEmailBody(emailDiv, email) {
+    if (emailDiv.classList.contains('expanded')) {
+        emailDiv.classList.remove('expanded');
+        const body = emailDiv.querySelector('.email-body');
+        if (body) body.remove();
+    } else {
+        emailDiv.classList.add('expanded');
+        const bodyDiv = document.createElement('div');
+        bodyDiv.className = 'email-body';
+        bodyDiv.innerHTML = `<pre>${escapeHtml(email.body_text || email.body_html)}</pre>`;
+        emailDiv.appendChild(bodyDiv);
+    }
+}
+
+function refreshMailbox() {
+    if (currentUser) {
+        loadMailbox(currentUser);
+    }
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+</script>
+{% endblock %}

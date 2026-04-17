@@ -1,0 +1,354 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}GeniusGsm - Advanced Cybersecurity Intelligence Platform with 13+ Security Tools{% endblock %}
+
+{% block meta_description %}GeniusGsm - Advanced cybersecurity intelligence platform with IP lookup, abuse checking, JWT validation, speed testing, email verification, URL analysis, and 13+ professional security tools.{% endblock %}
+
+{% block meta_keywords %}cybersecurity tools, IP lookup, abuse checker, JWT validator, email verification, security intelligence, IP reputation, speed test, URL analyzer, phishing detector, online security tools{% endblock %}
+
+{% block og_title %}GeniusGsm - Cybersecurity Intelligence Platform{% endblock %}
+
+{% block og_description %}Advanced cybersecurity intelligence platform with 13+ professional security tools for IP analysis, domain checking, URL validation, email verification, and more.{% endblock %}
+
+{% block canonical_url %}https://geniusgsm.com/{% endblock %}
+
+{% block twitter_title %}GeniusGsm - Security Tools & Intelligence{% endblock %}
+
+{% block twitter_description %}Professional cybersecurity tools for IP analysis, abuse detection, JWT validation, and security intelligence.{% endblock %}
+
+{% block extra_css %}
+<style>
+  .hero {
+    text-align: center;
+    margin-bottom: 4rem;
+    animation: slideInDown 0.8s ease;
+    background: rgba(20, 25, 50, 0.8) !important;
+    backdrop-filter: blur(10px) !important;
+    border: 2px solid rgba(0, 150, 255, 0.2) !important;
+    border-radius: 12px !important;
+    padding: 3rem 2rem !important;
+    transition: all 0.3s ease;
+  }
+
+  @keyframes slideInDown {
+    from {
+      opacity: 0;
+      transform: translateY(-30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .hero h1 {
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+    font-weight: 900;
+    color: #ffffff !important;
+  }
+
+  .hero p {
+    font-size: 1.2rem;
+    color: #ffffff !important;
+    margin-bottom: 2rem;
+  }
+
+  .hero:hover {
+    border-color: rgba(0, 150, 255, 0.6) !important;
+    box-shadow: 0 8px 32px rgba(0, 150, 255, 0.2) !important;
+  }
+
+  .btn-group-hero {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 3rem;
+  }
+
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin: 3rem 0;
+  }
+
+  .card-service {
+    background: rgba(20, 25, 50, 0.8);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(0, 150, 255, 0.2);
+    border-radius: 12px;
+    padding: 2rem;
+    transition: all 0.3s ease;
+    animation: fadeInUp 0.6s ease;
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .card-service:hover {
+    border-color: rgba(0, 150, 255, 0.6);
+    box-shadow: 0 8px 32px rgba(0, 150, 255, 0.2);
+    transform: translateY(-5px);
+  }
+
+  .card-title {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #0096ff;
+  }
+
+  .card-title::before {
+    content: '';
+    width: 4px;
+    height: 24px;
+    background: linear-gradient(180deg, #0096ff, #00d4ff);
+    border-radius: 2px;
+  }
+
+  .card-description {
+    color: #a0aab9;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+  }
+
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin: 3rem 0;
+  }
+
+  .feature-box {
+    background: rgba(0, 150, 255, 0.05);
+    border-left: 4px solid #0096ff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+  }
+
+  .feature-box:hover {
+    background: rgba(0, 150, 255, 0.1);
+    transform: translateX(5px);
+  }
+
+  .feature-icon {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .feature-box h3 {
+    color: #0096ff;
+    margin-bottom: 0.5rem;
+  }
+
+  .section-title {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid rgba(0, 150, 255, 0.3);
+    color: #0096ff;
+  }
+
+  .cta-section {
+    text-align: center;
+    padding: 3rem;
+    background: rgba(0, 150, 255, 0.05);
+    border-radius: 12px;
+    border: 2px solid rgba(0, 150, 255, 0.3);
+    margin: 3rem 0;
+  }
+
+  .cta-section h2 {
+    color: #0096ff;
+    margin-bottom: 1rem;
+  }
+
+  .cta-section p {
+    color: #a0aab9;
+    margin-bottom: 2rem;
+    font-size: 1.1rem;
+  }
+
+  @media (max-width: 768px) {
+    .hero h1 {
+      font-size: 2rem;
+    }
+
+    .btn-group-hero {
+      flex-direction: column;
+    }
+
+    .btn-group-hero .btn,
+    .btn-group-hero .btn-outline {
+      width: 100%;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+  <h1>Cybersecurity Intelligence Platform</h1>
+</section>
+
+<!-- Services Grid -->
+<div class="cards-grid">
+  <div class="card-service">
+    <div class="card-title">🔍 IP Lookup & WHOIS</div>
+    <p class="card-description">
+      Get detailed information about any IP address including geolocation, ISP details, network owner information, and threat intelligence data.
+    </p>
+    <a href="{% url 'ip_lookup' %}" class="btn btn-primary w-100">Access Tool</a>
+  </div>
+
+  <div class="card-service">
+    <div class="card-title">⚠️ Abuse Reports</div>
+    <p class="card-description">
+      Check abuse history and reports for IP addresses. Comprehensive database of reported malicious activity and security threats.
+    </p>
+    <a href="{% url 'abusecheck:lookup' %}" class="btn btn-primary w-100">Check Reports</a>
+  </div>
+
+  <div class="card-service">
+    <div class="card-title">🌍 GeoIP Database</div>
+    <p class="card-description">
+      Precise geolocation data for IP addresses with country, city, latitude/longitude, and ISP information in real-time with high accuracy.
+    </p>
+    <a href="{% url 'ip_lookup' %}" class="btn btn-primary w-100">View Database</a>
+  </div>
+
+  <div class="card-service">
+    <div class="card-title">📧 TempMail</div>
+    <p class="card-description">
+      Create temporary, secure email addresses instantly. Perfect for protecting your privacy online. Automatic expiration and no registration required.
+    </p>
+    <a href="/tempmail/" class="btn btn-primary w-100" style="background: linear-gradient(135deg, #00d4ff 0%, #00ff88 100%); color: #0a0e27; border: none;">Create Temp Email</a>
+  </div>
+
+  <div class="card-service">
+    <div class="card-title">✨ Random Lines</div>
+    <p class="card-description">
+      Manipulate and organize your text lines with ease. Randomize, reverse, sort, remove duplicates, and more. Perfect for managing lists and phone numbers.
+    </p>
+    <a href="{% url 'randomlines:index' %}" class="btn btn-primary w-100" style="background: linear-gradient(135deg, #ff6b9d 0%, #c06c84 100%); color: white; border: none;">Open Tool</a>
+  </div>
+
+  <div class="card-service">
+    <div class="card-title">📊 Duplicate Counter</div>
+    <p class="card-description">
+      Count and analyze duplicates in your list with detailed statistics. Sort by count or alphabetically, export to CSV/TAB format. Perfect for data analysis.
+    </p>
+    <a href="{% url 'duplicatecounter:index' %}" class="btn btn-primary w-100" style="background: linear-gradient(135deg, #f39c12 0%, #d68910 100%); color: white; border: none;">Count Now</a>
+  </div>
+
+  <div class="card-service">
+    <div class="card-title">🔑 JWT Expiry Checker</div>
+    <p class="card-description">
+      Decode and analyze JWT tokens to check their expiry status. View token claims, expiry dates, and time remaining. Completely secure - decoding is done entirely in your browser.
+    </p>
+    <a href="{% url 'jwtchecker:index' %}" class="btn btn-primary w-100" style="background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); color: white; border: none;">Check Token</a>
+  </div>
+
+  <div class="card-service">
+    <div class="card-title">🔗 URL Analyzer</div>
+    <p class="card-description">
+      Analyze URLs and detect phishing attempts. Expand shortened links, check for malicious content, detect suspicious patterns, and get instant security risk scoring.
+    </p>
+    <a href="{% url 'urlanalyzer:index' %}" class="btn btn-primary w-100" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white; border: none;">Analyze URL</a>
+  </div>
+
+  <div class="card-service">
+    <div class="card-title">� Phishing Detector</div>
+    <p class="card-description">
+      Advanced detection system for phishing attacks and malicious websites. Analyze domain credibility, SSL certificates, page content, and URL structure to identify threats.
+    </p>
+    <a href="{% url 'phishingdetector:index' %}" class="btn btn-primary w-100" style="background: linear-gradient(135deg, #d32f2f 0%, #c62828 100%); color: white; border: none;">Detect Phishing</a>
+  </div>
+
+  <div class="card-service">
+    <div class="card-title">🔓 Short Link Expander</div>
+    <p class="card-description">
+      Expand shortened URLs instantly and reveal the real destination. Supports Bit.ly, TinyURL, Ow.ly, Goo.gl, and many more shortener services. Check before you click!
+    </p>
+    <a href="{% url 'shortenerexpander:index' %}" class="btn btn-primary w-100" style="background: linear-gradient(135deg, #3498db 0%, #2980b9 100%); color: white; border: none;">Expand Link</a>
+  </div>
+
+  <div class="card-service">
+    <div class="card-title">👁️ Link Preview</div>
+    <p class="card-description">
+      Preview link targets without visiting them. See page titles, descriptions, images, and metadata. Single or bulk preview for URLs. Stay safe while exploring.
+    </p>
+    <a href="{% url 'linkpreview:index' %}" class="btn btn-primary w-100" style="background: linear-gradient(135deg, #1abc9c 0%, #16a085 100%); color: white; border: none;">Preview Links</a>
+  </div>
+
+  <div class="card-service">
+    <div class="card-title">⚡ Speed Test</div>
+    <p class="card-description">
+      Test your internet speed instantly! Measure download speed, upload speed, and ping latency. Get your internet performance grade and track speed history over time.
+    </p>
+    <a href="{% url 'speedtest:index' %}" class="btn btn-primary w-100" style="background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%); color: white; border: none;">Test Speed</a>
+  </div>
+
+  <div class="card-service">
+    <div class="card-title">📚 Blog & Resources</div>
+    <p class="card-description">
+      Read expert guides and tutorials on cybersecurity, IP analysis, URL verification, and internet tools. Stay updated with the latest security trends and best practices.
+    </p>
+    <a href="{% url 'blog:index' %}" class="btn btn-primary w-100" style="background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); color: white; border: none;">Read Articles</a>
+  </div>
+</div>
+
+<!-- Featured Blog Posts Section -->
+<section style="margin-top: 4rem;">
+  <h2 class="section-title">📖 Latest from Our Blog</h2>
+  <div class="cards-grid">
+    {% if featured_posts %}
+      {% for post in featured_posts %}
+      <div class="card-service">
+        {% if post.featured_image %}
+        <img src="{{ post.featured_image.url }}" alt="{{ post.title }}" style="width: 100%; height: 180px; object-fit: cover; border-radius: 8px; margin-bottom: 1rem;">
+        {% endif %}
+        <span class="badge bg-primary mb-2">{{ post.category.name }}</span>
+        <h3 style="color: #ffffff; margin-top: 0.5rem;">{{ post.title }}</h3>
+        <p class="card-description">{{ post.summary|truncatewords:20 }}</p>
+        <div style="display: flex; justify-content: space-between; align-items: center; color: #a0aab9; font-size: 0.9rem; margin-bottom: 1rem;">
+          <span>📅 {{ post.published_date|date:"M d, Y" }}</span>
+          <span>👁️ {{ post.views }} views</span>
+        </div>
+        <a href="{{ post.get_absolute_url }}" class="btn btn-primary w-100">Read Article →</a>
+      </div>
+      {% endfor %}
+    {% else %}
+    <div class="col-12">
+      <div class="alert alert-info" style="background: rgba(0, 150, 255, 0.1); border-color: rgba(0, 150, 255, 0.3); color: #0096ff;">
+        <p>📝 Check back soon for expert articles on cybersecurity and online safety!</p>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+  
+  {% if featured_posts %}
+  <div style="text-align: center; margin-top: 2rem;">
+    <a href="{% url 'blog:index' %}" class="btn btn-primary" style="background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); color: white; border: none; padding: 10px 30px;">
+      View All Articles →
+    </a>
+  </div>
+  {% endif %}
+</section>
+{% endblock %}
+

@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+
+{% block title %}استيراد IP — GeniusGsm{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="search-hero">
+        <h1 class="hero-title">⬆️ Import Ranges IP</h1>
+        <p class="lead text-muted">استيراد قائمة من نطاقات IP بصيغة CIDR أو نطاقات فردية</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-8 mx-auto">
+      <div class="card bg-dark border-primary">
+        <div class="card-body">
+          <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <!-- المجموعة -->
+            <div class="mb-3">
+              <label for="id_group" class="form-label">{{ form.group.label }}</label>
+              {{ form.group }}
+              {% if form.group.errors %}
+                <div class="alert alert-danger mt-2">
+                  {{ form.group.errors }}
+                </div>
+              {% endif %}
+            </div>
+
+            <!-- البلد -->
+            <div class="mb-3">
+              <label for="id_country" class="form-label">{{ form.country.label }}</label>
+              {{ form.country }}
+              {% if form.country.errors %}
+                <div class="alert alert-danger mt-2">
+                  {{ form.country.errors }}
+                </div>
+              {% endif %}
+            </div>
+
+            <!-- صيغة الاستيراد -->
+            <div class="mb-3">
+              <label class="form-label">{{ form.format_type.label }}</label>
+              <div class="format-options">
+                {% for option in form.format_type %}
+                  <div class="form-check">
+                    {{ option.tag }}
+                    <label class="form-check-label" for="{{ option.id_for_label }}">
+                      {{ option.choice_label }}
+                    </label>
+                  </div>
+                {% endfor %}
+              </div>
+              {% if form.format_type.errors %}
+                <div class="alert alert-danger mt-2">
+                  {{ form.format_type.errors }}
+                </div>
+              {% endif %}
+            </div>
+
+            <hr class="border-secondary">
+
+            <!-- رفع ملف -->
+            <div class="mb-3">
+              <label for="id_file" class="form-label">
+                <i class="bi bi-upload"></i> {{ form.file.label }}
+              </label>
+              {{ form.file }}
+              <small class="text-muted d-block mt-1">أنواع مدعومة: .txt, .csv</small>
+              {% if form.file.errors %}
+                <div class="alert alert-danger mt-2">
+                  {{ form.file.errors }}
+                </div>
+              {% endif %}
+            </div>
+
+            <!-- أو إدخال يدوي -->
+            <div class="mb-3">
+              <label for="id_text_input" class="form-label">
+                <i class="bi bi-pencil"></i> أو {{ form.text_input.label }}
+              </label>
+              {{ form.text_input }}
+              <small class="text-muted d-block mt-1">
+                أمثلة:
+                <br>
+                <strong>CIDR:</strong> 192.168.0.0/24 | 10.0.0.0/8 | 2001:db8::/32
+                <br>
+                <strong>Range:</strong> 192.168.0.0 - 192.168.0.255
+                <br>
+                <strong>Single IPs:</strong> 192.168.1.1 | 8.8.8.8 | 2001:4860:4860::8888
+              </small>
+              {% if form.text_input.errors %}
+                <div class="alert alert-danger mt-2">
+                  {{ form.text_input.errors }}
+                </div>
+              {% endif %}
+            </div>
+
+            <!-- الأخطاء العامة -->
+            {% if form.non_field_errors %}
+              <div class="alert alert-danger">
+                {{ form.non_field_errors }}
+              </div>
+            {% endif %}
+
+            <!-- الأزرار -->
+            <div class="d-flex gap-2 mt-4">
+              <button type="submit" class="btn btn-primary btn-lg flex-grow-1">
+                ✓ استيراد الآن
+              </button>
+              <a href="{% url 'ipbulk:group_list' %}" class="btn btn-outline-secondary btn-lg">
+                Back
+              </a>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- معلومات مفيدة -->
+      <div class="alert alert-info mt-4">
+        <h6><i class="bi bi-info-circle"></i> معلومات</h6>
+        <ul class="small mb-0">
+          <li>يمكنك استيراد حتى 1000 نطاق في مرة واحدة</li>
+          <li>الأسطر الفارغة والتعليقات (يبدأ ب #) سيتم تجاهلها</li>
+          <li>النطاقات المكررة سيتم تجاهلها تلقائياً</li>
+          <li>CIDR notation أسهل وأسرع للنطاقات الكبيرة</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .format-options {
+    background: rgba(0, 150, 255, 0.05);
+    padding: 1rem;
+    border-radius: 8px;
+    border-left: 4px solid #0096ff;
+  }
+  
+  .form-check-label {
+    margin-left: 0.5rem;
+  }
+</style>
+{% endblock %}

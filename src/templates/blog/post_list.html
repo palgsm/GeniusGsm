@@ -1,0 +1,476 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}GeniusGsm Blog - Security and Technology Articles{% endblock %}
+
+{% block meta_description %}Professional blog covering cybersecurity, IP analysis, network tools, and technology guides{% endblock %}
+
+{% block extra_css %}
+<style>
+  /* Match homepage styling exactly */
+  .blog-hero {
+    text-align: center;
+    margin-bottom: 4rem;
+    animation: slideInDown 0.8s ease;
+    background: rgba(20, 25, 50, 0.8) !important;
+    backdrop-filter: blur(10px) !important;
+    border: 2px solid rgba(0, 150, 255, 0.2) !important;
+    border-radius: 12px !important;
+    padding: 3rem 2rem !important;
+    transition: all 0.3s ease;
+  }
+
+  .blog-hero:hover {
+    border-color: rgba(0, 150, 255, 0.6) !important;
+    box-shadow: 0 8px 32px rgba(0, 150, 255, 0.2) !important;
+  }
+
+  .blog-hero h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    font-weight: 900;
+    color: #ffffff !important;
+  }
+
+  .blog-hero p {
+    font-size: 1.1rem;
+    color: #a0aab9 !important;
+  }
+
+  @keyframes slideInDown {
+    from {
+      opacity: 0;
+      transform: translateY(-30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Featured section title */
+  .blog-section-title {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid rgba(0, 150, 255, 0.3);
+    color: #0096ff;
+    font-weight: 700;
+  }
+
+  /* Featured posts grid */
+  .featured-posts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-bottom: 4rem;
+  }
+
+  /* Featured post card */
+  .featured-post {
+    background: rgba(20, 25, 50, 0.8);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(0, 150, 255, 0.2);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    animation: fadeInUp 0.6s ease;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .featured-post:hover {
+    border-color: rgba(0, 150, 255, 0.6);
+    box-shadow: 0 8px 32px rgba(0, 150, 255, 0.2);
+    transform: translateY(-5px);
+  }
+
+  .featured-post-image {
+    width: 100% !important;
+    height: 200px !important;
+    object-fit: cover !important;
+    display: block !important;
+    background: rgba(0, 150, 255, 0.1) !important;
+    max-width: 100% !important;
+  }
+
+  .featured-post-content {
+    padding: 1.5rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .featured-post-content h3 {
+    color: #0096ff;
+    margin-bottom: 0.5rem;
+    font-size: 1.2rem;
+    font-weight: 700;
+  }
+
+  .featured-post-content p {
+    color: #a0aab9;
+    margin-bottom: 1rem;
+    flex: 1;
+    line-height: 1.6;
+  }
+
+  .featured-post-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+    color: #6b7280;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(0, 150, 255, 0.1);
+  }
+
+  /* All posts grid */
+  .blog-posts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+  }
+
+  /* Blog post card - same as homepage cards */
+  .blog-card {
+    background: rgba(20, 25, 50, 0.8);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(0, 150, 255, 0.2);
+    border-radius: 12px;
+    padding: 2rem;
+    transition: all 0.3s ease;
+    animation: fadeInUp 0.6s ease;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .blog-card:hover {
+    border-color: rgba(0, 150, 255, 0.6);
+    box-shadow: 0 8px 32px rgba(0, 150, 255, 0.2);
+    transform: translateY(-5px);
+  }
+
+  .blog-card img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    background: rgba(0, 150, 255, 0.1);
+  }
+
+  .blog-card-title {
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #0096ff;
+    font-weight: 700;
+  }
+
+  .blog-card-title::before {
+    content: '';
+    width: 4px;
+    height: 20px;
+    background: linear-gradient(180deg, #0096ff, #00d4ff);
+    border-radius: 2px;
+  }
+
+  .blog-card-description {
+    color: #a0aab9;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    flex: 1;
+  }
+
+  .blog-card-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+    color: #6b7280;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(0, 150, 255, 0.1);
+  }
+
+  .blog-category-badge {
+    display: inline-block;
+    background: rgba(0, 150, 255, 0.1);
+    color: #00d4ff;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+
+  /* Pagination */
+  .blog-pagination {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 3rem;
+    flex-wrap: wrap;
+  }
+
+  .blog-pagination a,
+  .blog-pagination span {
+    padding: 0.75rem 1rem;
+    border: 2px solid rgba(0, 150, 255, 0.2);
+    border-radius: 8px;
+    color: #a0aab9;
+    transition: all 0.3s ease;
+    background: transparent;
+    font-weight: 600;
+  }
+
+  .blog-pagination a:hover {
+    background: rgba(0, 150, 255, 0.05);
+    border-color: rgba(0, 150, 255, 0.6);
+    color: #0096ff;
+  }
+
+  .blog-pagination .current {
+    background: rgba(0, 150, 255, 0.1);
+    border-color: rgba(0, 150, 255, 0.6);
+    color: #0096ff;
+    font-weight: 700;
+  }
+
+  /* Sidebar */
+  .blog-sidebar {
+    margin-top: 3rem;
+  }
+
+  .blog-sidebar-widget {
+    background: rgba(20, 25, 50, 0.8);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(0, 150, 255, 0.2);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    transition: all 0.3s ease;
+  }
+
+  .blog-sidebar-widget:hover {
+    border-color: rgba(0, 150, 255, 0.6);
+    box-shadow: 0 8px 32px rgba(0, 150, 255, 0.2);
+  }
+
+  .blog-sidebar-widget h3 {
+    color: #0096ff;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    border-bottom: 2px solid rgba(0, 150, 255, 0.2);
+    padding-bottom: 0.5rem;
+  }
+
+  .blog-sidebar-text {
+    color: #a0aab9;
+    line-height: 1.6;
+    margin-bottom: 0.5rem;
+  }
+
+  /* Empty state */
+  .blog-empty-state {
+    background: rgba(0, 150, 255, 0.05);
+    border: 2px solid rgba(0, 150, 255, 0.3);
+    border-radius: 12px;
+    padding: 3rem 2rem;
+    text-align: center;
+  }
+
+  .blog-empty-state p {
+    color: #a0aab9;
+    margin: 0;
+  }
+
+  @media (max-width: 768px) {
+    .blog-hero h1 {
+      font-size: 1.8rem;
+    }
+
+    .blog-hero p {
+      font-size: 1rem;
+    }
+
+    .blog-section-title {
+      font-size: 1.5rem;
+    }
+
+    .featured-posts-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .blog-posts-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .blog-sidebar {
+      margin-top: 2rem;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Blog Hero Section -->
+<section class="blog-hero">
+  <h1>📚 GeniusGsm Blog</h1>
+  <p>Expert insights on cybersecurity, online safety, and digital intelligence tools</p>
+</section>
+
+<!-- UPDATED: 2026-04-17 17:20 -->
+
+<!-- Featured Posts Section -->
+{% if featured_posts %}
+<div class="container mt-5 mb-5">
+  <h2 class="blog-section-title">⭐ Featured Articles</h2>
+  
+  <div class="featured-posts-grid">
+    {% for post in featured_posts %}
+    <div class="featured-post">
+      {% if post.featured_image %}
+        <img src="{{ post.featured_image.url }}?v=3" alt="{{ post.title }}" class="featured-post-image">
+      {% else %}
+        <div class="featured-post-image" style="display: flex; align-items: center; justify-content: center; font-size: 48px;">📄</div>
+      {% endif %}
+      
+      <div class="featured-post-content">
+        {% if post.category %}
+        <span class="blog-category-badge">{{ post.category.icon }} {{ post.category.name }}</span>
+        {% endif %}
+        
+        <h3>{{ post.title }}</h3>
+        <p>{{ post.summary|truncatewords:20 }}</p>
+        
+        <div class="featured-post-meta">
+          <span>📅 {{ post.published_date|date:"M d, Y" }}</span>
+          <span>{{ post.read_time }} min read</span>
+        </div>
+      </div>
+      
+      <div style="padding: 1rem 1.5rem;">
+        <a href="{{ post.get_absolute_url }}" class="btn btn-primary w-100">Read Article →</a>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+<!-- All Posts Section -->
+<div class="container mt-5 mb-5">
+  <h2 class="blog-section-title">📖 All Articles</h2>
+  
+  {% if posts %}
+    <div class="blog-posts-grid">
+      {% for post in posts %}
+      <div class="blog-card">
+        {% if post.featured_image %}
+          <img src="{{ post.featured_image.url }}?v=2" alt="{{ post.title }}" class="blog-card-image" loading="lazy">
+        {% else %}
+          <div class="featured-post-image" style="margin-bottom: 1rem; display: flex; align-items: center; justify-content: center; font-size: 48px;">📄</div>
+        {% endif %}
+        
+        <div class="blog-card-title">{{ post.title }}</div>
+        
+        {% if post.category %}
+        <span class="blog-category-badge">{{ post.category.icon }} {{ post.category.name }}</span>
+        {% endif %}
+        
+        <p class="blog-card-description">{{ post.summary|truncatewords:15 }}</p>
+        
+        <div class="blog-card-meta">
+          <span>{{ post.published_date|date:"M d, Y" }}</span>
+          <span>👁️ {{ post.views }}</span>
+        </div>
+        
+        <div style="padding-top: 1rem;">
+          <a href="{{ post.get_absolute_url }}" class="btn btn-primary w-100">Read More →</a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if is_paginated %}
+    <div class="blog-pagination">
+      {% if page_obj.has_previous %}
+        <a href="?page=1">First</a>
+        <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+      {% endif %}
+
+      {% for num in page_obj.paginator.page_range %}
+        {% if page_obj.number == num %}
+          <span class="current">{{ num }}</span>
+        {% else %}
+          <a href="?page={{ num }}">{{ num }}</a>
+        {% endif %}
+      {% endfor %}
+
+      {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}">Next</a>
+        <a href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+      {% endif %}
+    </div>
+    {% endif %}
+
+  {% else %}
+    <div class="blog-empty-state">
+      <p>📝 No blog posts available yet. Check back soon!</p>
+    </div>
+  {% endif %}
+</div>
+
+<!-- Sidebar Section -->
+<div class="container">
+  <div class="row">
+    <div class="col-lg-8 mx-auto">
+      <div class="blog-sidebar">
+        <!-- Newsletter Widget -->
+        <div class="blog-sidebar-widget">
+          <h3>📬 Subscribe to Our Blog</h3>
+          <p class="blog-sidebar-text">Get the latest articles about cybersecurity and online tools delivered to your inbox.</p>
+          <form style="margin-top: 1rem;">
+            <input type="email" placeholder="Enter your email..." style="width: 100%; padding: 0.75rem; border: 2px solid rgba(0, 150, 255, 0.2); border-radius: 8px; background: rgba(0, 150, 255, 0.05); color: #e0e7ff; margin-bottom: 0.5rem;">
+            <button type="submit" class="btn btn-primary w-100">Subscribe</button>
+          </form>
+        </div>
+
+        <!-- Categories Widget -->
+        {% if categories %}
+        <div class="blog-sidebar-widget">
+          <h3>📂 Categories</h3>
+          <div>
+            {% for category in categories %}
+            <div style="margin-bottom: 0.5rem;">
+              <a href="#" style="color: #0096ff; text-decoration: none; transition: all 0.3s ease;">
+                {{ category.icon }} {{ category.name }}
+              </a>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

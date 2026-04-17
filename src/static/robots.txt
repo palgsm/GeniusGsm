@@ -1,0 +1,29 @@
+# GeniusGsm SEO Robots Configuration
+# Allow all search engines to crawl the site
+
+User-agent: *
+Disallow: /admin/
+Disallow: /api/
+Disallow: /static/admin/
+Allow: /
+
+# Specific search engines
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Slurp
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+# Crawl delay settings
+User-agent: *
+Crawl-delay: 1
+
+# Sitemap location
+Sitemap: https://geniusgsm.com/sitemap.xml
+Sitemap: https://geniusgsm.com/sitemap-pages.xml

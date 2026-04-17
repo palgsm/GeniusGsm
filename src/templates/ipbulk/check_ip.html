@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block title %}Check IP — GeniusGsm{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="search-hero">
+        <h1 class="hero-title">🔍 التحقق من عنوان IP</h1>
+        <p class="lead text-muted">ابحث عن عنوان IP في مجموعاتك</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-8 mx-auto">
+      <!-- نموذج البحث -->
+      <form method="post" class="mb-4">
+        {% csrf_token %}
+        <div class="input-group input-group-lg">
+          {{ form.ip_address }}
+          <button class="btn btn-primary" type="submit">
+            <i class="bi bi-search"></i> ابحث
+          </button>
+        </div>
+        {% if form.ip_address.errors %}
+          <div class="alert alert-danger mt-2">
+            {{ form.ip_address.errors }}
+          </div>
+        {% endif %}
+      </form>
+
+      <!-- النتائج -->
+      {% if results is not None %}
+        {% if results %}
+          <div class="alert alert-success">
+            <h5>✓ تم العثور على عنوان IP!</h5>
+            <p>وجد عنوان IP <strong>{{ request.POST.ip_address }}</strong> في {{ results|length }} مجموعة</p>
+          </div>
+
+          <div class="row">
+            {% for result in results %}
+              <div class="col-md-6 mb-3">
+                <div class="card bg-dark border-success">
+                  <div class="card-body">
+                    <h5 class="card-title">
+                      <span class="badge bg-success">مطابقة</span>
+                      {{ result.group.name }}
+                    </h5>
+                    <p class="card-text mb-2">
+                      <strong>النطاق:</strong> <code>{{ result.range.cidr }}</code>
+                    </p>
+                    <p class="card-text mb-2">
+                      <strong>النوع:</strong> 
+                      <span class="badge {% if result.range.ip_version == 4 %}bg-primary{% else %}bg-warning text-dark{% endif %}">
+                        IPv{{ result.range.ip_version }}
+                      </span>
+                    </p>
+                    <p class="card-text small text-muted">
+                      <strong>المدى:</strong> {{ result.range.start_ip }} — {{ result.range.end_ip }}
+                    </p>
+                    {% if result.range.description %}
+                      <p class="card-text small">{{ result.range.description }}</p>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="alert alert-warning">
+            <h5>✗ لم يتم العثور على النتيجة</h5>
+            <p>عنوان IP <strong>{{ request.POST.ip_address }}</strong> غير موجود في أي من المجموعات</p>
+          </div>
+        {% endif %}
+      {% else %}
+        <!-- معلومات -->
+        <div class="alert alert-info">
+          <h6>ℹ️ كيفية الاستخدام</h6>
+          <ul class="mb-0 small">
+            <li>أدخل عنوان IPv4 أو IPv6</li>
+            <li>سيتم البحث في جميع المجموعات والنطاقات</li>
+            <li>ستظهر جميع النطاقات التي يقع فيها عنوان IP</li>
+            <li>أمثلة: 192.168.1.1 أو 8.8.8.8 أو 2001:4860:4860::8888</li>
+          </ul>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<style>
+  .input-group-lg .form-control {
+    font-size: 1.25rem !important;
+    padding: 0.75rem 1rem !important;
+  }
+
+  code {
+    background: rgba(0, 150, 255, 0.1);
+    color: #00d4ff;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+  }
+
+  .badge {
+    font-size: 0.85rem;
+  }
+</style>
+{% endblock %}

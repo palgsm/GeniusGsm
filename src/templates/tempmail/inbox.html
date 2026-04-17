@@ -1,0 +1,622 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ inbox.email }} - TempMail{% endblock %}
+
+{% block content %}
+<div class="inbox-container">
+    <!-- Header -->
+    <div class="inbox-header">
+        <div class="inbox-header-left">
+            <h1 class="inbox-email">{{ inbox.email }}</h1>
+            <div class="inbox-info">
+                <span class="info-badge status-badge">
+                    {% if inbox.is_active %}
+                        <span class="badge-active">Active</span>
+                    {% else %}
+                        <span class="badge-inactive">Expired</span>
+                    {% endif %}
+                </span>
+                <span class="info-badge">
+                    <i class="fas fa-hourglass-end"></i>
+                    <span id="time-remaining">{{ inbox.time_remaining }}</span> seconds
+                </span>
+                <span class="info-badge">
+                    <i class="fas fa-envelope"></i>
+                    {{ emails.count }} emails
+                </span>
+            </div>
+        </div>
+        <div class="inbox-header-actions">
+            <button class="btn-action btn-copy" onclick="copyEmail()">
+                <i class="fas fa-copy"></i> Copy
+            </button>
+            <button class="btn-action btn-refresh" onclick="refreshInbox()">
+                <i class="fas fa-sync"></i> Refresh
+            </button>
+            <button class="btn-action btn-delete" onclick="deleteInbox()">
+                <i class="fas fa-trash"></i> Delete
+            </button>
+        </div>
+    </div>
+
+    <!-- Emails List -->
+    <div class="emails-section">
+        {% if emails %}
+            <div class="emails-list" id="emails-list">
+                {% for email in emails %}
+                    <div class="email-item" data-id="{{ email.id }}">
+                        <div class="email-item-header">
+                            <div class="email-from">
+                                <strong>{{ email.from_address }}</strong>
+                            </div>
+                            <div class="email-time">
+                                {{ email.received_at|date:"d/m/Y H:i" }}
+                            </div>
+                        </div>
+                        <div class="email-item-content">
+                            <div class="email-subject">{{ email.subject }}</div>
+                            <div class="email-preview">{{ email.body|truncatewords:20 }}</div>
+                        </div>
+                        <div class="email-item-actions">
+                            <button class="btn-small" onclick="markAsRead({{ email.id }})">
+                                <i class="fas fa-check"></i>
+                            </button>
+                            <button class="btn-small" onclick="viewEmail({{ email.id }})">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn-small" onclick="deleteEmail({{ email.id }})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="fas fa-inbox"></i>
+                </div>
+                <h3>No emails</h3>
+                <p>Any messages that arrive to this inbox will appear here</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Email Detail Modal -->
+    <div id="email-modal" class="modal d-none">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-subject">Subject</h2>
+                <button class="btn-close" onclick="closeModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-from">
+                    <strong>From:</strong> <span id="modal-from">unknown@example.com</span>
+                </div>
+                <div class="modal-body-content" id="modal-body-content">
+                    <!-- Email body content -->
+                </div>
+                <div id="modal-attachments" class="modal-attachments d-none">
+                    <strong>Attachments:</strong>
+                    <div id="attachments-list"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Toast Notification -->
+<div id="toast-notification" class="toast-notification"></div>
+
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .inbox-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .inbox-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        background: rgba(0, 150, 255, 0.1);
+        border: 2px solid #00d4ff;
+        border-radius: 12px;
+        padding: 25px;
+        margin-bottom: 30px;
+        gap: 20px;
+    }
+
+    .inbox-header-left {
+        flex: 1;
+    }
+
+    .inbox-email {
+        font-size: 1.8rem;
+        color: #00d4ff;
+        margin-bottom: 15px;
+        font-family: 'Courier New', monospace;
+        font-weight: bold;
+        word-break: break-all;
+    }
+
+    .inbox-info {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .info-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(0, 212, 255, 0.15);
+        border: 1px solid #00d4ff;
+        padding: 8px 12px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        color: #00ff88;
+    }
+
+    .status-badge .badge-active {
+        color: #00ff88;
+    }
+
+    .status-badge .badge-inactive {
+        color: #ff4444;
+    }
+
+    .inbox-header-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .btn-action {
+        padding: 10px 15px;
+        background: linear-gradient(135deg, #00d4ff 0%, #00ff88 100%);
+        color: #0a0e27;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .btn-action:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+    }
+
+    .btn-delete {
+        background: rgba(255, 68, 68, 0.15);
+        border: 1px solid #ff4444;
+        color: #ff4444;
+    }
+
+    .btn-delete:hover {
+        background: rgba(255, 68, 68, 0.25);
+    }
+
+    .emails-section {
+        margin-bottom: 30px;
+    }
+
+    .emails-list {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .email-item {
+        background: rgba(0, 150, 255, 0.05);
+        border: 1px solid rgba(0, 212, 255, 0.3);
+        border-radius: 10px;
+        padding: 20px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .email-item:hover {
+        background: rgba(0, 150, 255, 0.1);
+        border-color: #00d4ff;
+        transform: translateX(5px);
+        box-shadow: 0 4px 15px rgba(0, 212, 255, 0.15);
+    }
+
+    .email-item-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+        gap: 10px;
+    }
+
+    .email-from {
+        color: #00d4ff;
+        font-weight: 600;
+    }
+
+    .email-time {
+        color: #b0b8c1;
+        font-size: 0.85rem;
+        white-space: nowrap;
+    }
+
+    .email-item-content {
+        margin-bottom: 12px;
+    }
+
+    .email-subject {
+        color: #e0e6ed;
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+
+    .email-preview {
+        color: #b0b8c1;
+        font-size: 0.9rem;
+        line-height: 1.4;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-height: 40px;
+    }
+
+    .email-item-actions {
+        display: flex;
+        gap: 8px;
+        justify-content: flex-end;
+    }
+
+    .btn-small {
+        padding: 6px 10px;
+        background: rgba(0, 212, 255, 0.2);
+        border: 1px solid #00d4ff;
+        color: #00d4ff;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-size: 0.85rem;
+    }
+
+    .btn-small:hover {
+        background: #00d4ff;
+        color: #0a0e27;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #b0b8c1;
+    }
+
+    .empty-icon {
+        font-size: 4rem;
+        color: #00d4ff;
+        margin-bottom: 20px;
+        opacity: 0.5;
+    }
+
+    .empty-state h3 {
+        color: #e0e6ed;
+        margin-bottom: 10px;
+    }
+
+    .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+    }
+
+    .modal-content {
+        background: #0a0e27;
+        border: 2px solid #00d4ff;
+        border-radius: 12px;
+        max-width: 600px;
+        width: 90%;
+        max-height: 80vh;
+        overflow-y: auto;
+        animation: slideUp 0.3s ease;
+    }
+
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px;
+        border-bottom: 1px solid #00d4ff;
+    }
+
+    .modal-header h2 {
+        color: #00d4ff;
+        margin: 0;
+        flex: 1;
+        word-break: break-word;
+    }
+
+    .btn-close {
+        background: none;
+        border: none;
+        color: #00d4ff;
+        font-size: 2rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        line-height: 1;
+    }
+
+    .btn-close:hover {
+        color: #00ff88;
+        transform: rotate(90deg);
+    }
+
+    .modal-body {
+        padding: 20px;
+    }
+
+    .modal-from {
+        color: #e0e6ed;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+    }
+
+    .modal-from strong {
+        color: #00d4ff;
+    }
+
+    .modal-body-content {
+        color: #e0e6ed;
+        line-height: 1.6;
+        word-break: break-word;
+        white-space: pre-wrap;
+        margin-bottom: 20px;
+    }
+
+    .modal-attachments {
+        border-top: 1px solid rgba(0, 212, 255, 0.2);
+        padding-top: 15px;
+    }
+
+    .modal-attachments strong {
+        color: #00d4ff;
+        display: block;
+        margin-bottom: 10px;
+    }
+
+    #attachments-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .attachment-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: rgba(0, 150, 255, 0.1);
+        border: 1px solid #00d4ff;
+        padding: 10px;
+        border-radius: 6px;
+    }
+
+    .attachment-name {
+        color: #00d4ff;
+        font-family: 'Courier New', monospace;
+    }
+
+    .btn-download {
+        padding: 5px 10px;
+        background: #00ff88;
+        color: #0a0e27;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+
+    .btn-download:hover {
+        background: #00d4ff;
+    }
+
+    .toast-notification {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        background: #00ff88;
+        color: #0a0e27;
+        padding: 15px 25px;
+        border-radius: 8px;
+        font-weight: 600;
+        display: none;
+        animation: slideIn 0.3s ease;
+        z-index: 1001;
+    }
+
+    @keyframes slideIn {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+
+    .d-none {
+        display: none !important;
+    }
+
+    @media (max-width: 768px) {
+        .inbox-header {
+            flex-direction: column-reverse;
+        }
+
+        .inbox-email {
+            font-size: 1.2rem;
+        }
+
+        .modal-content {
+            width: 95%;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const inboxId = '{{ inbox.id }}';
+    
+    function copyEmail() {
+        const email = '{{ inbox.email }}';
+        navigator.clipboard.writeText(email);
+        showToast('تم نسخ البريد!');
+    }
+
+    function refreshInbox() {
+        location.reload();
+    }
+
+    function deleteInbox() {
+        if (confirm('Are you sure you want to delete this inbox?')) {
+            fetch(`/tempmail/api/inboxes/${inboxId}/delete_inbox/`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                showToast('Inbox deleted');
+                setTimeout(() => {
+                    window.location.href = '/tempmail/';
+                }, 1500);
+            })
+            .catch(error => showToast('Error: ' + error));
+        }
+    }
+
+    function viewEmail(emailId) {
+        fetch(`/tempmail/api/emails/${emailId}/`)
+            .then(response => response.json())
+            .then(email => {
+                document.getElementById('modal-subject').textContent = email.subject;
+                document.getElementById('modal-from').textContent = email.from_address;
+                document.getElementById('modal-body-content').textContent = email.body;
+
+                if (email.attachments && email.attachments.length > 0) {
+                    const attachmentsList = document.getElementById('attachments-list');
+                    attachmentsList.innerHTML = '';
+                    email.attachments.forEach(att => {
+                        const item = document.createElement('div');
+                        item.className = 'attachment-item';
+                        item.innerHTML = `
+                            <span class="attachment-name">${att.filename}</span>
+                            <a href="/tempmail/api/attachments/${att.id}/download/" class="btn-download">Download</a>
+                        `;
+                        attachmentsList.appendChild(item);
+                    });
+                    document.getElementById('modal-attachments').classList.remove('d-none');
+                } else {
+                    document.getElementById('modal-attachments').classList.add('d-none');
+                }
+
+                document.getElementById('email-modal').classList.remove('d-none');
+            })
+            .catch(error => showToast('Error loading email'));
+    }
+
+    function closeModal() {
+        document.getElementById('email-modal').classList.add('d-none');
+    }
+
+    function markAsRead(emailId) {
+        fetch(`/tempmail/api/emails/${emailId}/mark_as_read/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+            }
+        })
+        .then(response => response.json())
+        .then(data => showToast('Email status updated'))
+        .catch(error => showToast('Error'));
+    }
+
+    function deleteEmail(emailId) {
+        if (confirm('Are you sure you want to delete this email?')) {
+            fetch(`/tempmail/api/emails/${emailId}/delete_email/`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                showToast('Email deleted');
+                document.querySelector(`[data-id="${emailId}"]`).remove();
+            })
+            .catch(error => showToast('Error'));
+        }
+    }
+
+    function showToast(message) {
+        const toast = document.getElementById('toast-notification');
+        toast.textContent = message;
+        toast.style.display = 'block';
+        setTimeout(() => {
+            toast.style.display = 'none';
+        }, 3000);
+    }
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // Update time remaining every second
+    setInterval(() => {
+        const timeRemaining = document.getElementById('time-remaining');
+        if (timeRemaining) {
+            let time = parseInt(timeRemaining.textContent);
+            if (time > 0) {
+                timeRemaining.textContent = time - 1;
+            }
+        }
+    }, 1000);
+</script>
+{% endblock %}

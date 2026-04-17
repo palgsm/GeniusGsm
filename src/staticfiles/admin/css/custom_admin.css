@@ -1,0 +1,50 @@
+/* Gentle pastel admin theme */
+body.dashboard, body.login, body {
+  background: #f7fbff;
+}
+
+.module h2, .app-label {
+  border-bottom: 2px solid #ffefef;
+  color: #3b3b4f;
+}
+
+#site-name a {
+  color: #2b6cb0;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.site-tagline {
+  color: #6b7280;
+  margin-top: 4px;
+  font-size: 0.95em;
+}
+
+.module, .dashboard-module, .app-list {
+  background: #ffffff;
+  border: 1px solid #e6eef8;
+  border-radius: 10px;
+  box-shadow: 0 1px 0 rgba(43,76,103,0.03);
+  padding: 12px;
+}
+
+/* Make buttons softer */
+.grp-button, .button, input[type="submit"] {
+  background: linear-gradient(180deg,#9bd3ff,#6fb8ff);
+  border: none;
+  color: #04233a;
+  border-radius: 6px;
+  padding: 6px 10px;
+}
+
+/* Fix sidebar table width and text wrapping */
+#nav-sidebar table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+#nav-sidebar .module td {
+  white-space: normal;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}

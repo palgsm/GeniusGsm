@@ -1,0 +1,140 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GeniusGsm</title>
+  <link rel="icon" type="image/svg+xml" href="/static/img/favicon.svg">
+  <link rel="stylesheet" href="/static/css/site.css?v=2">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="site-root">
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="brand" href="/">
+          <img src="/static/img/logo.svg" alt="GeniusGsm logo" class="brand-logo"/>
+        </a>
+        <nav class="site-nav" id="main-nav">
+          <a href="/ip/lookup/">whois</a>
+        </nav>
+        <button class="nav-toggle" aria-label="Toggle navigation" onclick="document.getElementById('main-nav').classList.toggle('open')">☰</button>
+      </div>
+    </header>
+
+    <main class="site-main">
+      <div class="container">
+        
+<div class="search-hero">
+  <div class="hero-inner">
+    <h1 class="hero-title">Abuse Reports Lookup</h1>
+    <p class="lead">Enter an IP address and press SEARCH to view abuse reports (AbuseIPDB / Shodan).</p>
+    <form class="search-form" method="get" action="">
+      <input class="search-input" type="text" name="ip" placeholder="e.g. 8.8.8.8" value="8.8.8.8">
+      <button class="search-btn" type="submit">SEARCH</button>
+    </form>
+  </div>
+</div>
+
+
+  <div class="results-grid">
+    <aside class="details-full">
+      <div class="detail-card">
+        <h4>Local Reports</h4>
+        
+          <ul class="report-list">
+            
+              <li>
+                <div><strong>tester</strong> — <small>April 7, 2026, 8:12 a.m.</small></div>
+                <div><em>spam</em></div>
+                <div>test report</div>
+              </li>
+            
+          </ul>
+        
+      </div>
+
+      <div class="detail-card">
+        <h4>External Providers / Local Lookups</h4>
+        
+          <h5>RDAP (local)</h5>
+          
+            <p class="text-muted">RDAP/GeoIP visible via API endpoint. Use the API to fetch detailed RDAP and GeoIP for the IP.</p>
+          
+        
+
+        
+          <div class="geoip-note text-muted">
+            <p>GeoIP database not found. To enable local GeoIP lookups, download the GeoLite2-City.mmdb from MaxMind and set the environment variable <code>GEOIP_DB_PATH</code> to its path, or place the file in one of the common locations.</p>
+          </div>
+        
+      </div>
+    </aside>
+  </div>
+      <div class="detail-card">
+        <h4>Submit a report</h4>
+        <form method="post">
+          <input type="hidden" name="csrfmiddlewaretoken" value="jLlgPd5kU4JI7eh1NhBbiw5CqnZ5Poc2ub5t9NilpBiNIvHsVHXDIyzWjkQ4tgdn">
+          <p>
+    <label for="id_ip">Ip:</label>
+    <input type="text" name="ip" value="8.8.8.8" maxlength="39" required id="id_ip">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_reporter">Reporter:</label>
+    <input type="text" name="reporter" maxlength="100" id="id_reporter">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_email">Email:</label>
+    <input type="email" name="email" maxlength="254" id="id_email">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_category">Category:</label>
+    <input type="text" name="category" maxlength="64" id="id_category">
+    
+    
+  </p>
+
+  
+  <p>
+    <label for="id_description">Description:</label>
+    <textarea name="description" cols="40" rows="4" id="id_description">
+</textarea>
+    
+    
+      
+    
+  </p>
+          <button class="search-btn" type="submit">Submit Report</button>
+        </form>
+      </div>
+    </aside>
+  </div>
+
+
+
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <div class="footer-left">©  GeniusGsm</div>
+        <div class="footer-right">Built with Django • Responsive Flex layout</div>
+      </div>
+    </footer>
+  </div>
+  
+</body>
+</html>

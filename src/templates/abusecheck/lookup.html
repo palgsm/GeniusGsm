@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+<div class="row mb-4">
+  <div class="col-12">
+    <div class="rounded search-hero" data-aos="fade-down">
+      <h1 class="hero-title">Abuse Reports Lookup</h1>
+      <p class="lead text-muted">Enter an IP address and press SEARCH to view abuse reports.</p>
+      <form class="row g-2" method="get" action="">
+        <div class="col-md-9">
+          <input class="form-control form-control-lg" type="text" name="ip" placeholder="e.g. 8.8.8.8" value="{{ query_ip }}">
+        </div>
+        <div class="col-md-3">
+          <button class="btn btn-primary btn-lg w-100" type="submit">SEARCH</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% if query_ip %}
+  <div class="row g-3">
+    <div class="col-lg-6 col-md-12">
+      <div class="card card-cyber p-3 h-100">
+        <h4><i class="bi bi-flag me-2"></i>Local Reports</h4>
+        {% if reports %}
+          <ul class="report-list list-unstyled mb-0">
+            {% for r in reports %}
+              <li class="mb-3 border-bottom pb-2">
+                <div><strong>{{ r.reporter|default:'Anonymous' }}</strong> — <small>{{ r.created_at }}</small></div>
+                {% if r.category %}<div class="text-muted small"><em>{{ r.category }}</em></div>{% endif %}
+                {% if r.description %}<div class="mt-1">{{ r.description }}</div>{% endif %}
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p class="text-muted">No local reports for this IP.</p>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="col-lg-6 col-md-12">
+      <div class="card card-cyber p-3 h-100">
+        <h4><i class="bi bi-cloud-check me-2"></i>External / Local Lookups</h4>
+        {% if is_domain %}
+          <h5 class="mt-2"><i class="bi bi-file-person me-1"></i>Domain WHOIS</h5>
+          {% if domain_whois and domain_whois.error %}
+            <p class="text-muted">{{ domain_whois.error }}</p>
+          {% else %}
+            {% if domain_whois.domain_name %}
+              <p><strong>Domain:</strong> {{ domain_whois.domain_name }}</p>
+              {% if domain_whois.registrar %}<p><strong>Registrar:</strong> {{ domain_whois.registrar }}</p>{% endif %}
+            {% else %}
+              <p class="text-muted">No WHOIS data available locally.</p>
+            {% endif %}
+          {% endif %}
+
+          <h5 class="mt-3"><i class="bi bi-hdd-network me-1"></i>DNS Records</h5>
+          {% if domain_dns and domain_dns.error %}
+            <p class="text-muted">{{ domain_dns.error }}</p>
+          {% else %}
+            {% for t, recs in domain_dns.items %}
+              <p><strong>{{ t }}:</strong> {% if recs %}{{ recs|join:', ' }}{% else %}-{% endif %}</p>
+            {% endfor %}
+          {% endif %}
+
+        {% else %}
+          <h5 class="mt-2"><i class="bi bi-server me-1"></i>RDAP (local)</h5>
+          <p class="text-muted">RDAP/GeoIP details are available via API endpoint. Use the API to fetch detailed RDAP and GeoIP for the IP.</p>
+        {% endif %}
+
+        {% if not domain_whois and not domain_dns and not abuse %}
+          <div class="geoip-note text-muted mt-3 small">
+            <p>GeoIP DB not found. To enable local GeoIP, download GeoLite2-City.mmdb and set <code>GEOIP_DB_PATH</code>.</p>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% else %}
+  <p class="text-muted">Type an IP above and press SEARCH to view abuse reports.</p>
+{% endif %}
+</div>
+{% endblock %}

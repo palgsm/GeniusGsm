@@ -1,0 +1,1024 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Duplicate Counter - GeniusGsm{% endblock %}
+
+{% block meta_description %}Free online duplicate counter tool. Count and analyze duplicates in your list. Sort by count or alphabetically, filter duplicates, and export results as CSV, TXT, or JSON.{% endblock %}
+
+{% block meta_keywords %}duplicate counter, count duplicates, list analyzer, duplicate finder, text analysis tool, duplicate detector, data processing, CSV export{% endblock %}
+
+{% block og_title %}Duplicate Counter - Analyze & Count Duplicates Online{% endblock %}
+
+{% block og_description %}Instantly count duplicates in your list. Analyze data with sorting, filtering, and export options. Free and easy to use.{% endblock %}
+
+{% block twitter_title %}Duplicate Counter - Free List Analysis Tool{% endblock %}
+
+{% block twitter_description %}Count and analyze duplicates in your list. Export results as CSV, TXT, or JSON.{% endblock %}
+
+{% block extra_css %}
+<style>
+    .duplicatecounter-container {
+        max-width: 1000px;
+        margin: 40px auto;
+        padding: 20px;
+    }
+    
+    .header-section {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+    
+    .header-section h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #00d4ff;
+        margin-bottom: 10px;
+    }
+    
+    .header-section p {
+        font-size: 1.1rem;
+        color: #a0aab9;
+    }
+    
+    .main-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+        margin-bottom: 30px;
+    }
+    
+    .input-section, .output-section {
+        background: rgba(20, 25, 50, 0.8);
+        backdrop-filter: blur(10px);
+        border: 2px solid rgba(0, 150, 255, 0.2);
+        border-radius: 12px;
+        padding: 25px;
+        transition: all 0.3s ease;
+    }
+    
+    .input-section:hover, .output-section:hover {
+        border-color: rgba(0, 150, 255, 0.6);
+        box-shadow: 0 8px 32px rgba(0, 150, 255, 0.15);
+    }
+    
+    .section-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: #0096ff;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .section-title::before {
+        content: '';
+        display: inline-block;
+        width: 4px;
+        height: 20px;
+        background: linear-gradient(180deg, #0096ff, #00d4ff);
+        border-radius: 2px;
+    }
+    
+    #itemsInput {
+        width: 100%;
+        min-height: 250px;
+        padding: 15px;
+        border: 2px solid rgba(0, 150, 255, 0.3);
+        border-radius: 8px;
+        font-family: 'Courier New', monospace;
+        font-size: 14px;
+        resize: vertical;
+        transition: border-color 0.3s ease;
+        background: rgba(10, 14, 39, 0.8);
+        color: #e0e6ed;
+    }
+    
+    #itemsInput:focus {
+        outline: none;
+        border-color: #3498db;
+        box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+    }
+    
+    #resultsOutput {
+        width: 100%;
+        min-height: 250px;
+        padding: 15px;
+        border: 2px solid rgba(0, 150, 255, 0.3);
+        border-radius: 8px;
+        font-family: 'Courier New', monospace;
+        font-size: 14px;
+        background: rgba(10, 14, 39, 0.8);
+        color: #00d4ff;
+        resize: vertical;
+        border-color: rgba(39, 174, 96, 0.3);
+    }
+    
+    .stat-item {
+        background: rgba(39, 174, 96, 0.1);
+        padding: 10px 15px;
+        border-left: 4px solid #27ae60;
+        border-radius: 4px;
+        margin-bottom: 10px;
+        font-size: 14px;
+        color: #27ae60;
+    }
+    
+    .stat-label {
+        font-weight: 600;
+    }
+    
+    .options-section {
+        background: rgba(20, 25, 50, 0.8);
+        border: 2px solid rgba(0, 150, 255, 0.2);
+        border-radius: 12px;
+        padding: 25px;
+        margin-bottom: 30px;
+    }
+    
+    .options-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+    
+    .option-group {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .option-label {
+        font-weight: 600;
+        color: #0096ff;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .radio-group, .checkbox-group {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+    
+    .radio-item, .checkbox-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        background: rgba(20, 25, 50, 0.5);
+        border: 2px solid rgba(0, 150, 255, 0.2);
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 14px;
+        color: #a0aab9;
+    }
+    
+    .radio-item:hover, .checkbox-item:hover {
+        border-color: #0096ff;
+        background: rgba(0, 150, 255, 0.15);
+        color: #00d4ff;
+    }
+    
+    input[type="radio"]:checked + label,
+    input[type="checkbox"]:checked + label {
+        color: #00d4ff;
+    }
+    
+    .radio-item input,
+    .checkbox-item input {
+        cursor: pointer;
+        accent-color: #0096ff;
+    }
+    
+    .buttons-section {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 12px;
+        margin-bottom: 30px;
+    }
+    
+    .btn-action {
+        padding: 12px 16px;
+        border: none;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 13px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .btn-primary-action {
+        background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+        color: #fff;
+    }
+    
+    .btn-primary-action:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
+    }
+    
+    .btn-secondary-action {
+        background: rgba(0, 150, 255, 0.2);
+        color: #00d4ff;
+        border: 2px solid rgba(0, 150, 255, 0.4);
+    }
+    
+    .btn-secondary-action:hover {
+        background: rgba(0, 150, 255, 0.3);
+        border-color: rgba(0, 150, 255, 0.6);
+        transform: translateY(-2px);
+    }
+    
+    .btn-success-action {
+        background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+        color: #fff;
+    }
+    
+    .btn-success-action:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(39, 174, 96, 0.4);
+    }
+    
+    .btn-danger-action {
+        background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        color: #fff;
+    }
+    
+    .btn-danger-action:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4);
+    }
+    
+    .btn-action:active {
+        transform: translateY(0);
+    }
+    
+    .btn-action:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+    }
+    
+    .toast-notification {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        padding: 15px 20px;
+        background: #27ae60;
+        color: #fff;
+        border-radius: 6px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        animation: slideIn 0.4s ease;
+        z-index: 1000;
+        font-size: 14px;
+        font-weight: 500;
+    }
+    
+    .toast-notification.error {
+        background: #e74c3c;
+    }
+    
+    @keyframes slideIn {
+        from {
+            transform: translateX(400px);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+    
+    @keyframes slideOut {
+        from {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        to {
+            transform: translateX(400px);
+            opacity: 0;
+        }
+    }
+    
+    .toast-notification.hide {
+        animation: slideOut 0.4s ease forwards;
+    }
+    
+    .results-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        background: rgba(20, 25, 50, 0.8);
+        border: 2px solid rgba(0, 150, 255, 0.2);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    
+    .results-table th {
+        background: rgba(0, 150, 255, 0.2);
+        color: #0096ff;
+        padding: 12px;
+        text-align: left;
+        font-weight: 600;
+        border-bottom: 2px solid rgba(0, 150, 255, 0.3);
+    }
+    
+    .results-table td {
+        padding: 12px;
+        border-bottom: 1px solid rgba(0, 150, 255, 0.1);
+        color: #a0aab9;
+    }
+    
+    .results-table tr:hover {
+        background: rgba(0, 150, 255, 0.1);
+    }
+    
+    .results-table tr:last-child td {
+        border-bottom: none;
+    }
+    
+    /* Results Table with Progress Bars */
+    .modern-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        background: rgba(20, 25, 50, 0.9);
+        border: 2px solid rgba(0, 150, 255, 0.3);
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    }
+    
+    .modern-table thead {
+        background: linear-gradient(135deg, rgba(0, 150, 255, 0.3) 0%, rgba(0, 150, 255, 0.15) 100%);
+        color: #00d4ff;
+    }
+    
+    .modern-table th {
+        padding: 16px;
+        text-align: left;
+        font-weight: 600;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border-bottom: 2px solid rgba(0, 150, 255, 0.3);
+        color: #00d4ff;
+    }
+    
+    .modern-table td {
+        padding: 14px 16px;
+        border-bottom: 1px solid rgba(0, 150, 255, 0.1);
+        color: #a0aab9;
+        font-size: 14px;
+    }
+    
+    .modern-table tbody tr {
+        transition: all 0.3s ease;
+        background: rgba(20, 25, 50, 0.6);
+    }
+    
+    .modern-table tbody tr:hover {
+        background: rgba(0, 150, 255, 0.15);
+        transform: translateX(4px);
+    }
+    
+    .modern-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+    
+    .item-name {
+        font-weight: 600;
+        color: #00d4ff;
+        font-family: 'Courier New', monospace;
+    }
+    
+    .bar-container {
+        width: 100%;
+        height: 30px;
+        background: rgba(0, 150, 255, 0.1);
+        border-radius: 8px;
+        overflow: hidden;
+        position: relative;
+        min-width: 150px;
+        border: 1px solid rgba(0, 150, 255, 0.2);
+    }
+    
+    .bar-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #0096ff, #00d4ff);
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        padding-right: 10px;
+        color: #0a0e27;
+        font-weight: 600;
+        font-size: 12px;
+        transition: width 0.5s ease;
+    }
+    
+    .bar-fill.high {
+        background: linear-gradient(90deg, #27ae60, #229954);
+    }
+    
+    .bar-fill.medium {
+        background: linear-gradient(90deg, #f39c12, #d68910);
+    }
+    
+    .bar-fill.low {
+        background: linear-gradient(90deg, #3498db, #2d86c9);
+    }
+    
+    .percentage-badge {
+        display: inline-block;
+        background: linear-gradient(135deg, #e74c3c, #c0392b);
+        color: white;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 12px;
+        min-width: 45px;
+        text-align: center;
+    }
+    
+    .percentage-badge.high {
+        background: linear-gradient(135deg, #27ae60, #229954);
+    }
+    
+    .percentage-badge.medium {
+        background: linear-gradient(135deg, #f39c12, #d68910);
+    }
+    
+    .rank-badge {
+        display: inline-block;
+        background: linear-gradient(135deg, #9b59b6, #8e44ad);
+        color: #e0e6ed;
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 14px;
+    }
+    
+    .stats-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 15px;
+        margin-bottom: 30px;
+    }
+    
+    .stat-card {
+        background: rgba(20, 25, 50, 0.8);
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        text-align: center;
+        border-top: 4px solid #0096ff;
+        transition: all 0.3s ease;
+        border: 2px solid rgba(0, 150, 255, 0.2);
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 25px rgba(0, 150, 255, 0.2);
+        border-color: rgba(0, 150, 255, 0.5);
+    }
+    
+    .stat-card.blue {
+        border-top-color: #0096ff;
+    }
+    
+    .stat-card.green {
+        border-top-color: #27ae60;
+    }
+    
+    .stat-card.orange {
+        border-top-color: #f39c12;
+    }
+    
+    .stat-card.red {
+        border-top-color: #e74c3c;
+    }
+    
+    .stat-card h3 {
+        margin: 0;
+        font-size: 12px;
+        color: #a0aab9;
+        margin-bottom: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .stat-card .stat-value {
+        font-size: 28px;
+        font-weight: 700;
+        color: #00d4ff;
+    }
+    
+    .stat-card .stat-icon {
+        font-size: 24px;
+        margin-bottom: 10px;
+    }
+    
+    @media (max-width: 768px) {
+        .header-section h1 {
+            font-size: 2rem;
+        }
+        
+        .main-grid, .options-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .buttons-section {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="duplicatecounter-container">
+    <div class="header-section">
+        <h1>📊 Duplicate Counter</h1>
+        <p>Count duplicates in your list and get detailed statistics</p>
+    </div>
+    
+    <!-- Options Section -->
+    <div class="options-section">
+        <div class="options-grid">
+            <div class="option-group">
+                <label class="option-label">📋 Sort By:</label>
+                <div class="radio-group">
+                    <label class="radio-item">
+                        <input type="radio" name="sortBy" value="count" checked>
+                        Count
+                    </label>
+                    <label class="radio-item">
+                        <input type="radio" name="sortBy" value="line">
+                        Alphabetically
+                    </label>
+                </div>
+            </div>
+            
+            <div class="option-group">
+                <label class="option-label">📄 Format:</label>
+                <div class="radio-group">
+                    <label class="radio-item">
+                        <input type="radio" name="format" value="text" checked>
+                        Text
+                    </label>
+                    <label class="radio-item">
+                        <input type="radio" name="format" value="csv">
+                        CSV
+                    </label>
+                    <label class="radio-item">
+                        <input type="radio" name="format" value="tab">
+                        TAB
+                    </label>
+                </div>
+            </div>
+            
+            <div class="option-group">
+                <label class="option-label">🎯 Show Items:</label>
+                <div class="radio-group">
+                    <label class="radio-item">
+                        <input type="radio" name="valuesFilter" value="all" checked>
+                        All Items
+                    </label>
+                    <label class="radio-item">
+                        <input type="radio" name="valuesFilter" value="duplicates_only">
+                        Duplicates Only
+                    </label>
+                </div>
+            </div>
+            
+            <div class="option-group">
+                <label class="option-label">✓ Include Count:</label>
+                <div class="checkbox-group">
+                    <label class="checkbox-item">
+                        <input type="checkbox" id="includeCount" checked>
+                        Show Count Column
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Buttons Section -->
+    <div class="buttons-section">
+        <button type="button" class="btn-action btn-primary-action" id="countBtn">
+            🔍 Count Duplicates
+        </button>
+        <button type="button" class="btn-action btn-secondary-action" id="analyzeBtn">
+            📊 Analyze
+        </button>
+        <button type="button" class="btn-action btn-secondary-action" id="copyBtn">
+            📋 Copy Result
+        </button>
+        <button type="button" class="btn-action btn-secondary-action" id="downloadCSV">
+            📥 CSV
+        </button>
+        <button type="button" class="btn-action btn-secondary-action" id="downloadTXT">
+            📄 TXT
+        </button>
+        <button type="button" class="btn-action btn-secondary-action" id="downloadJSON">
+            📦 JSON
+        </button>
+        <button type="button" class="btn-action btn-secondary-action" id="clearBtn">
+            🗑️ Clear All
+        </button>
+    </div>
+    
+    <!-- Input/Output Section -->
+    <div class="main-grid">
+        <div class="input-section">
+            <div class="section-title">📝 Input</div>
+            <textarea 
+                id="itemsInput" 
+                placeholder="Paste your items here (one item per line)...
+
+Example:
+Philippines-PL-KS01
+Philippines-PL-KS01
+Nigeria-XVX04
+Philippines-PL-KS01"
+                autocomplete="off"
+                spellcheck="false"
+            ></textarea>
+        </div>
+        
+        <div class="output-section">
+            <div class="section-title">✨ Results</div>
+            <textarea 
+                id="resultsOutput" 
+                readonly
+                placeholder="Results will appear here..."
+            ></textarea>
+        </div>
+    </div>
+    
+    <!-- Stats Section -->
+    <div id="statsSection" style="display: none; margin-top: 30px;">
+        <div id="statsCards" class="stats-cards">
+        </div>
+    </div>
+    
+    <!-- Results Table Section -->
+    <div id="tableSection" style="display: none; margin-top: 30px;">
+        <div style="padding: 10px 0;">
+            <h2 style="color: #2c3e50; font-size: 1.8rem; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                <span style="font-size: 28px;">📊</span>
+                <span>Detailed Analysis</span>
+            </h2>
+            <table class="modern-table" id="resultsTable">
+                <thead>
+                    <tr>
+                        <th style="width: 30px;">Rank</th>
+                        <th style="width: 40%;">Item</th>
+                        <th>Count</th>
+                        <th>Visualization</th>
+                        <th>Percentage</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+const itemsInput = document.getElementById('itemsInput');
+const resultsOutput = document.getElementById('resultsOutput');
+const countBtn = document.getElementById('countBtn');
+const analyzeBtn = document.getElementById('analyzeBtn');
+const copyBtn = document.getElementById('copyBtn');
+const clearBtn = document.getElementById('clearBtn');
+const downloadCSV = document.getElementById('downloadCSV');
+const downloadTXT = document.getElementById('downloadTXT');
+const downloadJSON = document.getElementById('downloadJSON');
+const statsSection = document.getElementById('statsSection');
+const tableSection = document.getElementById('tableSection');
+const statsContainer = document.getElementById('statsContainer');
+const tableBody = document.getElementById('tableBody');
+
+// Get option values
+function getOptions() {
+    return {
+        sort_by: document.querySelector('input[name="sortBy"]:checked').value,
+        format: document.querySelector('input[name="format"]:checked').value,
+        include_counts: document.getElementById('includeCount').checked,
+        values_filter: document.querySelector('input[name="valuesFilter"]:checked').value
+    };
+}
+
+// Show toast
+function showToast(message, isError = false) {
+    const toast = document.createElement('div');
+    toast.className = `toast-notification ${isError ? 'error' : ''}`;
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.classList.add('hide');
+        setTimeout(() => toast.remove(), 400);
+    }, 2000);
+}
+
+// API call
+async function processItems(endpoint, options) {
+    const text = itemsInput.value;
+    if (!text.trim()) {
+        showToast('⚠️ Please enter some items', true);
+        return;
+    }
+    
+    try {
+        const response = await fetch(`{% url 'duplicatecounter:index' %}api/${endpoint}/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+            },
+            body: JSON.stringify({ text, ...options })
+        });
+        
+        if (!response.ok) {
+            throw new Error('Failed to process items');
+        }
+        
+        const data = await response.json();
+        resultsOutput.value = data.result;
+        
+        // Update table
+        if (data.result_array) {
+            updateTable(data.result_array);
+        }
+        
+        // Update stats
+        if (data.stats) {
+            updateStats(data.stats);
+        }
+        
+        showToast('✅ Items processed successfully!');
+    } catch (error) {
+        showToast('❌ Error processing items', true);
+        console.error(error);
+    }
+}
+
+// Update stats display with cards
+function updateStats(stats) {
+    statsSection.style.display = 'block';
+    const statsCardsContainer = document.getElementById('statsCards');
+    statsCardsContainer.innerHTML = `
+        <div class="stat-card blue">
+            <div class="stat-icon">📋</div>
+            <h3>Total Items</h3>
+            <div class="stat-value">${stats.total_items}</div>
+        </div>
+        <div class="stat-card green">
+            <div class="stat-icon">✨</div>
+            <h3>Unique Items</h3>
+            <div class="stat-value">${stats.unique_items}</div>
+        </div>
+        <div class="stat-card orange">
+            <div class="stat-icon">🔄</div>
+            <h3>Duplicated Items</h3>
+            <div class="stat-value">${stats.duplicates_count}</div>
+        </div>
+        <div class="stat-card red">
+            <div class="stat-icon">📈</div>
+            <h3>Max Duplicates</h3>
+            <div class="stat-value">${stats.max_duplicates}</div>
+        </div>
+    `;
+}
+
+// Update table display with modern design
+function updateTable(items) {
+    tableSection.style.display = 'block';
+    const total = items.reduce((sum, item) => sum + item.count, 0);
+    
+    // Determine color based on count percentage
+    const getBarColor = (count, total) => {
+        const percentage = (count / total) * 100;
+        if (percentage >= 20) return 'high';
+        if (percentage >= 10) return 'medium';
+        return 'low';
+    };
+    
+    const getPercentageColor = (count, total) => {
+        const percentage = (count / total) * 100;
+        if (percentage >= 20) return 'high';
+        if (percentage >= 10) return 'medium';
+        return '';
+    };
+    
+    tableBody.innerHTML = items.map((item, index) => {
+        const percentage = ((item.count / total) * 100).toFixed(1);
+        const barColor = getBarColor(item.count, total);
+        const percentageColor = getPercentageColor(item.count, total);
+        
+        return `
+            <tr>
+                <td>
+                    <div class="rank-badge">${index + 1}</div>
+                </td>
+                <td>
+                    <div class="item-name">${escapeHtml(item.item)}</div>
+                </td>
+                <td style="text-align: center; font-weight: 600;">
+                    <span style="background: linear-gradient(135deg, #0096ff, #00d4ff); color: #0a0e27; padding: 8px 12px; border-radius: 8px; display: inline-block; min-width: 40px; font-weight: 700;">
+                        ${item.count}
+                    </span>
+                </td>
+                <td>
+                    <div class="bar-container">
+                        <div class="bar-fill ${barColor}" style="width: ${Math.max((item.count / Math.max(...items.map(i => i.count))) * 100, 5)}%;">
+                            ${percentage}%
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <span class="percentage-badge ${percentageColor}">${percentage}%</span>
+                </td>
+            </tr>
+        `;
+    }).join('');
+}
+
+// Escape HTML
+function escapeHtml(text) {
+    const map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+    };
+    return text.replace(/[&<>"']/g, m => map[m]);
+}
+
+// Event listeners
+countBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    processItems('count', getOptions());
+});
+
+analyzeBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (!itemsInput.value.trim()) {
+        showToast('⚠️ Please enter some items', true);
+        return;
+    }
+    
+    const text = itemsInput.value;
+    fetch(`{% url 'duplicatecounter:index' %}api/analyze/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+        },
+        body: JSON.stringify({ text })
+    })
+    .then(r => r.json())
+    .then(data => {
+        statsSection.style.display = 'block';
+        statsContainer.innerHTML = `
+            <div class="stat-item">
+                <span class="stat-label">Total Items:</span> ${data.total}
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Unique Items:</span> ${data.unique}
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Duplicated Items:</span> ${data.duplicates}
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Max Count:</span> ${data.max_count}
+            </div>
+        `;
+        showToast('✅ Analysis complete!');
+    })
+    .catch(err => {
+        showToast('❌ Error analyzing items', true);
+    });
+});
+
+copyBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (!resultsOutput.value.trim()) {
+        showToast('⚠️ Nothing to copy', true);
+        return;
+    }
+    navigator.clipboard.writeText(resultsOutput.value).then(() => {
+        showToast('✅ Copied to clipboard!');
+    }).catch(() => {
+        showToast('❌ Failed to copy', true);
+    });
+});
+
+clearBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    itemsInput.value = '';
+    resultsOutput.value = '';
+    statsSection.style.display = 'none';
+    tableSection.style.display = 'none';
+    showToast('🗑️ All cleared!');
+});
+
+// Helper function to download file
+function downloadFile(content, filename, mimeType = 'text/plain') {
+    const blob = new Blob([content], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    showToast(`✅ Downloaded ${filename}!`);
+}
+
+// Download as CSV
+downloadCSV.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (!resultsOutput.value.trim()) {
+        showToast('⚠️ No results to download', true);
+        return;
+    }
+    
+    // Parse the results and convert to CSV
+    const lines = resultsOutput.value.split('\n');
+    let csv = 'Item,Count\n';
+    
+    lines.forEach(line => {
+        if (line.trim()) {
+            // Parse format "item (count)"
+            const match = line.match(/^(.*?)\s*\((\d+)\)\s*$/);
+            if (match) {
+                const item = match[1].replace(/"/g, '""');
+                const count = match[2];
+                csv += `"${item}",${count}\n`;
+            } else {
+                // Just item without count
+                const item = line.replace(/"/g, '""');
+                csv += `"${item}",1\n`;
+            }
+        }
+    });
+    
+    downloadFile(csv, 'duplicates.csv', 'text/csv');
+});
+
+// Download as TXT
+downloadTXT.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (!resultsOutput.value.trim()) {
+        showToast('⚠️ No results to download', true);
+        return;
+    }
+    downloadFile(resultsOutput.value, 'duplicates.txt', 'text/plain');
+});
+
+// Download as JSON
+downloadJSON.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (!tableSection.style.display === 'none' || !tableBody.innerHTML.trim()) {
+        showToast('⚠️ Please count duplicates first', true);
+        return;
+    }
+    
+    // Extract data from table
+    const items = [];
+    const rows = tableBody.querySelectorAll('tr');
+    rows.forEach(row => {
+        const cells = row.querySelectorAll('td');
+        if (cells.length >= 2) {
+            const itemName = cells[1].querySelector('.item-name')?.textContent || '';
+            const countSpan = cells[2]?.textContent.trim() || '0';
+            const count = parseInt(countSpan) || 0;
+            items.push({ item: itemName, count: count });
+        }
+    });
+    
+    const jsonData = {
+        exported_at: new Date().toISOString(),
+        total_items: itemsInput.value.split('\n').filter(l => l.trim()).length,
+        unique_items: items.length,
+        items: items
+    };
+    
+    downloadFile(JSON.stringify(jsonData, null, 2), 'duplicates.json', 'application/json');
+});
+</script>
+{% endblock %}

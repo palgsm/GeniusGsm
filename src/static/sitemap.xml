@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xmlns:mobile="http://www.google.com/schemas/sitemap-mobile/1.0">
+    
+    <!-- Homepage -->
+    <url>
+        <loc>https://geniusgsm.com/</loc>
+        <lastmod>2026-04-17</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>1.0</priority>
+    </url>
+
+    <!-- NETWORK TOOLS CATEGORY -->
+    
+    <!-- Tool 1: IP Lookup - Search IP address geolocation -->
+    <url>
+        <loc>https://geniusgsm.com/ip/lookup/</loc>
+        <lastmod>2026-04-17</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.9</priority>
+    </url>
+
+    <!-- Tool 2: Abuse Check - Check IP reputation and blacklist status -->
+    <url>
+        <loc>https://geniusgsm.com/abuse/lookup/</loc>
+        <lastmod>2026-04-17</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.9</priority>
+    </url>
+
+    <!-- Tool 5: IP Bulk - Process multiple IP addresses at once -->
+    <url>
+        <loc>https://geniusgsm.com/ipbulk/groups/</loc>
+        <lastmod>2026-04-17</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+
+    <!-- URL TOOLS CATEGORY -->
+    
+    <!-- Tool 8: URL Analyzer - Analyze links for phishing and safety -->
+    <url>
+        <loc>https://geniusgsm.com/urlanalyzer/</loc>
+        <lastmod>2026-04-17</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.9</priority>
+    </url>
+
+    <!-- Tool 9: Short Link Expander - Expand shortened URLs (bit.ly, tinyurl) -->
+    <url>
+        <loc>https://geniusgsm.com/shortener/</loc>
+        <lastmod>2026-04-17</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+
+    <!-- Tool 11: Link Preview - Preview website content without visiting -->
+    <url>
+        <loc>https://geniusgsm.com/preview/</loc>
+        <lastmod>2026-04-17</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+
+    <!-- Tool 10: Phishing Detector - Detect phishing and malicious websites -->
+    <url>
+        <loc>https://geniusgsm.com/phishing/</loc>
+        <lastmod>2026-04-17</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.9</priority>
+    </url>
+
+    <!-- TEXT TOOLS CATEGORY -->
+    
+    <!-- Tool 6: Random Lines - Shuffle and randomize text lines -->
+    <url>
+        <loc>https://geniusgsm.com/randomlines/</loc>
+        <lastmod>2026-04-17</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+
+    <!-- Tool 7: Duplicate Counter - Count and remove duplicate lines -->
+    <url>
+        <loc>https://geniusgsm.com/duplicatecounter/</loc>
+        <lastmod>2026-04-17</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+
+    <!-- SECURITY TOOLS CATEGORY -->
+    
+    <!-- Tool 3: JWT Checker - Parse and analyze JWT tokens -->
+    <url>
+        <loc>https://geniusgsm.com/jwtchecker/</loc>
+        <lastmod>2026-04-17</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+
+    <!-- Tool 4: Temp Mail - Generate temporary email addresses -->
+    <url>
+        <loc>https://geniusgsm.com/tempmail/</loc>
+        <lastmod>2026-04-17</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+
+    <!-- UTILITIES CATEGORY -->
+    
+    <!-- Tool 12: Speed Test - Measure download, upload and ping speed -->
+    <url>
+        <loc>https://geniusgsm.com/speedtest/</loc>
+        <lastmod>2026-04-17</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+
+</urlset>

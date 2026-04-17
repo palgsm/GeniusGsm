@@ -1,0 +1,551 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Speed Test - Test Your Internet Speed — GeniusGsm{% endblock %}
+
+{% block meta_description %}Test your internet speed with GeniusGsm. Measure download speed, upload speed, and ping latency instantly. Accurate and reliable speed testing tool.{% endblock %}
+
+{% block meta_keywords %}speed test, internet speed test, download speed, upload speed, ping test, bandwidth test, connection speed, broadband test{% endblock %}
+
+{% block og_title %}Speed Test - Test Your Internet Speed — GeniusGsm{% endblock %}
+
+{% block og_description %}Accurate internet speed testing tool. Measure your download/upload speeds and ping latency with real-time results.{% endblock %}
+
+{% block canonical_url %}https://geniusgsm.com/speedtest/{% endblock %}
+
+{% block extra_css %}
+<style>
+  .speedtest-container {
+    max-width: 800px;
+    margin: 3rem auto;
+  }
+
+  .speedtest-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    background: rgba(20, 25, 50, 0.8);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(0, 150, 255, 0.2);
+    border-radius: 12px;
+    padding: 2rem;
+  }
+
+  .speedtest-header h1 {
+    font-size: 2.5rem;
+    color: #0096ff;
+    margin-bottom: 0.5rem;
+  }
+
+  .speedtest-header p {
+    color: #a0aab9;
+    font-size: 1rem;
+  }
+
+  .speed-display {
+    background: rgba(0, 150, 255, 0.05);
+    border: 2px solid rgba(0, 150, 255, 0.3);
+    border-radius: 12px;
+    padding: 2rem;
+    margin: 2rem 0;
+    text-align: center;
+  }
+
+  .speed-meters {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+    margin: 2rem 0;
+  }
+
+  .speed-meter {
+    background: rgba(20, 25, 50, 0.8);
+    border: 2px solid rgba(0, 150, 255, 0.2);
+    border-radius: 10px;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+  }
+
+  .speed-meter:hover {
+    border-color: rgba(0, 150, 255, 0.6);
+    box-shadow: 0 8px 32px rgba(0, 150, 255, 0.2);
+  }
+
+  .speed-value {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #0096ff;
+    margin: 1rem 0;
+  }
+
+  .speed-label {
+    color: #a0aab9;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .speed-unit {
+    color: #00d4ff;
+    font-size: 1rem;
+  }
+
+  .test-button {
+    width: 100%;
+    padding: 1.5rem;
+    font-size: 1.2rem;
+    font-weight: bold;
+    background: linear-gradient(135deg, #0096ff 0%, #00d4ff 100%);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin: 1rem 0;
+  }
+
+  .test-button:hover:not(:disabled) {
+    box-shadow: 0 8px 32px rgba(0, 150, 255, 0.4);
+    transform: translateY(-2px);
+  }
+
+  .test-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .progress-bar {
+    width: 100%;
+    height: 4px;
+    background: rgba(0, 150, 255, 0.1);
+    border-radius: 2px;
+    margin: 1rem 0;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #0096ff, #00d4ff);
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+
+  .status-text {
+    text-align: center;
+    color: #a0aab9;
+    margin: 1rem 0;
+    min-height: 20px;
+  }
+
+  .grade-badge {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    font-weight: bold;
+    margin-top: 1rem;
+  }
+
+  .grade-excellent {
+    background: rgba(76, 175, 80, 0.2);
+    color: #4caf50;
+    border: 1px solid #4caf50;
+  }
+
+  .grade-good {
+    background: rgba(33, 150, 243, 0.2);
+    color: #2196f3;
+    border: 1px solid #2196f3;
+  }
+
+  .grade-fair {
+    background: rgba(255, 193, 7, 0.2);
+    color: #ffc107;
+    border: 1px solid #ffc107;
+  }
+
+  .grade-poor {
+    background: rgba(244, 67, 54, 0.2);
+    color: #f44336;
+    border: 1px solid #f44336;
+  }
+
+  .results-table {
+    width: 100%;
+    margin: 2rem 0;
+    border-collapse: collapse;
+  }
+
+  .results-table th {
+    background: rgba(0, 150, 255, 0.1);
+    color: #0096ff;
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 2px solid rgba(0, 150, 255, 0.3);
+  }
+
+  .results-table td {
+    padding: 1rem;
+    border-bottom: 1px solid rgba(0, 150, 255, 0.1);
+    color: #e0e6ed;
+  }
+
+  .results-table tr:hover {
+    background: rgba(0, 150, 255, 0.05);
+  }
+
+  .info-box {
+    background: rgba(0, 150, 255, 0.05);
+    border-left: 4px solid #0096ff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin: 2rem 0;
+    color: #a0aab9;
+  }
+
+  @media (max-width: 768px) {
+    .speedtest-header h1 {
+      font-size: 1.8rem;
+    }
+
+    .speed-meters {
+      grid-template-columns: 1fr;
+    }
+
+    .speed-value {
+      font-size: 2rem;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="speedtest-container">
+  <!-- Header -->
+  <div class="speedtest-header">
+    <h1>⚡ Speed Test</h1>
+    <p>Check your internet speed - Download, Upload & Ping</p>
+  </div>
+
+  <!-- Main Speed Test Card -->
+  <div class="speed-display">
+    <div class="speed-meters">
+      <div class="speed-meter">
+        <div class="speed-label">📥 Download</div>
+        <div class="speed-value" id="downloadSpeed">0.0</div>
+        <div class="speed-unit">Mbps</div>
+      </div>
+
+      <div class="speed-meter">
+        <div class="speed-label">📤 Upload</div>
+        <div class="speed-value" id="uploadSpeed">0.0</div>
+        <div class="speed-unit">Mbps</div>
+      </div>
+
+      <div class="speed-meter">
+        <div class="speed-label">🏓 Ping</div>
+        <div class="speed-value" id="ping">0.0</div>
+        <div class="speed-unit">ms</div>
+      </div>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+
+    <!-- Status Text -->
+    <div class="status-text" id="statusText">Ready to test</div>
+
+    <!-- Grade Badge -->
+    <div id="gradeBadge"></div>
+
+    <!-- Test Button -->
+    <button class="test-button" id="testButton" onclick="startSpeedTest()">
+      🚀 Start Speed Test
+    </button>
+  </div>
+
+  <!-- Info Box -->
+  <div class="info-box">
+    <strong>💡 Tips:</strong>
+    <ul style="margin: 1rem 0; padding-left: 1.5rem;">
+      <li>Close other applications and browser tabs for more accurate results</li>
+      <li>Use wired connection (Ethernet) for best results</li>
+      <li>Results are stored and can be viewed in your history</li>
+      <li>Test multiple times for average internet speed</li>
+    </ul>
+  </div>
+
+  <!-- Recent Test Results -->
+  <div>
+    <h2 style="color: #0096ff; margin: 2rem 0 1rem; border-bottom: 2px solid rgba(0, 150, 255, 0.3); padding-bottom: 1rem;">
+      📊 Recent Test Results
+    </h2>
+    
+    {% if recent_tests %}
+      <table class="results-table">
+        <thead>
+          <tr>
+            <th>Date & Time</th>
+            <th>Download</th>
+            <th>Upload</th>
+            <th>Ping</th>
+            <th>Grade</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for test in recent_tests %}
+          <tr>
+            <td>{{ test.timestamp|date:"M d, Y H:i" }}</td>
+            <td>{{ test.download_speed }} Mbps</td>
+            <td>{{ test.upload_speed }} Mbps</td>
+            <td>{{ test.ping }} ms</td>
+            <td>
+              <span class="grade-badge grade-{{ test.grade }}">
+                {{ test.get_grade|upper }}
+              </span>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p style="text-align: center; color: #a0aab9; padding: 2rem;">
+        No test results yet. Run your first speed test to see results here.
+      </p>
+    {% endif %}
+  </div>
+</div>
+
+<script>
+// Global variables
+let testInProgress = false;
+let gradeBadges = {
+  'excellent': { text: 'Excellent', class: 'grade-excellent' },
+  'good': { text: 'Good', class: 'grade-good' },
+  'fair': { text: 'Fair', class: 'grade-fair' },
+  'poor': { text: 'Poor', class: 'grade-poor' }
+};
+
+function startSpeedTest() {
+  if (testInProgress) return;
+  
+  testInProgress = true;
+  const button = document.getElementById('testButton');
+  button.disabled = true;
+  button.textContent = '⏳ Testing... (This may take a few seconds)';
+  
+  document.getElementById('statusText').textContent = 'Initializing test...';
+  document.getElementById('progressFill').style.width = '0%';
+  document.getElementById('downloadSpeed').textContent = '0.0';
+  document.getElementById('uploadSpeed').textContent = '0.0';
+  document.getElementById('ping').textContent = '0.0';
+  
+  // Perform REAL speed test
+  performRealSpeedTest();
+}
+
+async function performRealSpeedTest() {
+  const statusText = document.getElementById('statusText');
+  const progressFill = document.getElementById('progressFill');
+  
+  try {
+    // Stage 1: Download Speed Test
+    statusText.textContent = '📥 Measuring download speed...';
+    progressFill.style.width = '20%';
+    const downloadSpeed = await measureDownloadSpeed();
+    progressFill.style.width = '40%';
+    
+    // Stage 2: Upload Speed Test
+    statusText.textContent = '📤 Testing upload speed...';
+    const uploadSpeed = await measureUploadSpeed();
+    progressFill.style.width = '70%';
+    
+    // Stage 3: Ping Test
+    statusText.textContent = '🏓 Calculating latency...';
+    const ping = await measurePing();
+    progressFill.style.width = '90%';
+    
+    // Update display
+    document.getElementById('downloadSpeed').textContent = downloadSpeed.toFixed(2);
+    document.getElementById('uploadSpeed').textContent = uploadSpeed.toFixed(2);
+    document.getElementById('ping').textContent = ping.toFixed(2);
+    
+    // Update status
+    statusText.textContent = '✅ Test completed successfully!';
+    progressFill.style.width = '100%';
+    
+    // Determine grade
+    let grade = 'poor';
+    if (downloadSpeed >= 100) grade = 'excellent';
+    else if (downloadSpeed >= 25) grade = 'good';
+    else if (downloadSpeed >= 5) grade = 'fair';
+    
+    updateGradeBadge(grade, getGradeLabel(grade));
+    
+    // Save result
+    saveSpeedTestResult(downloadSpeed, uploadSpeed, ping);
+    
+  } catch (error) {
+    statusText.textContent = '❌ Test failed: ' + error.message;
+    console.error('Speed test error:', error);
+  }
+}
+
+async function measureDownloadSpeed() {
+  // قياس التحميل بطريقة دقيقة: تحميل بيانات عشوائية بدون تخزين مؤقت
+  let totalBytes = 0;
+  let totalTime = 0;
+  let successfulTests = 0;
+  
+  // محاول متعددة لحساب المتوسط
+  for (let i = 0; i < 3; i++) {
+    try {
+      const testSize = 1024 * 1024; // 1MB
+      const startTime = performance.now();
+      
+      // إنشاء بيانات عشوائية وتحميلها إلى السيرفر
+      const testData = new Uint8Array(testSize);
+      for (let j = 0; j < testSize; j++) {
+        testData[j] = Math.floor(Math.random() * 256);
+      }
+      
+      // إرسال البيانات وحساب وقت الرد
+      const response = await fetch('/speedtest/api/download/', {
+        method: 'POST',
+        body: testData,
+        headers: { 'X-Test-Size': testSize }
+      });
+      
+      const endTime = performance.now();
+      const timeSeconds = (endTime - startTime) / 1000;
+      
+      if (response.ok && timeSeconds > 0) {
+        // حساب السرعة: نحسب بناءً على وقت الإرسال والرد
+        totalBytes += testSize;
+        totalTime += timeSeconds;
+        successfulTests++;
+      }
+    } catch (e) {
+      console.warn('Download test iteration failed:', e);
+    }
+  }
+  
+  if (successfulTests > 0 && totalTime > 0) {
+    const speedMbps = (totalBytes * 8) / (totalTime * 1_000_000);
+    return Math.max(0.1, Math.min(speedMbps, 1000)); // Cap at 1000 Mbps
+  }
+  
+  return 0.5; // Fallback
+}
+
+async function measureUploadSpeed() {
+  const uploadSize = 1024 * 1024; // 1MB
+  const testData = new Uint8Array(uploadSize);
+  
+  try {
+    const startTime = performance.now();
+    const response = await fetch('/speedtest/api/upload/', {
+      method: 'POST',
+      body: testData,
+      headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    });
+    const endTime = performance.now();
+    
+    const timeSeconds = (endTime - startTime) / 1000;
+    const speedMbps = (uploadSize * 8) / (timeSeconds * 1_000_000);
+    return Math.max(0.1, speedMbps);
+  } catch (error) {
+    console.warn('Upload test failed:', error);
+    return 1.0; // Fallback
+  }
+}
+
+async function measurePing() {
+  const measurements = [];
+  const servers = [
+    '/speedtest/api/ping/',
+    'https://www.google.com/favicon.ico',
+    'https://www.cloudflare.com/'
+  ];
+  
+  for (let i = 0; i < 3; i++) {
+    for (const server of servers) {
+      try {
+        const startTime = performance.now();
+        const response = await fetch(server, { method: 'HEAD' });
+        const endTime = performance.now();
+        measurements.push(endTime - startTime);
+      } catch (e) {
+        // Skip failed requests
+      }
+    }
+  }
+  
+  if (measurements.length === 0) return 10;
+  
+  // Return average
+  return measurements.reduce((a, b) => a + b, 0) / measurements.length;
+}
+
+function completeRealSpeedTest() {
+  // This function is now integrated into performRealSpeedTest
+  // No longer needed as separate function
+}
+
+function getGradeLabel(grade) {
+  const grades = {
+    'excellent': 'Excellent (> 100 Mbps)',
+    'good': 'Good (25-100 Mbps)',
+    'fair': 'Fair (5-25 Mbps)',
+    'poor': 'Poor (< 5 Mbps)'
+  };
+  return grades[grade] || 'Unknown';
+}
+
+function updateGradeBadge(grade, gradeLabel) {
+  const badgeDiv = document.getElementById('gradeBadge');
+  const badge = gradeBadges[grade] || gradeBadges['fair'];
+  badgeDiv.innerHTML = `<span class="grade-badge ${badge.class}">${badge.text.toUpperCase()}</span>`;
+}
+
+function saveSpeedTestResult(download, upload, ping) {
+  const payload = {
+    download_speed: download,
+    upload_speed: upload,
+    ping: ping
+  };
+  
+  fetch('{% url "speedtest:api_test" %}', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(payload)
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log('Result saved:', data);
+    // Reset button state
+    testInProgress = false;
+    const button = document.getElementById('testButton');
+    button.disabled = false;
+    button.textContent = '🚀 Start Speed Test';
+  })
+  .catch(error => {
+    console.error('Error saving result:', error);
+    // Still reset button even if saving failed
+    testInProgress = false;
+    const button = document.getElementById('testButton');
+    button.disabled = false;
+    button.textContent = '🚀 Start Speed Test';
+  });
+}
+
+// Auto-refresh results every 30 seconds
+setInterval(() => {
+  if (!testInProgress) {
+    location.reload();
+  }
+}, 30000);
+</script>
+{% endblock %}

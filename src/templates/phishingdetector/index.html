@@ -1,0 +1,349 @@
+{% extends 'base.html' %}
+
+{% block title %}Phishing Detector - Advanced URL Security Analysis{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-danger text-white">
+                    <h2 class="mb-0">🚨 Phishing Detector</h2>
+                    <p class="text-light mb-0 small">Advanced detection system for phishing attacks, scams, and malicious websites</p>
+                </div>
+                <div class="card-body">
+                    <!-- Detection Form -->
+                    <form id="phishingForm" class="mb-4">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="detectorUrl" class="font-weight-bold">Enter URL to Check</label>
+                            <div class="input-group">
+                                <input type="url" class="form-control form-control-lg" id="detectorUrl" 
+                                       placeholder="https://example.com"
+                                       required>
+                                <div class="input-group-append">
+                                    <button class="btn btn-danger btn-lg" type="submit">
+                                        <i class="fas fa-shield-alt"></i> Detect
+                                    </button>
+                                </div>
+                            </div>
+                            <small class="form-text text-muted">
+                                Advanced analysis checks domain credibility, SSL certificate, page content, and URL structure.
+                            </small>
+                        </div>
+                    </form>
+
+                    <!-- Loading Spinner -->
+                    <div id="loadingSpinner" class="text-center d-none">
+                        <div class="spinner-border text-danger" role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                        <p class="mt-2">Analyzing URL for phishing threats...</p>
+                    </div>
+
+                    <!-- Results Container -->
+                    <div id="resultsContainer"></div>
+                </div>
+            </div>
+
+            <!-- Recent Detections -->
+            <div class="card mt-4">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0">📊 Recent Detections</h5>
+                </div>
+                <div class="card-body">
+                    {% if recent_detections %}
+                    <table class="table table-dark table-hover table-sm">
+                        <thead>
+                            <tr>
+                                <th>Domain</th>
+                                <th>Risk Level</th>
+                                <th>Score</th>
+                                <th>Forms</th>
+                                <th>Detected</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for detection in recent_detections %}
+                            <tr>
+                                <td><small>{{ detection.domain }}</small></td>
+                                <td>
+                                    {% if detection.risk_level == 'critical' %}
+                                    <span class="badge badge-danger">🔴 CRITICAL</span>
+                                    {% elif detection.risk_level == 'high' %}
+                                    <span class="badge badge-warning">🟠 HIGH</span>
+                                    {% elif detection.risk_level == 'medium' %}
+                                    <span class="badge badge-info">🟡 MEDIUM</span>
+                                    {% elif detection.risk_level == 'low' %}
+                                    <span class="badge badge-light">🟢 LOW</span>
+                                    {% else %}
+                                    <span class="badge badge-success">✓ SAFE</span>
+                                    {% endif %}
+                                </td>
+                                <td><strong>{{ detection.phishing_score }}%</strong></td>
+                                <td>{{ detection.form_fields }}</td>
+                                <td><small>{{ detection.created_at|date:"M d, g:i A" }}</small></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% else %}
+                    <p class="text-muted text-center">No detections yet. Start by analyzing a URL above!</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Result Template -->
+<template id="resultTemplate">
+    <div class="result-card mt-4">
+        <div class="card border-danger">
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0" id="riskTitle">🚨 Detection Result</h5>
+            </div>
+            <div class="card-body">
+                <!-- Risk Score Display -->
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="alert alert-warning">
+                            <strong>Phishing Score:</strong>
+                            <div id="scoreDisplay" class="h3 mt-2"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="alert alert-info">
+                            <strong>Risk Level:</strong>
+                            <div id="riskDisplay" class="h3 mt-2"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- URL Info -->
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <div class="alert alert-secondary">
+                            <strong>Domain:</strong>
+                            <div id="domainDisplay" class="text-break mt-2"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Page Title -->
+                <div id="titleSection" class="mb-3 d-none">
+                    <strong>Page Title:</strong>
+                    <div id="titleDisplay" class="alert alert-light mt-2"></div>
+                </div>
+
+                <!-- Warning Section -->
+                <div id="warningSection" class="mb-3 d-none">
+                    <div class="alert alert-danger">
+                        <strong><i class="fas fa-exclamation-triangle"></i> WARNING!</strong>
+                        <p class="mt-2 mb-0">This URL has been flagged as potentially dangerous. Exercise extreme caution before visiting.</p>
+                    </div>
+                </div>
+
+                <!-- Suspicious Indicators -->
+                <div id="indicatorsSection" class="mb-3">
+                    <strong>Detection Indicators:</strong>
+                    <div id="indicatorsList" class="mt-2"></div>
+                </div>
+
+                <!-- Form Fields -->
+                <div id="formSection" class="mb-3 d-none">
+                    <div class="alert alert-warning">
+                        <strong>⚠️ Forms Found:</strong>
+                        <p class="mb-0 mt-2">This page contains <span id="formCount"></span> form(s), potentially for credential harvesting.</p>
+                    </div>
+                </div>
+
+                <!-- Keywords -->
+                <div id="keywordsSection" class="mb-3 d-none">
+                    <strong>Phishing Keywords:</strong>
+                    <div id="keywordsList" class="mt-2"></div>
+                </div>
+
+                <!-- Actions -->
+                <div class="mt-4">
+                    <button class="btn btn-secondary btn-sm" onclick="copyToClipboard()">
+                        <i class="fas fa-copy"></i> Copy URL
+                    </button>
+                    <button class="btn btn-info btn-sm" onclick="reportPhishing()">
+                        <i class="fas fa-flag"></i> Report Phishing
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<style>
+.result-card {
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.badge {
+    padding: 0.35em 0.65em;
+}
+
+.indicator-item {
+    padding: 8px;
+    margin: 5px 0;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-left: 3px solid #ff6b6b;
+    border-radius: 3px;
+}
+</style>
+
+<script>
+document.getElementById('phishingForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const url = document.getElementById('detectorUrl').value.trim();
+    
+    if (!url) {
+        alert('Please enter a URL');
+        return;
+    }
+    
+    // Show loading
+    const spinner = document.getElementById('loadingSpinner');
+    spinner.classList.remove('d-none');
+    document.getElementById('resultsContainer').innerHTML = '';
+    
+    // Send detection request
+    fetch('{% url "phishingdetector:api_detect" %}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('[name="csrfmiddlewaretoken"]').value
+        },
+        body: JSON.stringify({ url: url })
+    })
+    .then(response => response.json())
+    .then(data => {
+        spinner.classList.add('d-none');
+        
+        if (data.success) {
+            displayResult(data.result);
+            document.getElementById('detectorUrl').value = '';
+        } else {
+            showError(data.error || 'Detection failed');
+        }
+    })
+    .catch(error => {
+        spinner.classList.add('d-none');
+        showError('Error: ' + error.message);
+    });
+});
+
+function displayResult(result) {
+    const template = document.getElementById('resultTemplate');
+    const clone = template.content.cloneNode(true);
+    
+    // Risk level colors
+    const riskColors = {
+        'critical': { color: 'danger', icon: '🔴' },
+        'high': { color: 'warning', icon: '🟠' },
+        'medium': { color: 'info', icon: '🟡' },
+        'low': { color: 'light', icon: '🟢' },
+        'safe': { color: 'success', icon: '✓' }
+    };
+    
+    const riskInfo = riskColors[result.risk_level] || riskColors['safe'];
+    
+    // Populate template
+    clone.getElementById('riskTitle').textContent = `${riskInfo.icon} ${result.risk_level.toUpperCase()} RISK`;
+    clone.getElementById('scoreDisplay').textContent = result.phishing_score + ' / 100';
+    clone.getElementById('riskDisplay').textContent = result.risk_level.toUpperCase();
+    clone.getElementById('domainDisplay').textContent = result.domain;
+    
+    // Page title
+    if (result.page_title) {
+        clone.getElementById('titleDisplay').textContent = result.page_title;
+    } else {
+        clone.getElementById('titleSection').classList.add('d-none');
+    }
+    
+    // Warning for phishing
+    if (result.is_phishing) {
+        clone.getElementById('warningSection').classList.remove('d-none');
+    }
+    
+    // Indicators
+    const indicatorsList = clone.getElementById('indicatorsList');
+    if (result.indicators && result.indicators.length > 0) {
+        result.indicators.forEach(ind => {
+            const div = document.createElement('div');
+            div.className = 'indicator-item';
+            div.textContent = ind;
+            indicatorsList.appendChild(div);
+        });
+    }
+    
+    // Forms
+    if (result.form_fields > 0) {
+        clone.getElementById('formSection').classList.remove('d-none');
+        clone.getElementById('formCount').textContent = result.form_fields;
+    }
+    
+    // Keywords
+    if (result.phishing_keywords && result.phishing_keywords.length > 0) {
+        clone.getElementById('keywordsSection').classList.remove('d-none');
+        const keywordsList = clone.getElementById('keywordsList');
+        result.phishing_keywords.forEach(kw => {
+            const badge = document.createElement('span');
+            badge.className = 'badge badge-warning mr-2';
+            badge.textContent = kw;
+            keywordsList.appendChild(badge);
+        });
+    }
+    
+    // Store URL for actions
+    clone.querySelector('.result-card').dataset.url = result.url;
+    
+    document.getElementById('resultsContainer').appendChild(clone);
+}
+
+function showError(message) {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = 'alert alert-danger alert-dismissible fade show';
+    alertDiv.innerHTML = `
+        <strong>Detection Error!</strong> ${message}
+        <button type="button" class="close" data-dismiss="alert">
+            <span>&times;</span>
+        </button>
+    `;
+    document.getElementById('resultsContainer').innerHTML = '';
+    document.getElementById('resultsContainer').appendChild(alertDiv);
+}
+
+function copyToClipboard() {
+    const url = document.querySelector('.result-card')?.dataset.url;
+    if (url) {
+        navigator.clipboard.writeText(url).then(() => {
+            alert('URL copied to clipboard');
+        });
+    }
+}
+
+function reportPhishing() {
+    const url = document.querySelector('.result-card')?.dataset.url;
+    if (url) {
+        alert('Report URL: ' + url + '\n\nThis would be sent to security authorities.');
+    }
+}
+</script>
+{% endblock %}

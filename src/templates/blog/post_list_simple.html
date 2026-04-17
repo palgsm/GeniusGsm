@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}GeniusGsm Blog - Security and Technology Articles{% endblock %}
+
+{% block meta_description %}Professional blog covering cybersecurity, IP analysis, network tools, and technology guides{% endblock %}
+
+{% block extra_css %}
+<style>
+  body { background: #0a0e27 !important; }
+  
+  .simple-featured-posts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    padding: 20px;
+  }
+  
+  .simple-post {
+    background: #1a1f3a;
+    border: 1px solid cyan;
+    padding: 10px;
+  }
+  
+  .simple-post img {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    min-height: 150px;
+    background: rgba(0, 150, 255, 0.3);
+    display: block !important;
+  }
+  
+  .simple-post h3 {
+    color: rgba(0, 150, 255, 1);
+    margin: 10px 0;
+  }
+  
+  .simple-post p {
+    color: #a0aab9;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <h1 style="color: #0096ff;">Blog - Simplified Version</h1>
+  <p style="color: #a0aab9;">This is a simplified debug version without complex CSS</p>
+  
+  {% if featured_posts %}
+    <h2 style="color: #0096ff; margin: 20px 0;">Featured Posts ({{ featured_posts|length }})</h2>
+    
+    <div class="simple-featured-posts">
+      {% for post in featured_posts %}
+        <div class="simple-post">
+          <h3>{{ post.title }}</h3>
+          
+          {% if post.featured_image %}
+            <img src="{{ post.featured_image.url }}" alt="{{ post.title }}" style="border: 2px solid cyan;">
+          {% else %}
+            <div style="height: 200px; background: rgba(0,150,255,0.2); display: flex; align-items: center; justify-content: center;">NO IMAGE</div>
+          {% endif %}
+          
+          <p>{{ post.summary|truncate words:20 }}</p>
+          <small style="color: #6b7280;">{{ post.published_date|date:"M d, Y" }}</small>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p>No featured posts</p>
+  {% endif %}
+  
+  <hr style="border-color: rgba(0,150,255,0.2); margin: 40px 0;">
+  
+  {% if posts %}
+    <h2 style="color: #0096ff; margin: 20px 0;">All Posts ({{ posts|length }})</h2>
+    
+    <div class="simple-featured-posts">
+      {% for post in posts %}
+        <div class="simple-post">
+          <h3>{{ post.title|truncate words:10 }}</h3>
+          
+          {% if post.featured_image %}
+            <img src="{{ post.featured_image.url }}" alt="{{ post.title }}" style="border: 2px solid #00d4ff;">
+          {% else %}
+            <div style="height: 150px; background: rgba(0,150,255,0.1);">NO IMG</div>
+          {% endif %}
+          
+          <p>{{ post.summary|truncate words:15 }}</p>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

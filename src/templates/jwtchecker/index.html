@@ -1,0 +1,667 @@
+{% extends 'base.html' %}
+
+{% block title %}JWT Expiry Checker - Free Online Tool{% endblock %}
+
+{% block meta_description %}Free JWT token expiry checker. Decode and analyze JWT tokens online. Check token expiration status, view claims, and validate tokens instantly without requiring a secret key.{% endblock %}
+
+{% block meta_keywords %}JWT checker, JWT validator, token expiry, JWT decoder, JWT analysis, JWT online tool, token validation, expiration checker{% endblock %}
+
+{% block og_title %}JWT Expiry Checker - Decode & Validate Tokens Online{% endblock %}
+
+{% block og_description %}Instantly decode JWT tokens and check their expiry status. View all claims and analyze token details. Free, secure, and easy to use.{% endblock %}
+
+{% block twitter_title %}JWT Expiry Checker - Free Token Validation{% endblock %}
+
+{% block twitter_description %}Check JWT token expiry instantly. Decode tokens, view claims, and validate them online for free.{% endblock %}
+
+{% block content %}
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+        min-height: 100vh;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .jwt-container {
+        max-width: 900px;
+        margin: 30px auto;
+        padding: 0 20px;
+    }
+
+    .jwt-header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .jwt-header h1 {
+        background: linear-gradient(135deg, #00d4ff 0%, #0096ff 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+
+    .jwt-header p {
+        color: #a0aab9;
+        font-size: 1.1rem;
+    }
+
+    .jwt-card {
+        background: rgba(20, 25, 50, 0.8);
+        border: 1px solid rgba(0, 150, 255, 0.2);
+        border-radius: 12px;
+        padding: 30px;
+        margin-bottom: 30px;
+        backdrop-filter: blur(10px);
+    }
+
+    .jwt-card h2 {
+        color: #00d4ff;
+        font-size: 1.3rem;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+    }
+
+    .jwt-card h2 i {
+        margin-right: 10px;
+        color: #0096ff;
+    }
+
+    label {
+        display: block;
+        color: #a0aab9;
+        font-weight: 600;
+        margin-bottom: 10px;
+        font-size: 0.95rem;
+    }
+
+    .jwt-input {
+        width: 100%;
+        height: 180px;
+        padding: 12px;
+        background: rgba(10, 14, 39, 0.8);
+        border: 2px solid rgba(0, 150, 255, 0.3);
+        border-radius: 8px;
+        color: #00d4ff;
+        font-family: 'Monaco', 'Courier New', monospace;
+        font-size: 0.85rem;
+        resize: vertical;
+        transition: all 0.3s ease;
+    }
+
+    .jwt-input:focus {
+        outline: none;
+        border-color: #00d4ff;
+        box-shadow: 0 0 15px rgba(0, 212, 255, 0.2);
+        background: rgba(10, 14, 39, 0.95);
+    }
+
+    .jwt-input::placeholder {
+        color: #5a6478;
+    }
+
+    .button-group {
+        display: flex;
+        gap: 12px;
+        margin-top: 20px;
+        flex-wrap: wrap;
+    }
+
+    .btn {
+        padding: 12px 28px;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        outline: none;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #0096ff 0%, #0076cc 100%);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0, 150, 255, 0.3);
+    }
+
+    .btn-secondary {
+        background: rgba(0, 150, 255, 0.2);
+        color: #00d4ff;
+        border: 1px solid #00d4ff;
+    }
+
+    .btn-secondary:hover {
+        background: rgba(0, 150, 255, 0.3);
+        box-shadow: 0 4px 12px rgba(0, 150, 255, 0.2);
+    }
+
+    .btn-success {
+        background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+        color: white;
+    }
+
+    .btn-success:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(39, 174, 96, 0.3);
+    }
+
+    .btn-info {
+        background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+        color: white;
+    }
+
+    .btn-info:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(52, 152, 219, 0.3);
+    }
+
+    .expiry-info-section {
+        display: none;
+        margin-top: 30px;
+    }
+
+    .expiry-info-section.show {
+        display: block;
+    }
+
+    .info-label {
+        color: #00d4ff;
+        font-weight: 600;
+        font-size: 1.1rem;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+    }
+
+    .info-label i {
+        margin-right: 10px;
+        font-size: 1.2rem;
+    }
+
+    .expiry-details {
+        background: rgba(10, 14, 39, 0.6);
+        border-left: 4px solid #0096ff;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+    }
+
+    .detail-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 12px 0;
+        border-bottom: 1px solid rgba(0, 150, 255, 0.1);
+        align-items: center;
+    }
+
+    .detail-row:last-child {
+        border-bottom: none;
+    }
+
+    .detail-label {
+        color: #a0aab9;
+        font-weight: 600;
+        font-size: 0.95rem;
+    }
+
+    .detail-value {
+        color: #00d4ff;
+        font-family: 'Monaco', 'Courier New', monospace;
+        font-size: 0.95rem;
+        font-weight: 500;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 6px 16px;
+        border-radius: 6px;
+        font-weight: 700;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .status-expired {
+        background: rgba(231, 76, 60, 0.2);
+        color: #e74c3c;
+        border: 1px solid #e74c3c;
+    }
+
+    .status-valid {
+        background: rgba(39, 174, 96, 0.2);
+        color: #27ae60;
+        border: 1px solid #27ae60;
+    }
+
+    .time-info {
+        color: #a0aab9;
+        font-size: 0.95rem;
+        font-style: italic;
+    }
+
+    .claims-section {
+        display: none;
+        margin-top: 30px;
+    }
+
+    .claims-section.show {
+        display: block;
+    }
+
+    .claims-title {
+        color: #00d4ff;
+        font-weight: 600;
+        font-size: 1.1rem;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+    }
+
+    .claims-title i {
+        margin-right: 10px;
+    }
+
+    .claims-content {
+        background: rgba(10, 14, 39, 0.6);
+        border: 1px solid rgba(0, 150, 255, 0.2);
+        border-radius: 8px;
+        padding: 15px;
+        overflow-x: auto;
+    }
+
+    .claims-json {
+        color: #00d4ff;
+        font-family: 'Monaco', 'Courier New', monospace;
+        font-size: 0.85rem;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        line-height: 1.6;
+    }
+
+    .error-message {
+        background: rgba(231, 76, 60, 0.1);
+        border-left: 4px solid #e74c3c;
+        padding: 15px;
+        border-radius: 8px;
+        color: #ff6b6b;
+        margin-top: 20px;
+        display: none;
+    }
+
+    .error-message.show {
+        display: block;
+    }
+
+    .loading-spinner {
+        display: none;
+        text-align: center;
+        padding: 20px;
+    }
+
+    .loading-spinner.show {
+        display: block;
+    }
+
+    .spinner {
+        border: 3px solid rgba(0, 150, 255, 0.2);
+        border-top: 3px solid #00d4ff;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    .toast-notification {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: rgba(39, 174, 96, 0.9);
+        color: white;
+        padding: 15px 25px;
+        border-radius: 8px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        display: none;
+        z-index: 1000;
+        animation: slideIn 0.3s ease;
+    }
+
+    .toast-notification.show {
+        display: block;
+    }
+
+    @keyframes slideIn {
+        from {
+            transform: translateX(400px);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 40px 20px;
+        color: #a0aab9;
+    }
+
+    .empty-state-icon {
+        font-size: 3rem;
+        margin-bottom: 15px;
+        opacity: 0.5;
+    }
+
+    .empty-state-text {
+        font-size: 1.1rem;
+    }
+
+    .token-preview {
+        background: rgba(10, 14, 39, 0.6);
+        border: 1px solid rgba(0, 150, 255, 0.2);
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 15px;
+    }
+
+    .token-preview-title {
+        color: #a0aab9;
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-bottom: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .token-preview-content {
+        color: #00d4ff;
+        font-family: 'Monaco', 'Courier New', monospace;
+        font-size: 0.8rem;
+        overflow-x: auto;
+        word-break: break-all;
+        line-height: 1.4;
+    }
+
+    @media (max-width: 768px) {
+        .jwt-header h1 {
+            font-size: 2rem;
+        }
+
+        .jwt-card {
+            padding: 20px;
+        }
+
+        .button-group {
+            flex-direction: column;
+        }
+
+        .button-group .btn {
+            width: 100%;
+        }
+
+        .detail-row {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .detail-value {
+            margin-top: 8px;
+        }
+    }
+</style>
+
+<div class="jwt-container">
+    <div class="jwt-header">
+        <h1><i class="fas fa-key"></i> Try JWT Expiry Checker Now</h1>
+        <p>Experience the power of professional JWT token analysis in your browser</p>
+    </div>
+
+    <div class="jwt-card">
+        <h2><i class="fas fa-lock-open"></i> JWT Input</h2>
+        <label for="jwtInput">Paste your JWT token below:</label>
+        <textarea id="jwtInput" class="jwt-input" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiZXhwIjoxNzA2ODI0MDU4fQ..."></textarea>
+        
+        <div class="button-group">
+            <button id="checkBtn" class="btn btn-success"><i class="fas fa-check-circle"></i> Check Expiry</button>
+            <button id="clearBtn" class="btn btn-secondary"><i class="fas fa-trash-alt"></i> Clear All</button>
+        </div>
+    </div>
+
+    <div class="loading-spinner" id="loadingSpinner">
+        <div class="spinner"></div>
+        <p style="color: #a0aab9; margin-top: 15px;">Analyzing token...</p>
+    </div>
+
+    <div class="error-message" id="errorMessage">
+        <i class="fas fa-exclamation-circle"></i> <span id="errorText"></span>
+    </div>
+
+    <div class="expiry-info-section" id="expirySection">
+        <div class="jwt-card">
+            <h2><i class="fas fa-clock"></i> JWT Expiry Details</h2>
+            
+            <div class="expiry-details">
+                <div class="detail-row">
+                    <span class="detail-label">Status:</span>
+                    <span id="statusBadge" class="status-badge"></span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Expiry Date:</span>
+                    <span class="detail-value" id="expiryDate"></span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Time:</span>
+                    <span class="time-info" id="timeText"></span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Issued At:</span>
+                    <span class="detail-value" id="issuedAt"></span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Token Preview:</span>
+                </div>
+            </div>
+
+            <div class="token-preview">
+                <div class="token-preview-title">Raw Token</div>
+                <div class="token-preview-content" id="tokenPreview"></div>
+            </div>
+
+            <div class="button-group">
+                <button id="copyResultsBtn" class="btn btn-info"><i class="fas fa-copy"></i> Copy Results</button>
+                <button id="copyTokenBtn" class="btn btn-info"><i class="fas fa-copy"></i> Copy Token</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="claims-section" id="claimsSection">
+        <div class="jwt-card">
+            <div class="claims-title"><i class="fas fa-list"></i> Token Claims</div>
+            <div class="claims-content">
+                <div class="claims-json" id="claimsJson"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="toast-notification" id="toast">
+    <i class="fas fa-check-circle"></i> <span id="toastMessage"></span>
+</div>
+
+<script>
+    const jwtInput = document.getElementById('jwtInput');
+    const checkBtn = document.getElementById('checkBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const expirySection = document.getElementById('expirySection');
+    const claimsSection = document.getElementById('claimsSection');
+    const errorMessage = document.getElementById('errorMessage');
+    const errorText = document.getElementById('errorText');
+    const loadingSpinner = document.getElementById('loadingSpinner');
+    const toast = document.getElementById('toast');
+    const toastMessage = document.getElementById('toastMessage');
+    const copyResultsBtn = document.getElementById('copyResultsBtn');
+    const copyTokenBtn = document.getElementById('copyTokenBtn');
+
+    checkBtn.addEventListener('click', checkJWT);
+    clearBtn.addEventListener('click', clearAll);
+    copyResultsBtn.addEventListener('click', copyResults);
+    copyTokenBtn.addEventListener('click', copyToken);
+
+    async function checkJWT() {
+        const token = jwtInput.value.trim();
+        
+        if (!token) {
+            showError('Please enter a JWT token');
+            return;
+        }
+
+        loadingSpinner.classList.add('show');
+        errorMessage.classList.remove('show');
+        expirySection.classList.remove('show');
+        claimsSection.classList.remove('show');
+
+        try {
+            const response = await fetch('{% url "jwtchecker:check_jwt" %}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify({ token })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                showError(data.error || 'Error processing token');
+                return;
+            }
+
+            displayExpiryInfo(data);
+            displayClaims(data.all_claims);
+            expirySection.classList.add('show');
+            claimsSection.classList.add('show');
+        } catch (error) {
+            showError('Network error: ' + error.message);
+        } finally {
+            loadingSpinner.classList.remove('show');
+        }
+    }
+
+    function displayExpiryInfo(data) {
+        const statusBadge = document.getElementById('statusBadge');
+        const expiryDate = document.getElementById('expiryDate');
+        const timeText = document.getElementById('timeText');
+        const issuedAt = document.getElementById('issuedAt');
+        const tokenPreview = document.getElementById('tokenPreview');
+
+        statusBadge.textContent = data.status;
+        statusBadge.className = 'status-badge ' + (data.is_expired ? 'status-expired' : 'status-valid');
+        expiryDate.textContent = data.expiry_date;
+        timeText.textContent = data.time_text;
+        issuedAt.textContent = data.issued_at;
+        tokenPreview.textContent = jwtInput.value.substring(0, 150) + (jwtInput.value.length > 150 ? '...' : '');
+    }
+
+    function displayClaims(claims) {
+        const claimsJson = document.getElementById('claimsJson');
+        claimsJson.textContent = JSON.stringify(claims, null, 2);
+    }
+
+    function clearAll() {
+        jwtInput.value = '';
+        expirySection.classList.remove('show');
+        claimsSection.classList.remove('show');
+        errorMessage.classList.remove('show');
+        jwtInput.focus();
+    }
+
+    function copyResults() {
+        const text = `JWT Status: ${document.getElementById('statusBadge').textContent}
+Expiry Date: ${document.getElementById('expiryDate').textContent}
+Time: ${document.getElementById('timeText').textContent}
+Issued At: ${document.getElementById('issuedAt').textContent}`;
+        
+        navigator.clipboard.writeText(text).then(() => {
+            showToast('Results copied to clipboard!');
+        }).catch(() => {
+            showError('Failed to copy to clipboard');
+        });
+    }
+
+    function copyToken() {
+        const token = jwtInput.value.trim();
+        navigator.clipboard.writeText(token).then(() => {
+            showToast('Token copied to clipboard!');
+        }).catch(() => {
+            showError('Failed to copy to clipboard');
+        });
+    }
+
+    function showError(message) {
+        errorText.textContent = message;
+        errorMessage.classList.add('show');
+    }
+
+    function showToast(message) {
+        toastMessage.textContent = message;
+        toast.classList.add('show');
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 3000);
+    }
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    // Check for token in URL parameters
+    function checkURLToken() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const tokenFromURL = urlParams.get('token');
+        
+        if (tokenFromURL) {
+            jwtInput.value = tokenFromURL;
+            // Auto-check the token
+            setTimeout(() => {
+                checkJWT();
+            }, 500);
+        } else {
+            jwtInput.focus();
+        }
+    }
+
+    // Run on page load
+    checkURLToken();
+</script>
+{% endblock %}

@@ -1,0 +1,204 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}GeniusGsm Blog - Cybersecurity Tips & Tutorials{% endblock %}
+
+{% block meta_description %}Read articles about cybersecurity, online security tools, IP lookup, phishing detection, and more on the GeniusGsm blog.{% endblock %}
+
+{% block meta_keywords %}cybersecurity blog, security tutorials, IP lookup guide, phishing detection, online security tips{% endblock %}
+
+{% block og_title %}GeniusGsm Blog - Cybersecurity Articles{% endblock %}
+
+{% block og_description %}Expert articles and tutorials about cybersecurity and online security tools.{% endblock %}
+
+{% block canonical_url %}https://geniusgsm.com/blog/{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <!-- Blog Header -->
+    <div class="row mb-5">
+        <div class="col-lg-8 mx-auto text-center">
+            <h1 class="display-4 fw-bold mb-3" style="color: #fff;">📝 GeniusGsm Blog</h1>
+            <p class="lead text-muted">Expert insights on cybersecurity, online safety, and digital intelligence tools</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Featured Posts -->
+        {% if featured_posts %}
+        <div class="col-lg-12 mb-5">
+            <h2 class="mb-4" style="color: #fff;">⭐ Featured Articles</h2>
+            <div class="row">
+                {% for post in featured_posts %}
+                <div class="col-md-4 mb-4">
+                    <div class="card bg-dark border-warning h-100" style="transition: 0.3s;">
+                        {% if post.featured_image %}
+                        <img src="{{ post.featured_image.url }}" class="card-img-top" alt="{{ post.title }}">
+                        {% else %}
+                        <div class="bg-secondary" style="height: 200px; display: flex; align-items: center; justify-content: center;">
+                            <span style="font-size: 48px;">📄</span>
+                        </div>
+                        {% endif %}
+                        <div class="card-body">
+                            {% if post.category %}
+                            <span class="badge bg-info mb-2">{{ post.category.icon }} {{ post.category.name }}</span>
+                            {% endif %}
+                            <h5 class="card-title text-warning">{{ post.title }}</h5>
+                            <p class="card-text text-muted small">{{ post.summary|truncatewords:20 }}</p>
+                        </div>
+                        <div class="card-footer bg-transparent border-top border-secondary">
+                            <small class="text-muted">{{ post.published_date|date:"M d, Y" }} • {{ post.read_time }} min read • 👁 {{ post.views }}</small>
+                        </div>
+                        <a href="{{ post.get_absolute_url }}" class="btn btn-sm btn-warning w-100">Read More →</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Blog Posts List -->
+        <div class="col-lg-9">
+            <h2 class="mb-4" style="color: #fff;">Latest Articles</h2>
+            
+            {% if posts %}
+                {% for post in posts %}
+                <article class="card bg-dark border-secondary mb-4 post-card">
+                    <div class="row g-0">
+                        {% if post.featured_image %}
+                        <div class="col-md-3">
+                            <img src="{{ post.featured_image.url }}" class="img-fluid rounded-start" alt="{{ post.title }}">
+                        </div>
+                        {% endif %}
+                        <div class="col-md-{% if post.featured_image %}9{% else %}12{% endif %}">
+                            <div class="card-body">
+                                {% if post.category %}
+                                <div class="mb-2">
+                                    <a href="{% url 'blog:category' post.category.slug %}" class="badge bg-info text-decoration-none">
+                                        {{ post.category.icon }} {{ post.category.name }}
+                                    </a>
+                                </div>
+                                {% endif %}
+                                
+                                <h3 class="card-title">
+                                    <a href="{{ post.get_absolute_url }}" class="text-warning text-decoration-none">
+                                        {{ post.title }}
+                                    </a>
+                                </h3>
+                                
+                                <p class="card-text text-muted">{{ post.summary }}</p>
+                                
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted">
+                                        By <strong>{{ post.author }}</strong> on {{ post.published_date|date:"M d, Y" }} 
+                                        • {{ post.read_time }} min read 
+                                        • 👁 {{ post.views }} views
+                                    </small>
+                                    <a href="{{ post.get_absolute_url }}" class="btn btn-sm btn-warning">Read More →</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+                {% endfor %}
+
+                <!-- Pagination -->
+                {% if is_paginated %}
+                <nav aria-label="Blog pagination" class="mt-5">
+                    <ul class="pagination justify-content-center">
+                        {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1">« First</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">‹ Previous</a>
+                        </li>
+                        {% endif %}
+
+                        {% for num in page_obj.paginator.page_range %}
+                        <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+                            <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                        </li>
+                        {% endfor %}
+
+                        {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next ›</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Last »</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
+            {% else %}
+                <div class="alert alert-info">
+                    <h4>No articles found</h4>
+                    <p>Check back soon for new content!</p>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-3">
+            <!-- Search -->
+            <div class="card bg-dark border-secondary mb-4">
+                <div class="card-body">
+                    <h5 class="card-title text-warning mb-3">🔍 Search</h5>
+                    <form method="get" class="input-group">
+                        <input type="text" class="form-control bg-secondary border-secondary text-white" 
+                               name="q" placeholder="Search articles..." value="{{ request.GET.q }}">
+                        <button class="btn btn-warning" type="submit">Search</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Categories -->
+            {% if categories %}
+            <div class="card bg-dark border-secondary mb-4">
+                <div class="card-body">
+                    <h5 class="card-title text-warning mb-3">📂 Categories</h5>
+                    <div class="list-group list-group-flush bg-dark">
+                        {% for category in categories %}
+                        <a href="{% url 'blog:category' category.slug %}" class="list-group-item list-group-item-dark">
+                            {{ category.icon }} {{ category.name }}
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Subscribe -->
+            <div class="card bg-dark border-warning mb-4">
+                <div class="card-body">
+                    <h5 class="card-title text-warning mb-3">📧 Subscribe</h5>
+                    <p class="card-text small text-muted">Get the latest articles delivered to your inbox</p>
+                    <form>
+                        <input type="email" class="form-control form-control-sm bg-secondary border-secondary text-white mb-2" 
+                               placeholder="Your email" required>
+                        <button class="btn btn-warning btn-sm w-100" type="submit">Subscribe</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .post-card {
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .post-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(255, 193, 7, 0.2);
+    }
+    .card {
+        transition: 0.3s;
+    }
+    .card:hover img {
+        opacity: 0.8;
+    }
+</style>
+{% endblock %}
