@@ -129,4 +129,76 @@
         <priority>0.8</priority>
     </url>
 
+    <!-- CRYPTO & HASH TOOLS CATEGORY -->
+    
+    <!-- Tool 14: Hash Tools - Generate and verify hash values (MD5, SHA-1, SHA-256, SHA-512) -->
+    <url>
+        <loc>https://geniusgsm.com/hashtools/</loc>
+        <lastmod>2026-04-19</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+
+    <!-- DOMAIN & DNS TOOLS CATEGORY -->
+    
+    <!-- Tool 15: DNS Tools - Query DNS records and check nameservers -->
+    <url>
+        <loc>https://geniusgsm.com/dnstools/</loc>
+        <lastmod>2026-04-19</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+
+    <!-- Tool 16: Domain Checker - Check domain availability and WHOIS info -->
+    <url>
+        <loc>https://geniusgsm.com/domainchecker/</loc>
+        <lastmod>2026-04-19</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+
+    <!-- VERIFICATION TOOLS CATEGORY -->
+    
+    <!-- Tool 17: Email Verifier - Verify email addresses and check validity -->
+    <url>
+        <loc>https://geniusgsm.com/emailverifier/</loc>
+        <lastmod>2026-04-19</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+
+    <!-- Tool 18: SSL Checker - Check SSL certificates and security -->
+    <url>
+        <loc>https://geniusgsm.com/sslchecker/</loc>
+        <lastmod>2026-04-19</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+
+    <!-- Tool 19: Password Checker - Check password strength and security -->
+    <url>
+        <loc>https://geniusgsm.com/passwordchecker/</loc>
+        <lastmod>2026-04-19</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+
+    <!-- Tool 20: Geolocation - Get geolocation and location information -->
+    <url>
+        <loc>https://geniusgsm.com/geolocation/</loc>
+        <lastmod>2026-04-19</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+
+    <!-- CONTENT CATEGORY -->
+    
+    <!-- Blog - Read articles and tutorials -->
+    <url>
+        <loc>https://geniusgsm.com/blog/</loc>
+        <lastmod>2026-04-19</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+    </url>
+
 </urlset>

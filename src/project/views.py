@@ -132,7 +132,7 @@ def sitemap_xml(request):
     <!-- Homepage -->
     <url>
         <loc>https://geniusgsm.com/</loc>
-        <lastmod>2026-04-17</lastmod>
+        <lastmod>2026-04-19</lastmod>
         <changefreq>weekly</changefreq>
         <priority>1.0</priority>
     </url>
@@ -142,7 +142,7 @@ def sitemap_xml(request):
     <!-- Tool 1: IP Lookup - Search IP address geolocation -->
     <url>
         <loc>https://geniusgsm.com/ip/lookup/</loc>
-        <lastmod>2026-04-17</lastmod>
+        <lastmod>2026-04-19</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.9</priority>
     </url>
@@ -150,7 +150,7 @@ def sitemap_xml(request):
     <!-- Tool 2: Abuse Check - Check IP reputation and blacklist status -->
     <url>
         <loc>https://geniusgsm.com/abuse/lookup/</loc>
-        <lastmod>2026-04-17</lastmod>
+        <lastmod>2026-04-19</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.9</priority>
     </url>
@@ -158,7 +158,7 @@ def sitemap_xml(request):
     <!-- Tool 5: IP Bulk - Process multiple IP addresses at once -->
     <url>
         <loc>https://geniusgsm.com/ipbulk/groups/</loc>
-        <lastmod>2026-04-17</lastmod>
+        <lastmod>2026-04-19</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
@@ -168,7 +168,7 @@ def sitemap_xml(request):
     <!-- Tool 8: URL Analyzer - Analyze links for phishing and safety -->
     <url>
         <loc>https://geniusgsm.com/urlanalyzer/</loc>
-        <lastmod>2026-04-17</lastmod>
+        <lastmod>2026-04-19</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.9</priority>
     </url>
@@ -176,7 +176,7 @@ def sitemap_xml(request):
     <!-- Tool 9: Short Link Expander - Expand shortened URLs (bit.ly, tinyurl) -->
     <url>
         <loc>https://geniusgsm.com/shortener/</loc>
-        <lastmod>2026-04-17</lastmod>
+        <lastmod>2026-04-19</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
@@ -184,7 +184,7 @@ def sitemap_xml(request):
     <!-- Tool 11: Link Preview - Preview website content without visiting -->
     <url>
         <loc>https://geniusgsm.com/preview/</loc>
-        <lastmod>2026-04-17</lastmod>
+        <lastmod>2026-04-19</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
@@ -192,7 +192,7 @@ def sitemap_xml(request):
     <!-- Tool 10: Phishing Detector - Detect phishing and malicious websites -->
     <url>
         <loc>https://geniusgsm.com/phishing/</loc>
-        <lastmod>2026-04-17</lastmod>
+        <lastmod>2026-04-19</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.9</priority>
     </url>
@@ -202,7 +202,7 @@ def sitemap_xml(request):
     <!-- Tool 6: Random Lines - Shuffle and randomize text lines -->
     <url>
         <loc>https://geniusgsm.com/randomlines/</loc>
-        <lastmod>2026-04-17</lastmod>
+        <lastmod>2026-04-19</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.7</priority>
     </url>
@@ -210,7 +210,7 @@ def sitemap_xml(request):
     <!-- Tool 7: Duplicate Counter - Count and remove duplicate lines -->
     <url>
         <loc>https://geniusgsm.com/duplicatecounter/</loc>
-        <lastmod>2026-04-17</lastmod>
+        <lastmod>2026-04-19</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.7</priority>
     </url>
@@ -220,7 +220,7 @@ def sitemap_xml(request):
     <!-- Tool 3: JWT Checker - Parse and analyze JWT tokens -->
     <url>
         <loc>https://geniusgsm.com/jwtchecker/</loc>
-        <lastmod>2026-04-17</lastmod>
+        <lastmod>2026-04-19</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
@@ -228,7 +228,7 @@ def sitemap_xml(request):
     <!-- Tool 4: Temp Mail - Generate temporary email addresses -->
     <url>
         <loc>https://geniusgsm.com/tempmail/</loc>
-        <lastmod>2026-04-17</lastmod>
+        <lastmod>2026-04-19</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
@@ -238,9 +238,93 @@ def sitemap_xml(request):
     <!-- Tool 12: Speed Test - Measure download, upload and ping speed -->
     <url>
         <loc>https://geniusgsm.com/speedtest/</loc>
-        <lastmod>2026-04-17</lastmod>
+        <lastmod>2026-04-19</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
+    </url>
+
+    <!-- Tool 13: Text Comparator - Compare texts and files for differences -->
+    <url>
+        <loc>https://geniusgsm.com/comparator/</loc>
+        <lastmod>2026-04-19</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+        <image:image>
+            <image:loc>https://geniusgsm.com/static/img/comparator-icon.png</image:loc>
+            <image:title>Text & File Comparator Tool</image:title>
+        </image:image>
+    </url>
+
+    <!-- CRYPTO & HASH TOOLS CATEGORY -->
+    
+    <!-- Tool 14: Hash Tools - Generate and verify hash values (MD5, SHA-1, SHA-256, SHA-512) -->
+    <url>
+        <loc>https://geniusgsm.com/hashtools/</loc>
+        <lastmod>2026-04-19</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+
+    <!-- DOMAIN & DNS TOOLS CATEGORY -->
+    
+    <!-- Tool 15: DNS Tools - Query DNS records and check nameservers -->
+    <url>
+        <loc>https://geniusgsm.com/dnstools/</loc>
+        <lastmod>2026-04-19</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+
+    <!-- Tool 16: Domain Checker - Check domain availability and WHOIS info -->
+    <url>
+        <loc>https://geniusgsm.com/domainchecker/</loc>
+        <lastmod>2026-04-19</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+
+    <!-- VERIFICATION TOOLS CATEGORY -->
+    
+    <!-- Tool 17: Email Verifier - Verify email addresses and check validity -->
+    <url>
+        <loc>https://geniusgsm.com/emailverifier/</loc>
+        <lastmod>2026-04-19</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+
+    <!-- Tool 18: SSL Checker - Check SSL certificates and security -->
+    <url>
+        <loc>https://geniusgsm.com/sslchecker/</loc>
+        <lastmod>2026-04-19</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+
+    <!-- Tool 19: Password Checker - Check password strength and security -->
+    <url>
+        <loc>https://geniusgsm.com/passwordchecker/</loc>
+        <lastmod>2026-04-19</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+
+    <!-- Tool 20: Geolocation - Get geolocation and location information -->
+    <url>
+        <loc>https://geniusgsm.com/geolocation/</loc>
+        <lastmod>2026-04-19</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+
+    <!-- CONTENT CATEGORY -->
+    
+    <!-- Blog - Read articles and tutorials -->
+    <url>
+        <loc>https://geniusgsm.com/blog/</loc>
+        <lastmod>2026-04-19</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
     </url>
 
 </urlset>"""
