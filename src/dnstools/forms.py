@@ -6,7 +6,7 @@ class DNSQueryForm(forms.Form):
     domain = forms.CharField(
         widget=forms.TextInput(attrs={
             'class': 'form-control',
-            'placeholder': 'أدخل اسم الدومين (مثال: google.com)',
+            'placeholder': 'Enter domain name (e.g., google.com)...',
             'id': 'domainInput'
         }),
         max_length=255

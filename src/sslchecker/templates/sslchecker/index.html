@@ -1,26 +1,26 @@
 {% extends 'base.html' %}
 
-{% block title %}فاحص SSL - GeniusGsm{% endblock %}
+{% block title %}SSL Checker - GeniusGsm{% endblock %}
 
 {% block content %}
 <div style="max-width: 800px; margin: 0 auto; padding: 20px;">
-    <h1 style="color: #333; margin-bottom: 30px;">🔒 فاحص شهادة SSL</h1>
+    <h1 style="color: #333; margin-bottom: 30px;">🔒 SSL Checker Certificate</h1>
     
     <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; border-radius: 15px; padding: 30px; margin-bottom: 30px;">
         <form method="post">
             {% csrf_token %}
             {{ form.domain }}
-            <button type="submit" class="btn btn-light mt-3" style="width: 100%; color: #f5576c; font-weight: bold;">فحص</button>
+            <button type="submit" class="btn btn-light mt-3" style="width: 100%; color: #f5576c; font-weight: bold;">Check</button>
         </form>
     </div>
     
     {% if result %}
     <div style="background: white; border-radius: 10px; padding: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
         {% if result.valid %}
-        <h5 style="color: #4CAF50;">✅ الشهادة صحيحة</h5>
+        <h5 style="color: # #4CAF50;">  </h5>
         <p><strong>المُصدر:</strong> {{ result.issuer }}</p>
         {% else %}
-        <h5 style="color: #f44336;">❌ خطأ</h5>
+        <h5 style="color: # #f44336;"> </h5>
         <p>{{ result.error }}</p>
         {% endif %}
     </div>

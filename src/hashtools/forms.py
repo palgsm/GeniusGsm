@@ -20,7 +20,7 @@ class HashForm(forms.Form):
         widget=forms.Textarea(attrs={
             'class': 'form-control',
             'rows': 4,
-            'placeholder': 'أدخل النص للتجزئة...',
+            'placeholder': 'Enter text to hash...',
             'id': 'inputText'
         }),
         max_length=5000
@@ -49,7 +49,7 @@ class EncodingForm(forms.Form):
         widget=forms.Textarea(attrs={
             'class': 'form-control',
             'rows': 4,
-            'placeholder': 'أدخل النص للترميز...',
+            'placeholder': 'Enter text to encode...',
             'id': 'inputText2'
         }),
         max_length=5000

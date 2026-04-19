@@ -10,11 +10,11 @@ class Command(BaseCommand):
         parser.add_argument(
             '--force',
             action='store_true',
-            help='فرض الحذف بدون تأكيد',
+            help='فرض الDelete بدون تأكيد',
         )
 
     def handle(self, *args, **options):
-        # البحث عن صناديق منتهية الصلاحية
+        # # Search    
         expired_inboxes = TempInbox.objects.filter(
             expires_at__lt=timezone.now()
         )
@@ -32,9 +32,9 @@ class Command(BaseCommand):
         if options['force']:
             expired_inboxes.delete()
             self.stdout.write(
-                self.style.SUCCESS(f'تم حذف {count} صندوق بريد')
+                self.style.SUCCESS(f'تم Delete {count} صندوق بريد')
             )
         else:
             self.stdout.write(
-                'استخدم --force لتأكيد الحذف 🗑️'
+                'استخدم --force لتأكيد الDelete 🗑️'
             )

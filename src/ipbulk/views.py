@@ -13,7 +13,7 @@ from geoip2.webservice import Client
 
 
 class IPGroupListView(ListView):
-    """قائمة مجموعات IP"""
+    """List of IP groups"""
     model = IPGroup
     template_name = 'ipbulk/group_list.html'
     context_object_name = 'groups'
@@ -21,7 +21,7 @@ class IPGroupListView(ListView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # إضافة عدد النطاقات والـ IPs لكل مجموعة
+        # Add count of ranges and IPs for each group
         for group in context['groups']:
             group.ranges_count = group.ranges.count()
             group.total_ips = group.get_total_ips()
@@ -29,7 +29,7 @@ class IPGroupListView(ListView):
 
 
 class IPGroupDetailView(DetailView):
-    """تفاصيل مجموعة IP"""
+    """IP group details"""
     model = IPGroup
     template_name = 'ipbulk/group_detail.html'
     context_object_name = 'group'
@@ -43,30 +43,30 @@ class IPGroupDetailView(DetailView):
 
 
 class IPGroupCreateView(CreateView):
-    """إنشاء مجموعة جديدة"""
+    """Create new IP group"""
     model = IPGroup
     form_class = IPGroupForm
     template_name = 'ipbulk/group_form.html'
     success_url = reverse_lazy('ipbulk:group_list')
     
     def form_valid(self, form):
-        messages.success(self.request, f"تم إنشاء المجموعة '{form.cleaned_data['name']}' بنجاح")
+        messages.success(self.request, f"Successfully created group '{form.cleaned_data['name']}' successfully")
         return super().form_valid(form)
 
 
 class IPGroupDeleteView(DeleteView):
-    """حذف مجموعة"""
+    """Delete IP group"""
     model = IPGroup
     template_name = 'ipbulk/group_confirm_delete.html'
     success_url = reverse_lazy('ipbulk:group_list')
     
     def delete(self, request, *args, **kwargs):
-        messages.success(request, "تم حذف المجموعة بنجاح")
+        messages.success(request, "تم Delete المجموعة successfully")
         return super().delete(request, *args, **kwargs)
 
 
 def bulk_import_view(request):
-    """استيراد مجموعة من IP addresses"""
+    """Import IP addresses"""
     if request.method == 'POST':
         form = BulkIPImportForm(request.POST, request.FILES)
         if form.is_valid():
@@ -74,10 +74,10 @@ def bulk_import_view(request):
             country = form.cleaned_data['country']
             format_type = form.cleaned_data['format_type']
             
-            # الحصول على البيانات
+            # Get data
             cidrs, errors = form.get_import_data()
             
-            # إنشاء سجل الاستيراد
+            # Create import log
             import_log = BulkImportLog.objects.create(
                 file_name=request.FILES.get('file', 'manual_input').name if request.FILES.get('file') else 'manual_input',
                 group=group,
@@ -85,7 +85,7 @@ def bulk_import_view(request):
                 status='processing'
             )
             
-            # استيراد البيانات
+            # Import data
             successful = 0
             failed_items = []
             
@@ -100,27 +100,27 @@ def bulk_import_view(request):
                 except Exception as e:
                     failed_items.append(f"{cidr}: {str(e)}")
             
-            # إضافة الأخطاء من الصيغة
+            # Add validation errors
             for line_num, line_data, error in errors:
                 failed_items.append(f"Line {line_num} ({line_data}): {error}")
             
-            # تحديث السجل
+            # Update log
             import_log.successful_imports = successful
             import_log.failed_imports = len(errors)
-            import_log.errors_log = "\n".join(failed_items[:100])  # أول 100 خطأ
+            import_log.errors_log = "\n".join(failed_items[:100])  # First 100 errors
             import_log.status = 'completed'
             import_log.completed_at = timezone.now()
             import_log.save()
             
             messages.success(
                 request,
-                f"تم استيراد {successful} نطاق IP بنجاح من أصل {import_log.total_records} في البلد {dict(IPRange.COUNTRY_CHOICES).get(country, 'Unknown')}"
+                f"Successfully imported {successful} نطاق IP successfully من أصل {import_log.total_records} in country {dict(IPRange.COUNTRY_CHOICES).get(country, 'Unknown')}"
             )
             
             if failed_items:
                 messages.warning(
                     request,
-                    f"فشل استيراد {len(failed_items)} نطاق. تحقق من الصيغة"
+                    f"Failed to import {len(failed_items)} نطاق. Check format"
                 )
             
             return redirect('ipbulk:group_detail', pk=group.pk)
@@ -131,7 +131,7 @@ def bulk_import_view(request):
 
 
 def check_ip_view(request):
-    """التحقق من وجود IP في المجموعات"""
+    """Check if IP exists in groups"""
     results = None
     form = CheckIPForm()
     
@@ -160,7 +160,7 @@ def check_ip_view(request):
 
 
 def country_ranges_view(request):
-    """عرض نطاقات IP حسب اختيار البلد"""
+    """Display IP ranges by country"""
     ranges = None
     selected_country = None
     selected_group = None
@@ -168,17 +168,17 @@ def country_ranges_view(request):
     total_ips = 0
     form = CountryFilterForm(request.POST or request.GET)
     
-    # التحقق من البيانات عند الضغط على البحث
+    # Validate data when searching
     if (request.method == 'POST' or request.GET.get('group')) and form.is_valid():
         selected_group = form.cleaned_data.get('group')
         selected_country = form.cleaned_data.get('country')
         
         if selected_group:
             if selected_country:
-                # فلتر حسب اختيار البلد
+                # Filter by selected country
                 ranges = selected_group.ranges.filter(country=selected_country).order_by('-created_at')
             else:
-                # عرض جميع النطاقات إذا لم يتم اختيار بلد معين
+                # # Show        
                 ranges = selected_group.ranges.all().order_by('-created_at')
             
             if ranges:
@@ -197,7 +197,7 @@ def country_ranges_view(request):
 
 
 def add_ip_range_view(request, group_id):
-    """إضافة نطاق IP جديد إلى مجموعة"""
+    """Add نطاق IP جديد إلى مجموعة"""
     group = get_object_or_404(IPGroup, pk=group_id)
     
     if request.method == 'POST':
@@ -207,7 +207,7 @@ def add_ip_range_view(request, group_id):
             ip_range.group = group
             try:
                 ip_range.save()
-                messages.success(request, f"تم إضافة النطاق '{ip_range.cidr}' بنجاح")
+                messages.success(request, f"تم Add النطاق '{ip_range.cidr}' successfully")
                 return redirect('ipbulk:group_detail', pk=group.pk)
             except Exception as e:
                 messages.error(request, f"خطأ: {str(e)}")
@@ -221,13 +221,13 @@ def add_ip_range_view(request, group_id):
 
 
 def delete_ip_range_view(request, pk):
-    """حذف نطاق IP"""
+    """Delete نطاق IP"""
     ip_range = get_object_or_404(IPRange, pk=pk)
     group_id = ip_range.group.id
     
     if request.method == 'POST':
         ip_range.delete()
-        messages.success(request, "تم حذف النطاق بنجاح")
+        messages.success(request, "تم Delete النطاق successfully")
         return redirect('ipbulk:group_detail', pk=group_id)
     
     return render(request, 'ipbulk/range_confirm_delete.html', {
@@ -238,11 +238,11 @@ def delete_ip_range_view(request, pk):
 def get_ip_geolocation(ip_address):
     """
     احصل على موقع IP من GeoIP2 API (MaxMind)
-    تدعم البيانات الحقيقية والدقيقة
+    تدعم Data الحقيقية والدقيقة
     """
     try:
-        # استخدم GeoIP2 API - تحتاج إلى حساب مجاني
-        # أو استخدم ip-api.com كبديل
+        # #  GeoIP2 API -    
+        # #   ip-api.com 
         response = requests.get(
             f'http://ip-api.com/json/{ip_address}?fields=status,country,countryCode,city,region,isp',
             timeout=5
@@ -264,7 +264,7 @@ def get_ip_geolocation(ip_address):
 
 
 def bulk_ip_lookup_view(request):
-    """ابحث عن عناوين IP متعددة مع معلومات الموقع الجغرافي من GeoIP2"""
+    """اSearch عن عناوين IP متعددة مع معلومات الموقع الجغرافي من GeoIP2"""
     results = None
     found_count = 0
     not_found_count = 0
@@ -288,7 +288,7 @@ def bulk_ip_lookup_view(request):
                     'isp': None
                 }
                 
-                # البحث عن معلومات IP من GeoIP2
+                # # Search   IP  GeoIP2
                 geo_data = get_ip_geolocation(ip_str)
                 if geo_data:
                     ip_result['found'] = True
@@ -303,7 +303,7 @@ def bulk_ip_lookup_view(request):
                 
                 results.append(ip_result)
             
-            # حساب نسبة النجاح
+            # #   
             total = len(results)
             if total > 0:
                 success_rate = round((found_count / total) * 100)

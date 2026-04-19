@@ -392,24 +392,24 @@ async function performRealSpeedTest() {
 }
 
 async function measureDownloadSpeed() {
-  // قياس التحميل بطريقة دقيقة: تحميل بيانات عشوائية بدون تخزين مؤقت
+  // // Measure download speed accurately:      
   let totalBytes = 0;
   let totalTime = 0;
   let successfulTests = 0;
   
-  // محاول متعددة لحساب المتوسط
+  // Multiple attempts to calculate average
   for (let i = 0; i < 3; i++) {
     try {
       const testSize = 1024 * 1024; // 1MB
       const startTime = performance.now();
       
-      // إنشاء بيانات عشوائية وتحميلها إلى السيرفر
+      // Create random data and upload to server
       const testData = new Uint8Array(testSize);
       for (let j = 0; j < testSize; j++) {
         testData[j] = Math.floor(Math.random() * 256);
       }
       
-      // إرسال البيانات وحساب وقت الرد
+      // Send data and measure response time
       const response = await fetch('/speedtest/api/download/', {
         method: 'POST',
         body: testData,
@@ -420,7 +420,7 @@ async function measureDownloadSpeed() {
       const timeSeconds = (endTime - startTime) / 1000;
       
       if (response.ok && timeSeconds > 0) {
-        // حساب السرعة: نحسب بناءً على وقت الإرسال والرد
+        // // Calculate speed:      
         totalBytes += testSize;
         totalTime += timeSeconds;
         successfulTests++;

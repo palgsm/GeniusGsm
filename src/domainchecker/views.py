@@ -83,8 +83,8 @@ def domainchecker_index(request):
         'form': form,
         'result': result,
         'history': history,
-        'page_title': 'فاحص سمعة الدومين',
-        'page_description': 'تحقق من معلومات الدومين والـ WHOIS و SSL والـ DNS',
+        'page_title': 'فاحص سمعة Domain',
+        'page_description': 'Verify من معلومات Domain والـ WHOIS و SSL والـ DNS',
     }
     
     return render(request, 'domainchecker/index.html', context)

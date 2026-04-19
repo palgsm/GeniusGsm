@@ -1,5 +1,5 @@
 """
-API views للحصول على معلومات الجلسة والإحصائيات في الوقت الفعلي
+API views للحصول على معلومات الجلسة والإحصائيات في Time الفعلي
 """
 from django.http import JsonResponse
 from django.views.decorators.http import require_GET
@@ -16,10 +16,10 @@ def session_info(request):
     الحصول على معلومات الجلسة الحالية والـ Token
     """
     session_key = request.session.session_key
-    session_age = request.session.get_expiry_age()  # الوقت المتبقي للجلسة بالثواني
+    session_age = request.session.get_expiry_age()  # # Time   
     session_timeout_minutes = settings.SESSION_COOKIE_AGE // 60
     
-    # حساب وقت انتهاء الجلسة
+    # #    
     expiry_time = datetime.now() + timedelta(seconds=session_age)
     
     return JsonResponse({
@@ -44,7 +44,7 @@ def dashboard_stats(request):
         .order_by('-created_at')[:10]
     )
     
-    # تحويل التواريخ إلى نص
+    # #    
     for report in recent_reports:
         report['created_at'] = report['created_at'].isoformat()
     
@@ -59,7 +59,7 @@ def dashboard_stats(request):
 @require_GET
 def token_status(request):
     """
-    التحقق من حالة التوكن والجلسة
+    الVerify من حالة التوكن والجلسة
     """
     is_authenticated = request.user.is_authenticated
     session_key = request.session.session_key

@@ -12,7 +12,7 @@ def check_password_strength(password):
     if len(password) >= 8:
         score += 1
     else:
-        feedback.append('طول قصير (أقل من 8 أحرف)')
+        feedback.append('Short length (less than 8 characters)')
     
     if re.search(r'[a-z]', password):
         score += 1
@@ -21,14 +21,14 @@ def check_password_strength(password):
     if re.search(r'\d', password):
         score += 1
     else:
-        feedback.append('بدون أرقام')
+        feedback.append('No numbers')
     
     if re.search(r'[!@#$%^&*]', password):
         score += 1
     else:
-        feedback.append('بدون رموز خاصة')
+        feedback.append('No special characters')
     
-    strength = ['ضعيفة جداً', 'ضعيفة', 'متوسطة', 'قوية', 'قوية جداً', 'قوية جداً'][min(score, 5)]
+    strength = ['Very Weak', 'Weak', 'Fair', 'Good', 'Strong', 'Very Strong'][min(score, 5)]
     
     return {'strength': strength, 'score': score, 'feedback': feedback}
 

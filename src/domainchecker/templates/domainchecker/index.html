@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}فاحص سمعة الدومين - GeniusGsm{% endblock %}
+{% block title %}فاحص سمعة Domain - GeniusGsm{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -25,17 +25,17 @@
 
 {% block content %}
 <div class="domain-container">
-    <h1 style="color: #333; margin-bottom: 30px;">🏢 فاحص سمعة الدومين</h1>
+    <h1 style="color: # #333; margin-bottom: 30px;">   Domain</h1>
     
     <div class="check-card">
-        <h3 style="margin-bottom: 20px;">🔍 تحقق من الدومين</h3>
+        <h3 style="margin-bottom: 20px;">🔍 Verify من Domain</h3>
         <form method="post">
             {% csrf_token %}
             <div class="form-group mb-3">
                 {{ form.domain }}
             </div>
             <button type="submit" class="btn btn-light" style="color: #667eea; font-weight: bold; width: 100%;">
-                فحص الدومين
+                Check Domain
             </button>
         </form>
     </div>
@@ -43,14 +43,14 @@
     {% if result %}
         {% if result.success %}
         <div class="result-section">
-            <h4 style="color: #333; margin-bottom: 20px;">✅ نتائج الفحص</h4>
+            <h4 style="color: # #333; margin-bottom: 20px;"> Results Check</h4>
             
             {% if result.whois %}
             <div class="info-item mb-3">
                 <strong>📋 معلومات WHOIS:</strong>
                 <div style="margin-top: 10px; font-size: 13px;">
                     <p>المسجل: {{ result.whois.registrar }}</p>
-                    <p>تاريخ الإنشاء: {{ result.whois.creation_date }}</p>
+                    <p>تاريخ الCreate: {{ result.whois.creation_date }}</p>
                     <p>انتهاء الصلاحية: {{ result.whois.expiration_date }}</p>
                 </div>
             </div>
@@ -58,7 +58,7 @@
             
             {% if result.dns %}
             <div class="info-item mb-3">
-                <strong>🌐 سجلات DNS:</strong>
+                <strong>🌐 DNS Records:</strong>
                 <div style="margin-top: 10px; font-size: 13px;">
                     {% for ip in result.dns %}
                     <p>{{ ip }}</p>
@@ -69,14 +69,14 @@
             
             {% if result.ssl %}
             <div class="info-item">
-                <strong>🔒 شهادة SSL:</strong>
+                <strong>🔒 SSL Certificate:</strong>
                 <p style="margin-top: 10px; font-size: 13px;">موجودة وصالحة</p>
             </div>
             {% endif %}
         </div>
         {% else %}
         <div class="result-section" style="border-left: 4px solid #f44336;">
-            <h5 style="color: #f44336;">❌ خطأ:</h5>
+            <h5 style="color: # #f44336;"> :</h5>
             <p>{{ result.error }}</p>
         </div>
         {% endif %}
@@ -84,7 +84,7 @@
     
     {% if history %}
     <div class="result-section" style="margin-top: 30px;">
-        <h4 style="color: #333; margin-bottom: 15px;">📜 السجل الأخير</h4>
+        <h4 style="color: # #333; margin-bottom: 15px;"> History </h4>
         <table class="table table-sm">
             <tbody>
                 {% for item in history %}

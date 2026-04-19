@@ -78,8 +78,8 @@ def dnstools_index(request):
         'form': form,
         'result': result,
         'history': history,
-        'page_title': 'أدوات DNS Lookup',
-        'page_description': 'استعلم عن سجلات DNS للدومين (A, AAAA, MX, NS, SOA, CNAME, TXT)',
+        'page_title': 'DNS Lookup Tools',
+        'page_description': 'Query DNS records for a domain (A, AAAA, MX, NS, SOA, CNAME, TXT)',
     }
     
     return render(request, 'dnstools/index.html', context)

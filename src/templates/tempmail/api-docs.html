@@ -320,7 +320,7 @@
 
     <p class="description">Create a new temporary email and save it to the database</p>
 
-    <h4 style="color: #00d4ff; margin-top: 1.5rem;">📤 Request Body (اختياري)</h4>
+    <h4 style="color: # #00d4ff; margin-top: 1.5rem;"> Request Body ()</h4>
     <div class="code-block">
       <code>{
   "email_name": "optional_email_name"
@@ -492,7 +492,7 @@
 
   <!-- Practical Examples -->
   <div class="endpoint-section" id="examples">
-    <h2 style="color: #00d4ff; margin-bottom: 1.5rem;">💻 أمثلة عملية</h2>
+    <h2 style="color: # #00d4ff; margin-bottom: 1.5rem;">  </h2>
 
     <h3 style="color: #0096ff; margin-top: 2rem; margin-bottom: 1rem;">🐍 Python Example</h3>
     <div class="code-block">
@@ -510,11 +510,11 @@ username = data['email'].split('@')[0]
 
 print(f"Email: {email}")
 
-# الانتظار قليلاً لاستقبال الرسالة
+# #    
 import time
 time.sleep(5)
 
-# الحصول على الرسائل
+# # Get 
 mailbox = requests.get(
     f'https://geniusgsm.com/tempmail/api/dovecot/mailbox/{username}/'
 ).json()
@@ -540,7 +540,7 @@ fetch('https://geniusgsm.com/tempmail/api/create-temp-email/', {
   
   console.log('Email created:', email);
   
-  // الانتظار ثم الحصول على الرسائل
+  // //     
   setTimeout(() => {
     fetch(`https://geniusgsm.com/tempmail/api/dovecot/mailbox/${username}/`)
       .then(r => r.json())
@@ -559,7 +559,7 @@ fetch('https://geniusgsm.com/tempmail/api/create-temp-email/', {
     <div class="code-block">
       <code>#!/bin/bash
 
-# إنشاء بريد مؤقت
+# #   
 response=$(curl -s -X POST https://geniusgsm.com/tempmail/api/create-temp-email/ \
   -H "Content-Type: application/json" \
   -d '{"email_name": "bashuser"}')
@@ -570,17 +570,17 @@ username=$(echo $email | cut -d'@' -f1)
 
 echo "Email: $email"
 
-# الانتظار للرسائل
+# #  
 sleep 5
 
-# الحصول على الرسائل
+# # Get 
 curl -s -X GET https://geniusgsm.com/tempmail/api/dovecot/mailbox/$username/ | jq '.emails'</code>
     </div>
   </div>
 
   <!-- Important Notes -->
   <div class="endpoint-section">
-    <h2 style="color: #ffa500; margin-bottom: 1.5rem;">⚡ مهم</h2>
+    <h2 style="color: # #ffa500; margin-bottom: 1.5rem;"> </h2>
 
     <div class="note">
       <strong>✓ معلومات مهمة:</strong>
@@ -606,7 +606,7 @@ curl -s -X GET https://geniusgsm.com/tempmail/api/dovecot/mailbox/$username/ | j
 
   <!-- Contact Section -->
   <div class="endpoint-section" style="text-align: center; margin-top: 3rem;">
-    <h3 style="color: #00d4ff; margin-bottom: 1rem;">📞 هل تحتاج مساعدة؟</h3>
+    <h3 style="color: # #00d4ff; margin-bottom: 1rem;">   </h3>
     <p style="color: #c0c6d1; margin-bottom: 1.5rem;">
       للمزيد من المعلومات أو الإبلاغ عن مشكلة، يمكنك التواصل معنا
     </p>

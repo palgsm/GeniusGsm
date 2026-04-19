@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}أدوات التجزئة والترميز - GeniusGsm{% endblock %}
+{% block title %}Hash & Encoding Tools - GeniusGsm{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -109,8 +109,8 @@
     <!-- Header -->
     <div class="row mb-4">
         <div class="col-12">
-            <h1 class="page-title" style="color: #333; margin-bottom: 10px;">🔐 أدوات التجزئة والترميز</h1>
-            <p class="text-muted" style="font-size: 16px;">حول النصوص والبيانات بأمان واحصل على التجزئة والترميز المطلوب</p>
+            <h1 class="page-title" style="color: #333; margin-bottom: 10px;">🔐 Hash & Encoding Tools</h1>
+            <p class="text-muted" style="font-size: 16px;">Transform text and data safely with hashing and encoding</p>
         </div>
     </div>
 
@@ -118,33 +118,33 @@
     <div class="row">
         <div class="col-lg-6">
             <div class="tool-card">
-                <h3>🔒 أدوات التجزئة (Hashing)</h3>
+                <h3>🔒 Hashing Tools</h3>
                 
                 <form method="post">
                     {% csrf_token %}
                     
                     <div class="form-group">
-                        <label for="hashType" class="form-label">نوع التجزئة:</label>
+                        <label for="hashType" class="form-label">Hash Type:</label>
                         {{ hash_form.hash_type }}
                     </div>
                     
                     <div class="form-group">
-                        <label for="inputText" class="form-label">النص المراد تجزئته:</label>
+                        <label for="inputText" class="form-label">Text to Hash:</label>
                         {{ hash_form.input_text }}
                     </div>
                     
                     <button type="submit" name="hash_submit" class="btn btn-light btn-block" style="color: #667eea; font-weight: bold;">
-                        <i class="fas fa-hash"></i> تجزئة النص
+                        <i class="fas fa-hash"></i> Hash Text
                     </button>
                     
                     {% if hash_result %}
                     <div class="result-box">
-                        <strong>📋 النتيجة:</strong>
+                        <strong>📋 Result:</strong>
                         <div style="word-break: break-all; margin-top: 10px; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 5px; font-family: monospace;">
                             {{ hash_result }}
                         </div>
                         <button class="copy-btn mt-2" onclick="copyToClipboard('{{ hash_result }}')">
-                            📋 نسخ النتيجة
+                            📋 Copy Result
                         </button>
                     </div>
                     {% endif %}
@@ -163,33 +163,33 @@
         <!-- Encoding Tools -->
         <div class="col-lg-6">
             <div class="tool-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
-                <h3>📝 أدوات الترميز (Encoding)</h3>
+                <h3>📝 Encoding Tools</h3>
                 
                 <form method="post">
                     {% csrf_token %}
                     
                     <div class="form-group">
-                        <label for="encodingType" class="form-label">نوع الترميز:</label>
+                        <label for="encodingType" class="form-label">Encoding Type:</label>
                         {{ encoding_form.encoding_type }}
                     </div>
                     
                     <div class="form-group">
-                        <label for="inputText2" class="form-label">النص المراد ترميزه:</label>
+                        <label for="inputText2" class="form-label">Text to Encode:</label>
                         {{ encoding_form.input_text }}
                     </div>
                     
                     <button type="submit" name="encoding_submit" class="btn btn-light btn-block" style="color: #f5576c; font-weight: bold;">
-                        <i class="fas fa-code"></i> ترميز النص
+                        <i class="fas fa-code"></i> Encode Text
                     </button>
                     
                     {% if encoding_result %}
                     <div class="result-box" style="border-left-color: #FF6B6B;">
-                        <strong>📋 النتيجة:</strong>
+                        <strong>📋 Result:</strong>
                         <div style="word-break: break-all; margin-top: 10px; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 5px; font-family: monospace; max-height: 200px; overflow-y: auto;">
                             {{ encoding_result }}
                         </div>
                         <button class="copy-btn mt-2" onclick="copyToClipboard('{{ encoding_result }}')">
-                            📋 نسخ النتيجة
+                            📋 Copy Result
                         </button>
                     </div>
                     {% endif %}
@@ -209,15 +209,15 @@
     <div class="row mt-4">
         <div class="col-lg-6">
             <div style="background: white; border-radius: 15px; padding: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
-                <h4 style="color: #333; margin-bottom: 20px;">📜 سجل التجزئة</h4>
+                <h4 style="color: #333; margin-bottom: 20px;">📜 Hash History</h4>
                 {% if hash_history %}
                 <div class="history-table">
                     <table>
                         <thead>
                             <tr>
-                                <th>النوع</th>
-                                <th>الإدخال</th>
-                                <th>الوقت</th>
+                                <th>Type</th>
+                                <th>Input</th>
+                                <th>Time</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -232,22 +232,22 @@
                     </table>
                 </div>
                 {% else %}
-                <p class="text-muted text-center">لا يوجد سجل بعد</p>
+                <p class="text-muted text-center">No history yet</p>
                 {% endif %}
             </div>
         </div>
 
         <div class="col-lg-6">
             <div style="background: white; border-radius: 15px; padding: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
-                <h4 style="color: #333; margin-bottom: 20px;">📜 سجل الترميز</h4>
+                <h4 style="color: #333; margin-bottom: 20px;">📜 Encoding History</h4>
                 {% if encoding_history %}
                 <div class="history-table">
                     <table>
                         <thead>
                             <tr>
-                                <th>النوع</th>
-                                <th>الإدخال</th>
-                                <th>الوقت</th>
+                                <th>Type</th>
+                                <th>Input</th>
+                                <th>Time</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -262,7 +262,7 @@
                     </table>
                 </div>
                 {% else %}
-                <p class="text-muted text-center">لا يوجد سجل بعد</p>
+                <p class="text-muted text-center">No history yet</p>
                 {% endif %}
             </div>
         </div>

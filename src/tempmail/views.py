@@ -23,7 +23,7 @@ from .dovecot_reader import DovecotMailReader
 logger = logging.getLogger(__name__)
 
 
-# View العام للـ TempMail Landing Page
+# # View   TempMail Landing Page
 def tempmail_home(request):
     domains = TempMailDomain.objects.filter(is_active=True)
     context = {
@@ -33,13 +33,13 @@ def tempmail_home(request):
     return render(request, 'tempmail/home.html', context)
 
 
-# View لعرض Dovecot Inbox
+# # View Show Dovecot Inbox
 def dovecot_inbox(request):
     """View for Dovecot direct mail inbox"""
     return render(request, 'tempmail/dovecot_inbox.html')
 
 
-# View لعرض صندوق البريد
+# # View Show  
 def inbox_view(request, inbox_id):
     inbox = get_object_or_404(TempInbox, id=inbox_id)
     emails = inbox.tempemail_set.all().order_by('-received_at')
@@ -50,7 +50,7 @@ def inbox_view(request, inbox_id):
     return render(request, 'tempmail/inbox.html', context)
 
 
-# View لعرض توثيق API
+# # View Show  API
 def api_docs(request):
     """View for API Documentation"""
     return render(request, 'tempmail/api-docs.html')
@@ -71,7 +71,7 @@ class TempInboxViewSet(viewsets.ModelViewSet):
     
     @action(detail=False, methods=['post'], permission_classes=[AllowAny])
     def create_inbox(self, request):
-        """إنشاء inbox جديد"""
+        """Create inbox جديد"""
         domain_id = request.data.get('domain_id')
         ttl = request.data.get('ttl', 3600)  # Default: 1 hour (in seconds)
         
@@ -81,7 +81,7 @@ class TempInboxViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
         
-        # تحويل TTL إلى integer إذا كان string
+        # #  TTL  integer   string
         if isinstance(ttl, str):
             try:
                 ttl = int(ttl)
@@ -96,11 +96,11 @@ class TempInboxViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_404_NOT_FOUND
             )
         
-        # إنشاء بريد عشوائي
+        # # Create  
         random_prefix = ''.join(random.choices(string.ascii_lowercase + string.digits, k=10))
         email = f"{random_prefix}@{domain.name}"
         
-        # التحقق من عدم وجود البريد مسبقا
+        # # Verify     
         while TempInbox.objects.filter(email=email).exists():
             random_prefix = ''.join(random.choices(string.ascii_lowercase + string.digits, k=10))
             email = f"{random_prefix}@{domain.name}"
@@ -111,7 +111,7 @@ class TempInboxViewSet(viewsets.ModelViewSet):
             ttl=ttl
         )
         
-        # إضافة إحصائيات للمستخدم إن وجد
+        # # Add    
         if request.user.is_authenticated:
             stats, _ = UsageStats.objects.get_or_create(user=request.user)
             stats.total_inboxes += 1
@@ -137,11 +137,11 @@ class TempInboxViewSet(viewsets.ModelViewSet):
     
     @action(detail=True, methods=['delete'], permission_classes=[AllowAny])
     def delete_inbox(self, request, id=None):
-        """حذف الـ inbox"""
+        """Delete الـ inbox"""
         inbox = self.get_object()
         email = inbox.email
         inbox.delete()
-        return Response({'message': f'تم حذف {email}'})
+        return Response({'message': f'تم Delete {email}'})
 
 
 class TempEmailViewSet(viewsets.ReadOnlyModelViewSet):
@@ -161,11 +161,11 @@ class TempEmailViewSet(viewsets.ReadOnlyModelViewSet):
     
     @action(detail=True, methods=['delete'], permission_classes=[AllowAny])
     def delete_email(self, request, id=None):
-        """حذف الرسالة"""
+        """Delete الرسالة"""
         email = self.get_object()
         subject = email.subject
         email.delete()
-        return Response({'message': f'تم حذف الرسالة: {subject}'})
+        return Response({'message': f'تم Delete الرسالة: {subject}'})
 
 
 class TempEmailAttachmentViewSet(viewsets.ReadOnlyModelViewSet):
@@ -175,7 +175,7 @@ class TempEmailAttachmentViewSet(viewsets.ReadOnlyModelViewSet):
     
     @action(detail=True, methods=['get'], permission_classes=[AllowAny])
     def download(self, request, pk=None):
-        """تحميل الملف المرفق"""
+        """Upload الملف المرفق"""
         attachment = self.get_object()
         if attachment.data:
             response = Response(
@@ -199,7 +199,7 @@ class APIKeyViewSet(viewsets.ModelViewSet):
     
     @action(detail=False, methods=['post'])
     def create_key(self, request):
-        """إنشاء مفتاح API جديد"""
+        """Create مفتاح API جديد"""
         name = request.data.get('name', 'API Key')
         
         api_key = APIKey.objects.create(
@@ -533,7 +533,7 @@ def delete_dovecot_email(request, username, filename):
         )
 
 
-# إنشاء بريد مؤقت جديد وحفظه على قاعدة البيانات
+# # Create       Data
 @api_view(['POST'])
 def create_temp_email(request):
     """Create a new temporary email and save to database

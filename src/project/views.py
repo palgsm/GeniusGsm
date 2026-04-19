@@ -54,12 +54,12 @@ def custom_logout(request):
 @login_required(login_url='/admin/login/')
 def dashboard(request):
     """
-    عرض الداشبورد الرئيسي مع معلومات الجلسة والـ Token والإحصائيات
+    Show الداشبورد الرئيسي مع معلومات الجلسة والـ Token والإحصائيات
     """
-    # معلومات الجلسة
-    session_timeout_minutes = settings.SESSION_COOKIE_AGE // 60  # تحويل الثواني إلى دقائق
+    # #  
+    session_timeout_minutes = settings.SESSION_COOKIE_AGE // 60  # #    
     
-    # الـ IP الحالي
+    # #  IP 
     try:
         current_ip = request.META.get('HTTP_X_FORWARDED_FOR', request.META.get('REMOTE_ADDR', 'N/A'))
         if ',' in current_ip:
@@ -67,12 +67,12 @@ def dashboard(request):
     except:
         current_ip = 'N/A'
     
-    # الإحصائيات
+    # # 
     total_requests = request.session.get('total_requests', 0)
     abuse_reports = AbuseReport.objects.filter(archived=False).count()
     active_services = 3  # IP Lookup, Abuse Check, Stats
     
-    # آخر تقارير الإساءة
+    # #   
     reports = AbuseReport.objects.filter(archived=False)[:20]
     
     context = {

@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='iprange',
             name='country',
-            field=models.CharField(choices=[('IQ', '🇮🇶 العراق'), ('AE', '🇦🇪 الإمارات'), ('SA', '🇸🇦 السعودية'), ('EG', '🇪🇬 مصر'), ('JO', '🇯🇴 الأردن'), ('PS', '🇵🇸 فلسطين'), ('LB', '🇱🇧 لبنان'), ('SY', '🇸🇾 سوريا'), ('TN', '🇹🇳 تونس'), ('MA', '🇲🇦 المغرب'), ('KW', '🇰🇼 الكويت'), ('QA', '🇶🇦 قطر'), ('BH', '🇧🇭 البحرين'), ('OM', '🇴🇲 عمان'), ('YE', '🇾🇪 اليمن'), ('US', '🇺🇸 الولايات المتحدة'), ('GB', '🇬🇧 المملكة المتحدة'), ('CA', '🇨🇦 كندا'), ('AU', '🇦🇺 استراليا'), ('JP', '🇯🇵 اليابان'), ('DE', '🇩🇪 ألمانيا'), ('FR', '🇫🇷 فرنسا'), ('IN', '🇮🇳 الهند'), ('CN', '🇨🇳 الصين'), ('RU', '🇷🇺 روسيا'), ('OTHER', '🌍 أخرى')], default='OTHER', help_text='البلد المرتبط بهذا النطاق', max_length=10),
+            field=models.CharField(choices=[('IQ', '🇮🇶 Iraq'), ('AE', '🇦🇪 UAE'), ('SA', '🇸🇦 Saudi Arabia'), ('EG', '🇪🇬 Egypt'), ('JO', '🇯🇴 Jordan'), ('PS', '🇵🇸 Palestine'), ('LB', '🇱🇧 Lebanon'), ('SY', '🇸🇾 Syria'), ('TN', '🇹🇳 Tunisia'), ('MA', '🇲🇦 Morocco'), ('KW', '🇰🇼 Kuwait'), ('QA', '🇶🇦 Qatar'), ('BH', '🇧🇭 Bahrain'), ('OM', '🇴🇲 Oman'), ('YE', '🇾🇪 Yemen'), ('US', '🇺🇸 United States'), ('GB', '🇬🇧 المملكة المتحدة'), ('CA', '🇨🇦 كندا'), ('AU', '🇦🇺 Australia'), ('JP', '🇯🇵 Japan'), ('DE', '🇩🇪 Germany'), ('FR', '🇫🇷 فرنسا'), ('IN', '🇮🇳 India'), ('CN', '🇨🇳 China'), ('RU', '🇷🇺 Russia'), ('OTHER', '🌍 Other')], default='OTHER', help_text='البلد المرتبط بهذا النطاق', max_length=10),
         ),
         migrations.AddIndex(
             model_name='iprange',

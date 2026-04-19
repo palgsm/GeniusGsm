@@ -24,7 +24,7 @@ def perform_hash(input_text, hash_type):
         elif hash_type == 'blake2':
             return hashlib.blake2b(input_text.encode()).hexdigest()
     except Exception as e:
-        return f"خطأ: {str(e)}"
+        return f"Error: {str(e)}"
 
 
 def perform_encoding(input_text, encoding_type):
@@ -47,7 +47,7 @@ def perform_encoding(input_text, encoding_type):
         elif encoding_type == 'hex_decode':
             return bytes.fromhex(input_text).decode()
     except Exception as e:
-        return f"خطأ: {str(e)}"
+        return f"Error: {str(e)}"
 
 
 @require_http_methods(["GET", "POST"])
@@ -98,8 +98,8 @@ def hashtools_index(request):
         'encoding_result': encoding_result,
         'hash_history': hash_history,
         'encoding_history': encoding_history,
-        'page_title': 'أدوات التجزئة والترميز',
-        'page_description': 'أدوات لتجزئة النصوص وترميز البيانات (MD5, SHA256, Base64, URL Encoding, etc)',
+        'page_title': 'Hash & Encoding Tools',
+        'page_description': 'Tools for hashing text and encoding data (MD5, SHA256, Base64, URL Encoding, etc)',
     }
     
     return render(request, 'hashtools/index.html', context)
