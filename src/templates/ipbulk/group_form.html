@@ -8,7 +8,7 @@
     <div class="col-12">
       <div class="search-hero">
         <h1 class="hero-title">➕ Create New Group</h1>
-        <p class="lead text-muted">أنشئ مجموعة جديدة لتخزين وإدارة نطاقات IP</p>
+        <p class="lead text-muted">Create a new group to store and manage IP ranges</p>
       </div>
     </div>
   </div>
@@ -29,7 +29,7 @@
         <div class="mb-3">
           <label for="id_description" class="form-label">{{ form.description.label }}</label>
           {{ form.description }}
-          <small class="form-text text-muted">اختياري - وصف المجموعة</small>
+          <small class="form-text text-muted">Optional - Describe the group</small>
           {% if form.description.errors %}
             <div class="alert alert-danger mt-2">{{ form.description.errors }}</div>
           {% endif %}
@@ -37,10 +37,10 @@
 
         <div class="d-flex gap-2">
           <button type="submit" class="btn btn-primary btn-lg flex-grow-1">
-            ✓ إنشاء المجموعة
+            ✓ Create Group
           </button>
           <a href="{% url 'ipbulk:group_list' %}" class="btn btn-outline-secondary btn-lg">
-            إلغاء
+            Cancel
           </a>
         </div>
       </form>

@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}استيراد IP — GeniusGsm{% endblock %}
+{% block title %}Import IP Ranges — GeniusGsm{% endblock %}
 
 {% block content %}
 <div class="container">
@@ -8,7 +8,7 @@
     <div class="col-12">
       <div class="search-hero">
         <h1 class="hero-title">⬆️ Import Ranges IP</h1>
-        <p class="lead text-muted">استيراد قائمة من نطاقات IP بصيغة CIDR أو نطاقات فردية</p>
+        <p class="lead text-muted">Import a list of IP ranges in CIDR format or individual ranges</p>
       </div>
     </div>
   </div>
@@ -20,7 +20,7 @@
           <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
             
-            <!-- المجموعة -->
+            <!-- Group -->
             <div class="mb-3">
               <label for="id_group" class="form-label">{{ form.group.label }}</label>
               {{ form.group }}
@@ -31,7 +31,7 @@
               {% endif %}
             </div>
 
-            <!-- البلد -->
+            <!-- Country -->
             <div class="mb-3">
               <label for="id_country" class="form-label">{{ form.country.label }}</label>
               {{ form.country }}
@@ -42,7 +42,7 @@
               {% endif %}
             </div>
 
-            <!-- صيغة الاستيراد -->
+            <!-- Import Format -->
             <div class="mb-3">
               <label class="form-label">{{ form.format_type.label }}</label>
               <div class="format-options">
@@ -64,13 +64,13 @@
 
             <hr class="border-secondary">
 
-            <!-- رفع ملف -->
+            <!-- File Upload -->
             <div class="mb-3">
               <label for="id_file" class="form-label">
                 <i class="bi bi-upload"></i> {{ form.file.label }}
               </label>
               {{ form.file }}
-              <small class="text-muted d-block mt-1">أنواع مدعومة: .txt, .csv</small>
+              <small class="text-muted d-block mt-1">Supported types: .txt, .csv</small>
               {% if form.file.errors %}
                 <div class="alert alert-danger mt-2">
                   {{ form.file.errors }}
@@ -78,14 +78,14 @@
               {% endif %}
             </div>
 
-            <!-- أو إدخال يدوي -->
+            <!-- Or Manual Input -->
             <div class="mb-3">
               <label for="id_text_input" class="form-label">
-                <i class="bi bi-pencil"></i> أو {{ form.text_input.label }}
+                <i class="bi bi-pencil"></i> or {{ form.text_input.label }}
               </label>
               {{ form.text_input }}
               <small class="text-muted d-block mt-1">
-                أمثلة:
+                Examples:
                 <br>
                 <strong>CIDR:</strong> 192.168.0.0/24 | 10.0.0.0/8 | 2001:db8::/32
                 <br>
@@ -100,17 +100,17 @@
               {% endif %}
             </div>
 
-            <!-- الأخطاء العامة -->
+            <!-- General Errors -->
             {% if form.non_field_errors %}
               <div class="alert alert-danger">
                 {{ form.non_field_errors }}
               </div>
             {% endif %}
 
-            <!-- الأزرار -->
+            <!-- Action Buttons -->
             <div class="d-flex gap-2 mt-4">
               <button type="submit" class="btn btn-primary btn-lg flex-grow-1">
-                ✓ استيراد الآن
+                ✓ Import Now
               </button>
               <a href="{% url 'ipbulk:group_list' %}" class="btn btn-outline-secondary btn-lg">
                 Back
@@ -120,14 +120,14 @@
         </div>
       </div>
 
-      <!-- معلومات مفيدة -->
+      <!-- Additional Information -->
       <div class="alert alert-info mt-4">
-        <h6><i class="bi bi-info-circle"></i> معلومات</h6>
+        <h6><i class="bi bi-info-circle"></i> Information</h6>
         <ul class="small mb-0">
-          <li>يمكنك استيراد حتى 1000 نطاق في مرة واحدة</li>
-          <li>الأسطر الفارغة والتعليقات (يبدأ ب # #)  </li>
-          <li>النطاقات المكررة سيتم تجاهلها تلقائياً</li>
-          <li>CIDR notation أسهل وأسرع للنطاقات الكبيرة</li>
+          <li>You can import up to 1000 ranges at once</li>
+          <li>Empty lines and comments (starting with #) are ignored</li>
+          <li>Duplicate ranges will be automatically ignored</li>
+          <li>CIDR notation is easiest and fastest for large ranges</li>
         </ul>
       </div>
     </div>

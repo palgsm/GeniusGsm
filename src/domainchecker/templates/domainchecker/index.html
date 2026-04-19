@@ -28,7 +28,7 @@
     <h1 style="color: # #333; margin-bottom: 30px;">   Domain</h1>
     
     <div class="check-card">
-        <h3 style="margin-bottom: 20px;">🔍 Verify من Domain</h3>
+        <h3 style="margin-bottom: 20px;">🔍 Verify Domain</h3>
         <form method="post">
             {% csrf_token %}
             <div class="form-group mb-3">
@@ -47,11 +47,11 @@
             
             {% if result.whois %}
             <div class="info-item mb-3">
-                <strong>📋 معلومات WHOIS:</strong>
+                <strong>📋 WHOIS Information:</strong>
                 <div style="margin-top: 10px; font-size: 13px;">
-                    <p>المسجل: {{ result.whois.registrar }}</p>
-                    <p>تاريخ الCreate: {{ result.whois.creation_date }}</p>
-                    <p>انتهاء الصلاحية: {{ result.whois.expiration_date }}</p>
+                    <p>Registrar: {{ result.whois.registrar }}</p>
+                    <p>Creation Date: {{ result.whois.creation_date }}</p>
+                    <p>Expiration Date: {{ result.whois.expiration_date }}</p>
                 </div>
             </div>
             {% endif %}
@@ -70,7 +70,7 @@
             {% if result.ssl %}
             <div class="info-item">
                 <strong>🔒 SSL Certificate:</strong>
-                <p style="margin-top: 10px; font-size: 13px;">موجودة وصالحة</p>
+                <p style="margin-top: 10px; font-size: 13px;">Valid and Active</p>
             </div>
             {% endif %}
         </div>

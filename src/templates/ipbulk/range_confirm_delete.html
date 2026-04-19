@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}تأكيد الDelete — GeniusGsm{% endblock %}
+{% block title %}Confirm Delete — GeniusGsm{% endblock %}
 
 {% block content %}
 <div class="container">
@@ -8,19 +8,19 @@
     <div class="col-lg-6 mx-auto">
       <div class="card bg-warning border-warning">
         <div class="card-body">
-          <h4 class="card-title text-dark">⚠️ تأكيد الDelete</h4>
+          <h4 class="card-title text-dark">⚠️ Confirm Delete</h4>
           <p class="card-text">
-            هل تريد Delete النطاق <strong><code>{{ range.cidr }}</code></strong>؟
+            Are you sure you want to delete the range <strong><code>{{ range.cidr }}</code></strong>?
           </p>
           <p class="card-text text-dark small">
-            عدد IPs: {{ range.get_ip_count }} | النوع: IPv{{ range.ip_version }}
+            IP Count: {{ range.get_ip_count }} | Type: IPv{{ range.ip_version }}
           </p>
 
           <form method="post" style="display:inline;">
             {% csrf_token %}
-            <button type="submit" class="btn btn-danger">Delete النطاق</button>
+            <button type="submit" class="btn btn-danger">Delete Range</button>
           </form>
-          <a href="{% url 'ipbulk:group_detail' range.group.id %}" class="btn btn-outline-secondary">إلغاء</a>
+          <a href="{% url 'ipbulk:group_detail' range.group.id %}" class="btn btn-outline-secondary">Cancel</a>
         </div>
       </div>
     </div>

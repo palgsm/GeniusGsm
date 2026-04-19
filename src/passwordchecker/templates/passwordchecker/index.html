@@ -16,9 +16,9 @@
     
     {% if result %}
     <div style="background: white; border-radius: 10px; padding: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
-        <h5>💪 القوة: {{ result.strength }}</h5>
+        <h5>💪 Strength: {{ result.strength }}</h5>
         {% if result.feedback %}
-        <p>🔔 الملاحظات:</p>
+        <p>🔔 Notes:</p>
         <ul>
             {% for item in result.feedback %}
             <li>{{ item }}</li>

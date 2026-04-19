@@ -212,7 +212,7 @@
     <!-- Mailbox Selector -->
     <div class="mailbox-selector">
         <div class="user-select">
-            <label for="user-list">اختر صندوق البريد:</label>
+            <label for="user-list">Select mailbox:</label>
             <div id="users-list" style="display: flex; gap: 10px; flex-wrap: wrap;"></div>
         </div>
     </div>
@@ -224,11 +224,11 @@
         </div>
         <div class="mailbox-stats">
             <div class="stat-item">
-                <span>إجمالي الرسائل:</span>
+                <span>Total messages:</span>
                 <span class="stat-badge" id="total-emails">0</span>
             </div>
             <div class="stat-item">
-                <span>رسائل جديدة:</span>
+                <span>New messages:</span>
                 <span class="stat-badge" id="unread-count">0</span>
             </div>
         </div>
@@ -242,18 +242,18 @@
     <!-- Empty State -->
     <div class="empty-state" id="empty-state" style="display: none;">
         <i class="fas fa-inbox"></i>
-        <p>لا توجد رسائل في هذا الصندوق</p>
+        <p>No messages in this mailbox</p>
     </div>
     
     <!-- Loading -->
     <div class="loading" id="loading" style="display: none;">
-        <i class="fas fa-spinner fa-spin"></i> جاري التحميل...
+        <i class="fas fa-spinner fa-spin"></i> Loading...
     </div>
     
     <!-- Action Buttons -->
     <div class="btn-group" id="btn-group" style="display: none;">
         <button class="btn-action btn-secondary" onclick="refreshMailbox()">
-            <i class="fas fa-sync"></i> تحديث
+            <i class="fas fa-sync"></i> Refresh
         </button>
     </div>
 </div>
@@ -360,7 +360,7 @@ function loadMailbox(username) {
                                 <span class="email-from">${escapeHtml(email.from)}</span>
                                 <span class="email-meta">
                                     ${new Date(email.received_at).toLocaleString('ar-SA')}
-                                    ${email.is_new ? '<span class="email-badge">جديدة</span>' : ''}
+                                    ${email.is_new ? '<span class="email-badge">New</span>' : ''}
                                 </span>
                             </div>
                             <div class="email-subject">${escapeHtml(email.subject)}</div>
@@ -379,7 +379,7 @@ function loadMailbox(username) {
             loading.style.display = 'none';
             console.error('Error loading mailbox:', err);
             emptyState.style.display = 'block';
-            document.querySelector('.empty-state p').textContent = 'خطأ أثناء تحميل الرسائل';
+            document.querySelector('.empty-state p').textContent = 'Error loading messages';
         });
 }
 

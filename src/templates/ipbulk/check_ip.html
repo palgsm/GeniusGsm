@@ -7,21 +7,21 @@
   <div class="row mb-4">
     <div class="col-12">
       <div class="search-hero">
-        <h1 class="hero-title">🔍 التحقق من عنوان IP</h1>
-        <p class="lead text-muted">ابحث عن عنوان IP في مجموعاتك</p>
+        <h1 class="hero-title">🔍 Check IP Address</h1>
+        <p class="lead text-muted">Search for an IP address in your groups</p>
       </div>
     </div>
   </div>
 
   <div class="row">
     <div class="col-lg-8 mx-auto">
-      <!-- نموذج البحث -->
+      <!-- Search Form -->
       <form method="post" class="mb-4">
         {% csrf_token %}
         <div class="input-group input-group-lg">
           {{ form.ip_address }}
           <button class="btn btn-primary" type="submit">
-            <i class="bi bi-search"></i> ابحث
+            <i class="bi bi-search"></i> Search
           </button>
         </div>
         {% if form.ip_address.errors %}
@@ -31,12 +31,12 @@
         {% endif %}
       </form>
 
-      <!-- النتائج -->
+      <!-- Results -->
       {% if results is not None %}
         {% if results %}
           <div class="alert alert-success">
-            <h5>✓ تم العثور على عنوان IP!</h5>
-            <p>وجد عنوان IP <strong>{{ request.POST.ip_address }}</strong> في {{ results|length }} مجموعة</p>
+            <h5>✓ IP Address Found!</h5>
+            <p>IP address <strong>{{ request.POST.ip_address }}</strong> found in {{ results|length }} group(s)</p>
           </div>
 
           <div class="row">
@@ -45,20 +45,20 @@
                 <div class="card bg-dark border-success">
                   <div class="card-body">
                     <h5 class="card-title">
-                      <span class="badge bg-success">مطابقة</span>
+                      <span class="badge bg-success">Match</span>
                       {{ result.group.name }}
                     </h5>
                     <p class="card-text mb-2">
-                      <strong>النطاق:</strong> <code>{{ result.range.cidr }}</code>
+                      <strong>Range:</strong> <code>{{ result.range.cidr }}</code>
                     </p>
                     <p class="card-text mb-2">
-                      <strong>النوع:</strong> 
+                      <strong>Type:</strong> 
                       <span class="badge {% if result.range.ip_version == 4 %}bg-primary{% else %}bg-warning text-dark{% endif %}">
                         IPv{{ result.range.ip_version }}
                       </span>
                     </p>
                     <p class="card-text small text-muted">
-                      <strong>المدى:</strong> {{ result.range.start_ip }} — {{ result.range.end_ip }}
+                      <strong>Range:</strong> {{ result.range.start_ip }} — {{ result.range.end_ip }}
                     </p>
                     {% if result.range.description %}
                       <p class="card-text small">{{ result.range.description }}</p>
@@ -70,19 +70,19 @@
           </div>
         {% else %}
           <div class="alert alert-warning">
-            <h5>✗ لم يتم العثور على النتيجة</h5>
-            <p>عنوان IP <strong>{{ request.POST.ip_address }}</strong> غير موجود في أي من المجموعات</p>
+            <h5>✗ No Results Found</h5>
+            <p>IP address <strong>{{ request.POST.ip_address }}</strong> not found in any groups</p>
           </div>
         {% endif %}
       {% else %}
-        <!-- معلومات -->
+        <!-- Information -->
         <div class="alert alert-info">
-          <h6>ℹ️ كيفية الاستخدام</h6>
+          <h6>ℹ️ How to Use</h6>
           <ul class="mb-0 small">
-            <li>أدخل عنوان IPv4 أو IPv6</li>
-            <li>سيتم البحث في جميع المجموعات والنطاقات</li>
-            <li>ستظهر جميع النطاقات التي يقع فيها عنوان IP</li>
-            <li>أمثلة: 192.168.1.1 أو 8.8.8.8 أو 2001:4860:4860::8888</li>
+            <li>Enter an IPv4 or IPv6 address</li>
+            <li>The search will check all groups and ranges</li>
+            <li>All IP ranges containing the address will be displayed</li>
+            <li>Examples: 192.168.1.1 or 8.8.8.8 or 2001:4860:4860::8888</li>
           </ul>
         </div>
       {% endif %}

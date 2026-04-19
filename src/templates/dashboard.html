@@ -10,36 +10,36 @@
     <div class="col-12">
       <div class="info-card session-card">
         <div class="card-header">
-          <h5><i class="bi bi-clock-history"></i> معلومات الجلسة والتوكن</h5>
+          <h5><i class="bi bi-clock-history"></i> Session & Token Information</h5>
         </div>
         <div class="card-body">
           <div class="row">
             <div class="col-md-3">
               <div class="stat-box">
-                <label>معرف الجلسة</label>
+                <label>Session ID</label>
                 <code class="session-id">{{ request.session.session_key|truncatechars:20 }}</code>
               </div>
             </div>
             <div class="col-md-3">
               <div class="stat-box">
-                <label>مدة الجلسة المتبقية</label>
+                <label>Remaining Session Time</label>
                 <div class="time-remaining">
                   <span class="counter" id="sessionTimer">{{ session_timeout_minutes }}:00</span>
-                  <small>دقائق</small>
+                  <small>minutes</small>
                 </div>
               </div>
             </div>
             <div class="col-md-3">
               <div class="stat-box">
-                <label>وقت انتهاء الجلسة</label>
+                <label>Session End Time</label>
                 <span class="expiry-time" id="expiryTime">--:--</span>
               </div>
             </div>
             <div class="col-md-3">
               <div class="stat-box">
-                <label>حالة التوكن</label>
+                <label>Token Status</label>
                 <span class="badge bg-success token-status">
-                  <i class="bi bi-shield-check"></i> نشط
+                  <i class="bi bi-shield-check"></i> Active
                 </span>
               </div>
             </div>
@@ -47,7 +47,7 @@
           
           <!-- Session Progress Bar -->
           <div class="mt-4">
-            <label class="small text-muted">شريط التقدم</label>
+            <label class="small text-muted">Progress Bar</label>
             <div class="progress" style="height: 8px;">
               <div class="progress-bar progress-bar-striped progress-bar-animated" 
                    role="progressbar" 
@@ -71,7 +71,7 @@
           <i class="bi bi-globe"></i>
         </div>
         <div class="stat-content">
-          <h6>IP حالي</h6>
+          <h6>Current IP</h6>
           <p class="stat-value">{{ current_ip }}</p>
         </div>
       </div>
@@ -82,7 +82,7 @@
           <i class="bi bi-file-text"></i>
         </div>
         <div class="stat-content">
-          <h6>الطلبات</h6>
+          <h6>Requests</h6>
           <p class="stat-value">{{ total_requests }}</p>
         </div>
       </div>
@@ -93,7 +93,7 @@
           <i class="bi bi-exclamation-triangle"></i>
         </div>
         <div class="stat-content">
-          <h6>تقارير الإساءة</h6>
+          <h6>Abuse Reports</h6>
           <p class="stat-value">{{ abuse_reports }}</p>
         </div>
       </div>
@@ -104,7 +104,7 @@
           <i class="bi bi-check-circle"></i>
         </div>
         <div class="stat-content">
-          <h6>الخدمات النشطة</h6>
+          <h6>Active Services</h6>
           <p class="stat-value">{{ active_services }}</p>
         </div>
       </div>
@@ -115,36 +115,36 @@
   <div class="row mb-4">
     <div class="col-12">
       <div class="tools-card">
-        <h5 class="mb-3"><i class="bi bi-tools"></i> أدوات العمل</h5>
+        <h5 class="mb-3"><i class="bi bi-tools"></i> Tools</h5>
         
         <!-- Search & Filter -->
         <div class="tools-section mb-3">
           <div class="input-group">
             <span class="input-group-text"><i class="bi bi-search"></i></span>
-            <input type="text" class="form-control" id="searchInput" placeholder="ابحث عن IP أو نطاق...">
+            <input type="text" class="form-control" id="searchInput" placeholder="Search for IP or range...">
             <button class="btn btn-outline-secondary" type="button" id="filterBtn">
-              <i class="bi bi-funnel"></i> تصفية
+              <i class="bi bi-funnel"></i> Filter
             </button>
           </div>
         </div>
 
         <!-- Quick Actions -->
         <div class="quick-actions">
-          <button class="action-btn" id="autoSortBtn" title="خاصية الترتيب التلقائي">
+          <button class="action-btn" id="autoSortBtn" title="Auto sort feature">
             <i class="bi bi-sort-down"></i>
-            <span>ترتيب تلقائي</span>
+            <span>Auto Sort</span>
           </button>
-          <button class="action-btn" id="refreshBtn" title="تحديث البيانات">
+          <button class="action-btn" id="refreshBtn" title="Refresh data">
             <i class="bi bi-arrow-clockwise"></i>
-            <span>تحديث</span>
+            <span>Refresh</span>
           </button>
-          <button class="action-btn" id="exportBtn" title="تصدير البيانات">
+          <button class="action-btn" id="exportBtn" title="Export data">
             <i class="bi bi-download"></i>
-            <span>تصدير</span>
+            <span>Export</span>
           </button>
-          <button class="action-btn" id="settingsBtn" title="الإعدادات">
+          <button class="action-btn" id="settingsBtn" title="Settings">
             <i class="bi bi-gear"></i>
-            <span>الإعدادات</span>
+            <span>Settings</span>
           </button>
         </div>
       </div>
@@ -156,16 +156,16 @@
     <div class="col-md-6">
       <div class="info-card">
         <div class="card-header">
-          <h5><i class="bi bi-phone"></i> الأجهزة المتصلة</h5>
+          <h5><i class="bi bi-phone"></i> Connected Devices</h5>
         </div>
         <div class="card-body">
           <div class="device-list">
             <div class="device-item">
               <div class="device-info">
-                <span class="device-name">الجهاز الحالي</span>
+                <span class="device-name">Current Device</span>
                 <small class="text-muted">{{ request.META.HTTP_USER_AGENT|truncatechars:40 }}</small>
               </div>
-              <span class="badge bg-success">متصل</span>
+              <span class="badge bg-success">Connected</span>
             </div>
           </div>
         </div>
@@ -175,17 +175,17 @@
     <div class="col-md-6">
       <div class="info-card">
         <div class="card-header">
-          <h5><i class="bi bi-history"></i> آخر الأنشطة</h5>
+          <h5><i class="bi bi-history"></i> Recent Activity</h5>
         </div>
         <div class="card-body">
           <div class="activity-list">
             <div class="activity-item">
-              <span class="activity-time">الآن</span>
-              <span class="activity-text">تسجيل الدخول إلى الداشبورد</span>
+              <span class="activity-time">Now</span>
+              <span class="activity-text">Logged in to dashboard</span>
             </div>
             <div class="activity-item">
-              <span class="activity-time">منذ 5 دقائق</span>
-              <span class="activity-text">بداية جلسة جديدة</span>
+              <span class="activity-time">5 minutes ago</span>
+              <span class="activity-text">Started new session</span>
             </div>
           </div>
         </div>
@@ -198,13 +198,13 @@
     <div class="col-12">
       <div class="info-card">
         <div class="card-header d-flex justify-content-between align-items-center">
-          <h5><i class="bi bi-table"></i> تقارير الإساءة</h5>
+          <h5><i class="bi bi-table"></i> Abuse Reports</h5>
           <div class="sort-controls">
             <select class="form-select form-select-sm w-auto" id="sortSelect">
-              <option value="date-desc">الأحدث أولاً</option>
-              <option value="date-asc">الأقدم أولاً</option>
-              <option value="category">حسب الفئة</option>
-              <option value="reporter">حسب المرسل</option>
+              <option value="date-desc">Newest First</option>
+              <option value="date-asc">Oldest First</option>
+              <option value="category">By Category</option>
+              <option value="reporter">By Reporter</option>
             </select>
           </div>
         </div>
@@ -214,11 +214,11 @@
               <thead>
                 <tr>
                   <th>IP</th>
-                  <th>الفئة</th>
-                  <th>المرسل</th>
-                  <th>البريد الإلكتروني</th>
-                  <th>التاريخ</th>
-                  <th>الإجراءات</th>
+                  <th>Category</th>
+                  <th>Reporter</th>
+                  <th>Email</th>
+                  <th>Date</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -228,18 +228,18 @@
                   <td>
                     <span class="badge bg-danger">{{ report.category }}</span>
                   </td>
-                  <td>{{ report.reporter|default:"مجهول" }}</td>
+                  <td>{{ report.reporter|default:"Unknown" }}</td>
                   <td>{{ report.email|default:"--" }}</td>
                   <td>{{ report.created_at|date:"Y-m-d H:i" }}</td>
                   <td>
-                    <button class="btn btn-sm btn-info" title="عرض التفاصيل">
+                    <button class="btn btn-sm btn-info" title="View Details">
                       <i class="bi bi-eye"></i>
                     </button>
                   </td>
                 </tr>
                 {% empty %}
                 <tr>
-                  <td colspan="6" class="text-center text-muted">لا توجد تقارير</td>
+                  <td colspan="6" class="text-center text-muted">No reports found</td>
                 </tr>
                 {% endfor %}
               </tbody>
@@ -256,15 +256,15 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header bg-warning">
-        <h5 class="modal-title">تنبيه: انتهاء الجلسة</h5>
+        <h5 class="modal-title">Alert: Session Expiring</h5>
       </div>
       <div class="modal-body">
-        <p>جلستك ستنتهي قريباً!</p>
-        <p>يتبقى <strong id="warningCountdown">5:00</strong> دقائق</p>
+        <p>Your session is expiring soon!</p>
+        <p>Time remaining: <strong id="warningCountdown">5:00</strong> minutes</p>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">تسجيل الخروج</button>
-        <button type="button" class="btn btn-primary" id="extendSessionBtn">استمرار الجلسة</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Logout</button>
+        <button type="button" class="btn btn-primary" id="extendSessionBtn">Continue Session</button>
       </div>
     </div>
   </div>
@@ -315,7 +315,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
   
   function handleSessionExpiry() {
-    alert('انتهت جلستك. يرجى تسجيل الدخول مرة أخرى.');
+    alert('Your session has ended. Please log in again.');
     window.location.href = '/admin/login/';
   }
   

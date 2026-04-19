@@ -1,19 +1,19 @@
 {% extends "base.html" %}
 
-{% block title %}البحث عن نطاقات حسب البلد — GeniusGsm{% endblock %}
+{% block title %}Country IP Ranges — GeniusGsm{% endblock %}
 
 {% block content %}
 <div class="container">
   <div class="row mb-4">
     <div class="col-12">
       <div class="search-hero">
-        <h1 class="hero-title">🌍 البحث عن نطاقات حسب البلد</h1>
-        <p class="lead text-muted">اختر مجموعة وبلد لعرض جميع النطاقات الخاصة بك</p>
+        <h1 class="hero-title">🌍 Search Ranges by Country</h1>
+        <p class="lead text-muted">Select a group and country to view all your ranges</p>
       </div>
     </div>
   </div>
 
-  <!-- نموذج البحث -->
+  <!-- Search Form -->
   <div class="row mb-4">
     <div class="col-lg-8 mx-auto">
       <form method="get" class="card bg-dark border-primary">
@@ -29,7 +29,7 @@
             </div>
             <div class="col-12">
               <button type="submit" class="btn btn-primary w-100">
-                🔍 بحث
+                🔍 Search
               </button>
             </div>
           </div>
@@ -38,38 +38,38 @@
     </div>
   </div>
 
-  <!-- النتائج -->
+  <!-- Results -->
   {% if ranges %}
     <div class="row mb-4">
       <div class="col-12">
         <div class="alert alert-info">
-          <strong>📊 النتائج:</strong>
+          <strong>📊 Results:</strong>
           {% if selected_country %}
-            تم العثور على <strong>{{ ranges_count }}</strong> نطاق في البلد <strong>
+            Found <strong>{{ ranges_count }}</strong> ranges in country <strong>
               {% for code, name in country_choices %}
                 {% if code == selected_country %}{{ name }}{% endif %}
               {% endfor %}
             </strong>
           {% else %}
-            تم العثور على <strong>{{ ranges_count }}</strong> نطاق في المجموعة <strong>{{ selected_group.name }}</strong>
+            Found <strong>{{ ranges_count }}</strong> ranges in group <strong>{{ selected_group.name }}</strong>
           {% endif %}
           <br>
-          <span class="badge bg-primary">{{ total_ips }} عنوان IP</span>
+          <span class="badge bg-primary">{{ total_ips }} IP addresses</span>
         </div>
       </div>
     </div>
 
-    <!-- جدول النطاقات -->
+    <!-- Ranges Table -->
     <div class="table-responsive">
       <table class="table table-dark table-hover">
         <thead class="table-dark">
           <tr>
-            <th>البلد</th>
+            <th>Country</th>
             <th>CIDR</th>
-            <th>نسخة IP</th>
-            <th>عدد IPs</th>
-            <th>من - إلى</th>
-            <th>التاريخ</th>
+            <th>IP Version</th>
+            <th>IP Count</th>
+            <th>From - To</th>
+            <th>Date</th>
           </tr>
         </thead>
         <tbody>
@@ -101,12 +101,12 @@
       </table>
     </div>
 
-    <!-- ملخص إحصائي -->
+    <!-- Statistical Summary -->
     <div class="row mt-4">
       <div class="col-md-4 mb-3">
         <div class="card bg-dark border-primary">
           <div class="card-body text-center">
-            <h5 class="card-title text-primary">النطاقات</h5>
+            <h5 class="card-title text-primary">Ranges</h5>
             <h2 class="text-primary">{{ ranges_count }}</h2>
           </div>
         </div>
@@ -114,7 +114,7 @@
       <div class="col-md-4 mb-3">
         <div class="card bg-dark border-cyan">
           <div class="card-body text-center">
-            <h5 class="card-title text-primary">عناوين IP</h5>
+            <h5 class="card-title text-primary">IP Addresses</h5>
             <h2 class="text-primary">{{ total_ips }}</h2>
           </div>
         </div>
@@ -122,14 +122,14 @@
       <div class="col-md-4 mb-3">
         <div class="card bg-dark border-success">
           <div class="card-body text-center">
-            <h5 class="card-title text-success">البلد</h5>
+            <h5 class="card-title text-success">Country</h5>
             <h2 class="text-success">
               {% if selected_country %}
                 {% for code, name in country_choices %}
                   {% if code == selected_country %}{{ name }}{% endif %}
                 {% endfor %}
               {% else %}
-                الكل
+                All
               {% endif %}
             </h2>
           </div>
@@ -139,15 +139,15 @@
   {% elif selected_group and request.GET %}
     <div class="alert alert-warning">
       <i class="bi bi-exclamation-triangle"></i>
-      لم يتم العثور على نطاقات في {% if selected_country %} البلد <strong>
+      No ranges found in {% if selected_country %} country <strong>
         {% for code, name in country_choices %}
           {% if code == selected_country %}{{ name }}{% endif %}
         {% endfor %}
-      </strong>{% else %} المجموعة <strong>{{ selected_group.name }}</strong>{% endif %}
+      </strong>{% else %} group <strong>{{ selected_group.name }}</strong>{% endif %}
     </div>
   {% else %}
     <div class="alert alert-info">
-      <i class="bi bi-info-circle"></i> اختر مجموعة وبلد ثم اضغط على بحث
+      <i class="bi bi-info-circle"></i> Select a group and country, then click search
     </div>
   {% endif %}
 

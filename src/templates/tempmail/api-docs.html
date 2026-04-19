@@ -420,7 +420,7 @@
       <span class="endpoint-path">/api/dovecot/mailbox/&lt;username&gt;/&lt;filename&gt;/</span>
     </div>
 
-    <p class="description">الحصول على رسالة واحدة معينة</p>
+    <p class="description">Get a specific single message</p>
 
     <h4 style="color: #00d4ff; margin-top: 1.5rem;">📋 Parameters</h4>
     <table class="param-table">
@@ -432,12 +432,12 @@
       <tr>
         <td>username</td>
         <td>string</td>
-        <td>اسم المستخدم</td>
+        <td>Username</td>
       </tr>
       <tr>
         <td>filename</td>
         <td>string</td>
-        <td>اسم ملف الرسالة</td>
+        <td>Message file name</td>
       </tr>
     </table>
 
@@ -454,7 +454,7 @@
       <span class="endpoint-path">/api/dovecot/mailbox/&lt;username&gt;/&lt;filename&gt;/</span>
     </div>
 
-    <p class="description">وضع علامة على الرسالة كـ مقروء</p>
+    <p class="description">Mark message as read</p>
 
     <div class="example-label">💡 Example cURL</div>
     <div class="code-block">
@@ -583,23 +583,23 @@ curl -s -X GET https://geniusgsm.com/tempmail/api/dovecot/mailbox/$username/ | j
     <h2 style="color: # #ffa500; margin-bottom: 1.5rem;"> </h2>
 
     <div class="note">
-      <strong>✓ معلومات مهمة:</strong>
+      <strong>✓ Important Information:</strong>
       <ul style="margin-top: 0.5rem; padding-left: 1.5rem;">
         <li>Email belongs to the <code>geniusgsm.com</code> domain only</li>
-        <li>صناديق البريد محفوظة في قاعدة البيانات <strong>إلى الأبد</strong></li>
-        <li>الرسائل تُحذف تلقائياً بعد <strong>90 يوم</strong></li>
-        <li>لا توجد حدود على عدد البريد المؤقت الذي يمكنك إنشاؤه</li>
-        <li>جميع الـ APIs مفتوحة ولا تحتاج لـ Authentication</li>
+        <li>Mailboxes are preserved in database <strong>forever</strong></li>
+        <li>Messages automatically deleted after <strong>90 days</strong></li>
+        <li>No limits on the number of temporary mailboxes you can create</li>
+        <li>All APIs are open and do not require Authentication</li>
       </ul>
     </div>
 
     <div class="success">
-      <strong>✓ ملاحظات الأداء:</strong>
+      <strong>✓ Performance Notes:</strong>
       <ul style="margin-top: 0.5rem; padding-left: 1.5rem;">
-        <li>البريد الوارد يتم استقباله فوراً عند الإرسال</li>
-        <li>قد يستغرق ظهور الرسائل في الـ API من 1-5 ثوان بعد الاستقبال</li>
-        <li>يمكنك استخدام Polling كل 3 ثواني للتحقق من الرسائل الجديدة</li>
-        <li>يوصى باستخدام Webhooks للحصول على إشعارات فورية (قريباً)</li>
+        <li>Incoming mail is received immediately when sent</li>
+        <li>Messages may take 1-5 seconds to appear in the API after reception</li>
+        <li>You can use Polling every 3 seconds to check for new messages</li>
+        <li>It is recommended to use Webhooks for instant notifications (coming soon)</li>
       </ul>
     </div>
   </div>
@@ -608,10 +608,10 @@ curl -s -X GET https://geniusgsm.com/tempmail/api/dovecot/mailbox/$username/ | j
   <div class="endpoint-section" style="text-align: center; margin-top: 3rem;">
     <h3 style="color: # #00d4ff; margin-bottom: 1rem;">   </h3>
     <p style="color: #c0c6d1; margin-bottom: 1.5rem;">
-      للمزيد من المعلومات أو الإبلاغ عن مشكلة، يمكنك التواصل معنا
+      For more information or to report an issue, please contact us
     </p>
-    <a href="/" class="btn btn-primary" style="margin-right: 0.5rem;">← العودة للبيت</a>
-    <a href="{% url 'tempmail:home' %}" class="btn btn-secondary">الذهاب إلى TempMail →</a>
+    <a href="/" class="btn btn-primary" style="margin-right: 0.5rem;">← Back to Home</a>
+    <a href="{% url 'tempmail:home' %}" class="btn btn-secondary">Go to TempMail →</a>
   </div>
 </div>
 {% endblock %}
