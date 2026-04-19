@@ -8,6 +8,7 @@ class TextComparatorForm(forms.Form):
         ('character', 'Character-by-Character'),
         ('word', 'Word-by-Word'),
         ('line', 'Line-by-Line'),
+        ('similarities_differences', 'Similarities & Differences'),
     ]
     
     INPUT_TYPES = [

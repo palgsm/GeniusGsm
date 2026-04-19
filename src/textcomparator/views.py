@@ -13,6 +13,45 @@ def calculate_similarity(text1, text2):
     return matcher.ratio() * 100
 
 
+def perform_similarities_differences_comparison(text1, text2):
+    """
+    Compare texts and separate similarities from differences
+    Returns: (similarities_list, differences_list)
+    """
+    lines1 = text1.splitlines()
+    lines2 = text2.splitlines()
+    
+    matcher = difflib.SequenceMatcher(None, lines1, lines2)
+    matching_blocks = matcher.get_matching_blocks()
+    
+    similarities = []
+    differences_removed = []
+    differences_added = []
+    
+    # Collect matching blocks
+    for block in matching_blocks:
+        if block.size > 0:
+            for i in range(block.size):
+                similarities.append(lines1[block.a + i])
+    
+    # Collect differences using unified_diff
+    diff = difflib.unified_diff(
+        lines1,
+        lines2,
+        fromfile='Text 1 (Removed)',
+        tofile='Text 2 (Added)',
+        lineterm=''
+    )
+    
+    for line in diff:
+        if line.startswith('-') and not line.startswith('---'):
+            differences_removed.append(line[1:])
+        elif line.startswith('+') and not line.startswith('+++'):
+            differences_added.append(line[1:])
+    
+    return similarities, differences_removed, differences_added
+
+
 def perform_comparison(text1, text2, comparison_type):
     """Perform different types of text comparison"""
     
@@ -56,6 +95,18 @@ def perform_comparison(text1, text2, comparison_type):
             lineterm=''
         )
         results = list(diff)
+    
+    elif comparison_type == 'similarities_differences':
+        # Similarities and Differences separated comparison
+        similarities, differences_removed, differences_added = perform_similarities_differences_comparison(text1, text2)
+        results = {
+            'similarities': similarities,
+            'removed': differences_removed,
+            'added': differences_added
+        }
+        # Return early for this type
+        differences = len(differences_removed) + len(differences_added)
+        return results, differences
     
     # Count differences
     differences = sum(1 for line in results if line.startswith(('+', '-')) and not line.startswith(('+++', '---')))
@@ -273,14 +324,27 @@ def textcomparator_view(request):
                 differences_count=differences
             )
             
-            comparison_result = {
-                'text1': text1,
-                'text2': text2,
-                'type': comparison_type,
-                'diff': '\n'.join(diff_result),
-                'differences': differences,
-                'similarity': round(similarity, 2)
-            }
+            # Build comparison result based on type
+            if comparison_type == 'similarities_differences':
+                comparison_result = {
+                    'text1': text1,
+                    'text2': text2,
+                    'type': comparison_type,
+                    'similarities': diff_result.get('similarities', []),
+                    'removed': diff_result.get('removed', []),
+                    'added': diff_result.get('added', []),
+                    'differences': differences,
+                    'similarity': round(similarity, 2)
+                }
+            else:
+                comparison_result = {
+                    'text1': text1,
+                    'text2': text2,
+                    'type': comparison_type,
+                    'diff': '\n'.join(diff_result),
+                    'differences': differences,
+                    'similarity': round(similarity, 2)
+                }
             
             # Refresh history
             history = TextComparison.objects.all()[:10]
