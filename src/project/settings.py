@@ -72,6 +72,13 @@ INSTALLED_APPS = [
     'phishingdetector',
     'linkpreview',
     'speedtest',
+    'hashtools',  # Hash & Encoding tools
+    'dnstools',  # DNS Lookup tools
+    'domainchecker',  # Domain Reputation Checker
+    'emailverifier',  # Email Verification
+    'sslchecker',  # SSL Certificate Checker
+    'passwordchecker',  # Password Strength Analyzer
+    'geolocation',  # Geolocation Finder
 ]
 
 MIDDLEWARE = [

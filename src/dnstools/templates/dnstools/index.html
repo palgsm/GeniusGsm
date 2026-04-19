@@ -1,0 +1,225 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}أدوات DNS Lookup - GeniusGsm{% endblock %}
+
+{% block extra_css %}
+<style>
+    .dns-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    
+    .query-card {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        border-radius: 15px;
+        padding: 30px;
+        margin-bottom: 30px;
+        color: white;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+    
+    .query-card h3 {
+        font-size: 24px;
+        margin-bottom: 20px;
+        border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+        padding-bottom: 10px;
+    }
+    
+    .record-badge {
+        display: inline-block;
+        background: rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        border-radius: 20px;
+        padding: 8px 15px;
+        margin: 5px;
+        font-size: 12px;
+    }
+    
+    .result-box {
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 10px;
+        padding: 20px;
+        margin-top: 20px;
+        border-left: 4px solid #4CAF50;
+        max-height: 400px;
+        overflow-y: auto;
+    }
+    
+    .result-item {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 5px;
+        padding: 10px;
+        margin: 8px 0;
+        font-family: monospace;
+        word-break: break-all;
+    }
+    
+    .history-card {
+        background: white;
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        margin-top: 20px;
+    }
+    
+    .history-item {
+        border-bottom: 1px solid #eee;
+        padding: 12px 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .history-item:last-child {
+        border-bottom: none;
+    }
+    
+    .record-type-badge {
+        background: #4facfe;
+        color: white;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: bold;
+    }
+    
+    .query-types {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 10px;
+        margin-top: 15px;
+    }
+    
+    .type-badge {
+        background: rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        border-radius: 20px;
+        padding: 8px 12px;
+        text-align: center;
+        font-size: 11px;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    
+    .type-badge:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: translateY(-2px);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dns-container">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="page-title" style="color: #333; margin-bottom: 10px;">🌐 أدوات DNS Lookup</h1>
+            <p class="text-muted" style="font-size: 16px;">استعلم عن سجلات DNS للدومين واحصل على معلومات كاملة</p>
+        </div>
+    </div>
+
+    <!-- Main Query Card -->
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="query-card">
+                <h3>🔍 استعلام DNS</h3>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="form-group">
+                        <label for="domainInput" class="form-label">اسم الدومين:</label>
+                        {{ form.domain }}
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="queryType" class="form-label">نوع الاستعلام:</label>
+                        {{ form.query_type }}
+                    </div>
+                    
+                    <button type="submit" class="btn btn-light btn-block" style="color: #4facfe; font-weight: bold;">
+                        <i class="fas fa-magnifying-glass"></i> بحث
+                    </button>
+                    
+                    {% if result %}
+                        {% if result.success %}
+                        <div class="result-box">
+                            <strong>✅ النتائج ({{ result.count }} record{{ result.count|pluralize }}):</strong>
+                            {% for item in result.results %}
+                            <div class="result-item">{{ item }}</div>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <div class="result-box" style="border-left-color: #f44336; background: rgba(244, 67, 54, 0.1);">
+                            <strong style="color: #f44336;">❌ خطأ:</strong>
+                            <div style="color: #d32f2f;">{{ result.error }}</div>
+                        </div>
+                        {% endif %}
+                    {% endif %}
+                </form>
+                
+                <div class="query-types">
+                    <div class="type-badge">A</div>
+                    <div class="type-badge">AAAA</div>
+                    <div class="type-badge">MX</div>
+                    <div class="type-badge">NS</div>
+                    <div class="type-badge">SOA</div>
+                    <div class="type-badge">CNAME</div>
+                    <div class="type-badge">TXT</div>
+                    <div class="type-badge">PTR</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Info Panel -->
+        <div class="col-lg-4">
+            <div style="background: white; border-radius: 15px; padding: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); height: 100%;">
+                <h5 style="color: #333; margin-bottom: 15px;">📋 أنواع السجلات</h5>
+                <div style="font-size: 13px; line-height: 2;">
+                    <p><strong>A:</strong> عنوان IPv4</p>
+                    <p><strong>AAAA:</strong> عنوان IPv6</p>
+                    <p><strong>MX:</strong> خادم البريد</p>
+                    <p><strong>NS:</strong> خادم الأسماء</p>
+                    <p><strong>SOA:</strong> معلومات السلطة</p>
+                    <p><strong>CNAME:</strong> اسم الكنية</p>
+                    <p><strong>TXT:</strong> سجلات نصية</p>
+                    <p><strong>PTR:</strong> DNS عكسي</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- History Section -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="history-card">
+                <h4 style="color: #333; margin-bottom: 20px;">📜 سجل الاستعلامات</h4>
+                {% if history %}
+                <table class="table table-hover">
+                    <thead>
+                        <tr style="background: #f5f5f5;">
+                            <th>الدومين</th>
+                            <th>نوع الاستعلام</th>
+                            <th>الوقت</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in history %}
+                        <tr>
+                            <td><strong>{{ item.domain }}</strong></td>
+                            <td><span class="record-type-badge">{{ item.query_type }}</span></td>
+                            <td style="font-size: 12px;">{{ item.created_at|date:"H:i:s" }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <p class="text-muted text-center">لا يوجد استعلامات بعد</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

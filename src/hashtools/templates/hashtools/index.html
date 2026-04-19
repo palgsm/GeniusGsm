@@ -1,0 +1,281 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}أدوات التجزئة والترميز - GeniusGsm{% endblock %}
+
+{% block extra_css %}
+<style>
+    .hash-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    
+    .tool-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 15px;
+        padding: 30px;
+        margin-bottom: 30px;
+        color: white;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+    
+    .tool-card h3 {
+        font-size: 24px;
+        margin-bottom: 20px;
+        border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+        padding-bottom: 10px;
+    }
+    
+    .result-box {
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 10px;
+        padding: 15px;
+        margin-top: 15px;
+        border-left: 4px solid #4CAF50;
+    }
+    
+    .copy-btn {
+        background: #4CAF50;
+        border: none;
+        color: white;
+        padding: 8px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    
+    .copy-btn:hover {
+        background: #45a049;
+        transform: scale(1.05);
+    }
+    
+    .history-table {
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        margin-top: 20px;
+    }
+    
+    .history-table table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    .history-table th,
+    .history-table td {
+        padding: 12px;
+        text-align: right;
+        border-bottom: 1px solid #ddd;
+    }
+    
+    .history-table th {
+        background: #f5f5f5;
+        font-weight: bold;
+        color: #333;
+    }
+    
+    .history-table tr:hover {
+        background: #f9f9f9;
+    }
+    
+    .hash-types {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 10px;
+        margin-top: 15px;
+    }
+    
+    .hash-type-badge {
+        background: rgba(255, 255, 255, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        border-radius: 20px;
+        padding: 8px 15px;
+        text-align: center;
+        font-size: 12px;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    
+    .hash-type-badge:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: translateY(-2px);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="hash-container">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="page-title" style="color: #333; margin-bottom: 10px;">🔐 أدوات التجزئة والترميز</h1>
+            <p class="text-muted" style="font-size: 16px;">حول النصوص والبيانات بأمان واحصل على التجزئة والترميز المطلوب</p>
+        </div>
+    </div>
+
+    <!-- Hash Tools -->
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="tool-card">
+                <h3>🔒 أدوات التجزئة (Hashing)</h3>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="form-group">
+                        <label for="hashType" class="form-label">نوع التجزئة:</label>
+                        {{ hash_form.hash_type }}
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="inputText" class="form-label">النص المراد تجزئته:</label>
+                        {{ hash_form.input_text }}
+                    </div>
+                    
+                    <button type="submit" name="hash_submit" class="btn btn-light btn-block" style="color: #667eea; font-weight: bold;">
+                        <i class="fas fa-hash"></i> تجزئة النص
+                    </button>
+                    
+                    {% if hash_result %}
+                    <div class="result-box">
+                        <strong>📋 النتيجة:</strong>
+                        <div style="word-break: break-all; margin-top: 10px; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 5px; font-family: monospace;">
+                            {{ hash_result }}
+                        </div>
+                        <button class="copy-btn mt-2" onclick="copyToClipboard('{{ hash_result }}')">
+                            📋 نسخ النتيجة
+                        </button>
+                    </div>
+                    {% endif %}
+                </form>
+                
+                <div class="hash-types">
+                    <div class="hash-type-badge">MD5</div>
+                    <div class="hash-type-badge">SHA-1</div>
+                    <div class="hash-type-badge">SHA-256</div>
+                    <div class="hash-type-badge">SHA-512</div>
+                    <div class="hash-type-badge">BLAKE2</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Encoding Tools -->
+        <div class="col-lg-6">
+            <div class="tool-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                <h3>📝 أدوات الترميز (Encoding)</h3>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="form-group">
+                        <label for="encodingType" class="form-label">نوع الترميز:</label>
+                        {{ encoding_form.encoding_type }}
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="inputText2" class="form-label">النص المراد ترميزه:</label>
+                        {{ encoding_form.input_text }}
+                    </div>
+                    
+                    <button type="submit" name="encoding_submit" class="btn btn-light btn-block" style="color: #f5576c; font-weight: bold;">
+                        <i class="fas fa-code"></i> ترميز النص
+                    </button>
+                    
+                    {% if encoding_result %}
+                    <div class="result-box" style="border-left-color: #FF6B6B;">
+                        <strong>📋 النتيجة:</strong>
+                        <div style="word-break: break-all; margin-top: 10px; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 5px; font-family: monospace; max-height: 200px; overflow-y: auto;">
+                            {{ encoding_result }}
+                        </div>
+                        <button class="copy-btn mt-2" onclick="copyToClipboard('{{ encoding_result }}')">
+                            📋 نسخ النتيجة
+                        </button>
+                    </div>
+                    {% endif %}
+                </form>
+                
+                <div class="hash-types">
+                    <div class="hash-type-badge">Base64</div>
+                    <div class="hash-type-badge">URL Encode</div>
+                    <div class="hash-type-badge">HTML Encode</div>
+                    <div class="hash-type-badge">Hex Encode</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- History Section -->
+    <div class="row mt-4">
+        <div class="col-lg-6">
+            <div style="background: white; border-radius: 15px; padding: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+                <h4 style="color: #333; margin-bottom: 20px;">📜 سجل التجزئة</h4>
+                {% if hash_history %}
+                <div class="history-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>النوع</th>
+                                <th>الإدخال</th>
+                                <th>الوقت</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in hash_history %}
+                            <tr>
+                                <td><span class="badge badge-info">{{ item.get_operation_type_display }}</span></td>
+                                <td>{{ item.input_data|truncatewords:5 }}</td>
+                                <td style="font-size: 12px;">{{ item.created_at|date:"H:i" }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-muted text-center">لا يوجد سجل بعد</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div style="background: white; border-radius: 15px; padding: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+                <h4 style="color: #333; margin-bottom: 20px;">📜 سجل الترميز</h4>
+                {% if encoding_history %}
+                <div class="history-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>النوع</th>
+                                <th>الإدخال</th>
+                                <th>الوقت</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in encoding_history %}
+                            <tr>
+                                <td><span class="badge badge-success">{{ item.get_encoding_type_display }}</span></td>
+                                <td>{{ item.input_data|truncatewords:5 }}</td>
+                                <td style="font-size: 12px;">{{ item.created_at|date:"H:i" }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-muted text-center">لا يوجد سجل بعد</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(function() {
+        alert('تم النسخ بنجاح!');
+    }, function(err) {
+        console.error('Failed to copy:', err);
+    });
+}
+</script>
+{% endblock %}

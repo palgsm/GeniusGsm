@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}فاحص قوة كلمة المرور - GeniusGsm{% endblock %}
+
+{% block content %}
+<div style="max-width: 800px; margin: 0 auto; padding: 20px;">
+    <h1 style="color: #333; margin-bottom: 30px;">🔐 فاحص قوة كلمة المرور</h1>
+    
+    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 15px; padding: 30px; margin-bottom: 30px;">
+        <form method="post">
+            {% csrf_token %}
+            {{ form.password }}
+            <button type="submit" class="btn btn-light mt-3" style="width: 100%; color: #667eea; font-weight: bold;">فحص</button>
+        </form>
+    </div>
+    
+    {% if result %}
+    <div style="background: white; border-radius: 10px; padding: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+        <h5>💪 القوة: {{ result.strength }}</h5>
+        {% if result.feedback %}
+        <p>🔔 الملاحظات:</p>
+        <ul>
+            {% for item in result.feedback %}
+            <li>{{ item }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

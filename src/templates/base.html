@@ -483,6 +483,9 @@
                   <li><a class="dropdown-item" href="{% url 'ip_lookup' %}">🔍 IP Lookup</a></li>
                   <li><a class="dropdown-item" href="{% url 'abusecheck:lookup' %}">⚠️ Abuse Check</a></li>
                   <li><a class="dropdown-item" href="{% url 'ipbulk:group_list' %}">📊 IP Bulk</a></li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li><a class="dropdown-item" href="{% url 'dnstools:index' %}">🌐 DNS Lookup</a></li>
+                  <li><a class="dropdown-item" href="{% url 'domainchecker:index' %}">🏢 Domain Check</a></li>
                 </ul>
               </li>
 
@@ -519,6 +522,11 @@
                 <ul class="dropdown-menu" aria-labelledby="securityDropdown">
                   <li><a class="dropdown-item" href="{% url 'jwtchecker:index' %}">🔑 JWT Checker</a></li>
                   <li><a class="dropdown-item" href="{% url 'tempmail:home' %}">📧 TempMail</a></li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li><a class="dropdown-item" href="{% url 'hashtools:index' %}">🔐 Hash & Encoding</a></li>
+                  <li><a class="dropdown-item" href="{% url 'emailverifier:index' %}">✉️ Email Verify</a></li>
+                  <li><a class="dropdown-item" href="{% url 'passwordchecker:index' %}">🔑 Password Check</a></li>
+                  <li><a class="dropdown-item" href="{% url 'sslchecker:index' %}">🔒 SSL Check</a></li>
                 </ul>
               </li>
 
@@ -529,6 +537,7 @@
                 </a>
                 <ul class="dropdown-menu" aria-labelledby="utilitiesDropdown">
                   <li><a class="dropdown-item" href="{% url 'speedtest:index' %}">⚡ Speed Test</a></li>
+                  <li><a class="dropdown-item" href="{% url 'geolocation:index' %}">🗺️ Geolocation</a></li>
                   <li><hr class="dropdown-divider"></li>
                   <li><a class="dropdown-item" href="{% url 'blog:index' %}">📝 Blog</a></li>
                 </ul>

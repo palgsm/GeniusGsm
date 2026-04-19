@@ -56,6 +56,13 @@ urlpatterns = [
     path('phishing/', _include('phishingdetector.urls')),
     path('preview/', _include('linkpreview.urls')),
     path('speedtest/', _include('speedtest.urls')),
+    path('hashtools/', _include('hashtools.urls')),
+    path('dnstools/', _include('dnstools.urls')),
+    path('domainchecker/', _include('domainchecker.urls')),
+    path('emailverifier/', _include('emailverifier.urls')),
+    path('sslchecker/', _include('sslchecker.urls')),
+    path('passwordchecker/', _include('passwordchecker.urls')),
+    path('geolocation/', _include('geolocation.urls')),
     path('blog/', _include('blog.urls')),  # Blog for content marketing
 ]
 

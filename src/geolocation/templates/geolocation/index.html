@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}البحث الجغرافي - GeniusGsm{% endblock %}
+
+{% block content %}
+<div style="max-width: 800px; margin: 0 auto; padding: 20px;">
+    <h1 style="color: #333; margin-bottom: 30px;">🗺️ البحث الجغرافي للـ IP</h1>
+    
+    <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; border-radius: 15px; padding: 30px; margin-bottom: 30px;">
+        <form method="post">
+            {% csrf_token %}
+            {{ form.ip_address }}
+            <button type="submit" class="btn btn-light mt-3" style="width: 100%; color: #4facfe; font-weight: bold;">بحث</button>
+        </form>
+    </div>
+    
+    {% if result %}
+    <div style="background: white; border-radius: 10px; padding: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+        {% if result.error %}
+        <p style="color: #f44336;">❌ {{ result.error }}</p>
+        {% else %}
+        <p><strong>🌍 الدولة:</strong> {{ result.country }}</p>
+        <p><strong>🏙️ المدينة:</strong> {{ result.city }}</p>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
