@@ -63,6 +63,7 @@ urlpatterns = [
     path('sslchecker/', _include('sslchecker.urls')),
     path('passwordchecker/', _include('passwordchecker.urls')),
     path('geolocation/', _include('geolocation.urls')),
+    path('comparator/', _include('textcomparator.urls')),
     path('blog/', _include('blog.urls')),  # Blog for content marketing
 ]
 

@@ -78,7 +78,8 @@ INSTALLED_APPS = [
     'emailverifier',  # Email Verification
     'sslchecker',  # SSL Certificate Checker
     'passwordchecker',  # Password Strength Analyzer
-    'geolocation',  # Geolocation Finder
+    'geolocation',  # IP Geolocation
+    'textcomparator',  # Text & File Comparator
 ]
 
 MIDDLEWARE = [
