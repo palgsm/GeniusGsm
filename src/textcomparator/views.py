@@ -64,7 +64,7 @@ def perform_comparison(text1, text2, comparison_type):
 
 @require_http_methods(["GET", "POST"])
 def textcomparator_view(request):
-    """Main text comparator view"""
+    """Main text comparator view - supports both text and file uploads"""
     
     form = TextComparatorForm()
     comparison_result = None
@@ -72,12 +72,77 @@ def textcomparator_view(request):
     history = TextComparison.objects.all()[:10]
     
     if request.method == 'POST':
-        form = TextComparatorForm(request.POST)
+        form = TextComparatorForm(request.POST, request.FILES)
         
         if form.is_valid():
-            text1 = form.cleaned_data['text1']
-            text2 = form.cleaned_data['text2']
+            input_type = request.POST.get('input_type', 'text')
             comparison_type = form.cleaned_data['comparison_type']
+            
+            # Get text content based on input type
+            if input_type == 'file':
+                # Read from uploaded files
+                file1 = request.FILES.get('file1')
+                file2 = request.FILES.get('file2')
+                
+                if not file1 or not file2:
+                    form.add_error(None, "Both files are required for file comparison")
+                    context = {
+                        'form': form,
+                        'comparison_result': None,
+                        'similarity': None,
+                        'history': history,
+                        'page_title': 'Text & File Comparator',
+                        'page_description': 'Compare texts and files to find differences'
+                    }
+                    return render(request, 'textcomparator/index.html', context)
+                
+                try:
+                    # Read file contents (max 1MB per file)
+                    if file1.size > 1048576 or file2.size > 1048576:
+                        form.add_error(None, "File size must be less than 1MB")
+                        context = {
+                            'form': form,
+                            'comparison_result': None,
+                            'similarity': None,
+                            'history': history,
+                            'page_title': 'Text & File Comparator',
+                            'page_description': 'Compare texts and files to find differences'
+                        }
+                        return render(request, 'textcomparator/index.html', context)
+                    
+                    text1 = file1.read().decode('utf-8', errors='replace')
+                    text2 = file2.read().decode('utf-8', errors='replace')
+                    file1_name = file1.name
+                    file2_name = file2.name
+                except Exception as e:
+                    form.add_error(None, f"Error reading files: {str(e)}")
+                    context = {
+                        'form': form,
+                        'comparison_result': None,
+                        'similarity': None,
+                        'history': history,
+                        'page_title': 'Text & File Comparator',
+                        'page_description': 'Compare texts and files to find differences'
+                    }
+                    return render(request, 'textcomparator/index.html', context)
+            else:
+                # Use text input
+                text1 = form.cleaned_data.get('text1', '')
+                text2 = form.cleaned_data.get('text2', '')
+                file1_name = None
+                file2_name = None
+                
+                if not text1 or not text2:
+                    form.add_error(None, "Both text fields are required for text comparison")
+                    context = {
+                        'form': form,
+                        'comparison_result': None,
+                        'similarity': None,
+                        'history': history,
+                        'page_title': 'Text & File Comparator',
+                        'page_description': 'Compare texts and files to find differences'
+                    }
+                    return render(request, 'textcomparator/index.html', context)
             
             # Perform comparison
             diff_result, differences = perform_comparison(text1, text2, comparison_type)

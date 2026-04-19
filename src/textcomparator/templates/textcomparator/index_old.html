@@ -11,38 +11,6 @@
         padding: 20px;
     }
     
-    .input-type-selector {
-        display: flex;
-        gap: 20px;
-        margin-bottom: 25px;
-        background: white;
-        padding: 20px;
-        border-radius: 12px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-    }
-    
-    .input-option {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        cursor: pointer;
-        flex: 1;
-    }
-    
-    .input-option input[type="radio"] {
-        cursor: pointer;
-        width: 20px;
-        height: 20px;
-    }
-    
-    .input-option label {
-        cursor: pointer;
-        font-weight: 600;
-        margin: 0;
-        font-size: 15px;
-        color: #333;
-    }
-    
     .comparison-section {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         border-radius: 15px;
@@ -59,7 +27,6 @@
         padding-bottom: 10px;
     }
     
-    /* Text Input Mode */
     .text-inputs {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -88,7 +55,6 @@
         font-family: monospace;
         resize: vertical;
         transition: all 0.3s;
-        min-height: 250px;
     }
     
     .text-input-group textarea::placeholder {
@@ -99,73 +65,6 @@
         border-color: rgba(255, 255, 255, 0.8);
         background: rgba(0, 0, 0, 0.3);
         outline: none;
-    }
-    
-    /* File Upload Mode */
-    .file-inputs {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 20px;
-        margin-bottom: 20px;
-        display: none;
-    }
-    
-    .file-input-group {
-        display: flex;
-        flex-direction: column;
-    }
-    
-    .file-input-group label {
-        color: white;
-        font-weight: 700;
-        margin-bottom: 10px;
-        font-size: 14px;
-    }
-    
-    .file-drop-zone {
-        background: rgba(0, 0, 0, 0.2);
-        border: 2px dashed rgba(255, 255, 255, 0.5);
-        border-radius: 8px;
-        padding: 40px 20px;
-        text-align: center;
-        cursor: pointer;
-        transition: all 0.3s;
-        min-height: 250px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-    }
-    
-    .file-drop-zone:hover {
-        border-color: rgba(255, 255, 255, 0.8);
-        background: rgba(0, 0, 0, 0.3);
-    }
-    
-    .file-drop-zone.dragover {
-        border-color: rgba(255, 255, 255, 1);
-        background: rgba(0, 0, 0, 0.4);
-    }
-    
-    .file-drop-zone i {
-        font-size: 40px;
-        margin-bottom: 10px;
-        opacity: 0.8;
-    }
-    
-    .file-drop-zone p {
-        margin: 0;
-        font-size: 14px;
-    }
-    
-    .file-drop-zone .file-name {
-        font-weight: 700;
-        margin-top: 10px;
-        color: rgba(255, 255, 255, 0.9);
-    }
-    
-    .file-input-group input[type="file"] {
-        display: none;
     }
     
     .comparison-options {
@@ -262,8 +161,6 @@
         padding: 15px;
         margin-top: 15px;
         overflow-x: auto;
-        max-height: 500px;
-        overflow-y: auto;
     }
     
     .diff-text {
@@ -272,7 +169,20 @@
         line-height: 1.5;
         white-space: pre-wrap;
         word-wrap: break-word;
-        margin: 0;
+    }
+    
+    .diff-text .added {
+        background: #c8e6c9;
+        color: #2e7d32;
+        padding: 2px 4px;
+        border-radius: 3px;
+    }
+    
+    .diff-text .removed {
+        background: #ffcdd2;
+        color: #c62828;
+        padding: 2px 4px;
+        border-radius: 3px;
     }
     
     .stats {
@@ -346,28 +256,13 @@
         color: #1976d2;
     }
     
-    .error-message {
-        background: #ffebee;
-        color: #c62828;
-        padding: 15px;
-        border-radius: 8px;
-        margin-bottom: 20px;
-        border-left: 4px solid #c62828;
-    }
-    
     @media (max-width: 768px) {
-        .text-inputs,
-        .file-inputs {
+        .text-inputs {
             grid-template-columns: 1fr;
         }
         
         .stats {
             grid-template-columns: 1fr;
-        }
-        
-        .results-header {
-            flex-direction: column;
-            gap: 15px;
         }
     }
 </style>
@@ -383,38 +278,15 @@
         </div>
     </div>
 
-    <!-- Input Type Selector -->
-    <div class="input-type-selector">
-        <div class="input-option">
-            <input type="radio" id="textInput" name="inputType" value="text" checked onchange="toggleInputType()">
-            <label for="textInput">📝 Text Input</label>
-        </div>
-        <div class="input-option">
-            <input type="radio" id="fileInput" name="inputType" value="file" onchange="toggleInputType()">
-            <label for="fileInput">📁 File Upload</label>
-        </div>
-    </div>
-
     <!-- Comparison Tool -->
     <div class="comparison-section">
-        <h3 id="sectionTitle">📝 Compare Texts</h3>
+        <h3>📝 Compare Texts</h3>
         
-        <form method="post" enctype="multipart/form-data" id="comparatorForm">
+        <form method="post">
             {% csrf_token %}
             
-            <!-- Hidden input for tracking selection -->
-            <input type="hidden" id="inputTypeHidden" name="input_type" value="text">
-            
-            {% if form.non_field_errors %}
-            <div class="error-message">
-                {% for error in form.non_field_errors %}
-                    <strong>❌ Error:</strong> {{ error }}
-                {% endfor %}
-            </div>
-            {% endif %}
-            
-            <!-- Text Inputs (Default) -->
-            <div class="text-inputs" id="textInputsContainer">
+            <!-- Text Inputs -->
+            <div class="text-inputs">
                 <div class="text-input-group">
                     <label for="text1">First Text</label>
                     {{ form.text1 }}
@@ -422,31 +294,6 @@
                 <div class="text-input-group">
                     <label for="text2">Second Text</label>
                     {{ form.text2 }}
-                </div>
-            </div>
-            
-            <!-- File Inputs (Hidden by default) -->
-            <div class="file-inputs" id="fileInputsContainer">
-                <div class="file-input-group">
-                    <label>First File</label>
-                    <div class="file-drop-zone" id="file1DropZone" onclick="document.getElementById('file1').click()">
-                        <i class="fas fa-cloud-upload-alt"></i>
-                        <p>Click to upload or drag & drop</p>
-                        <small style="font-size: 11px; margin-top: 5px; opacity: 0.8;">.txt, .py, .js, .json, .csv, .xml, .html, .css, .md (Max 1MB)</small>
-                        <span id="file1Name" class="file-name"></span>
-                    </div>
-                    {{ form.file1 }}
-                </div>
-                
-                <div class="file-input-group">
-                    <label>Second File</label>
-                    <div class="file-drop-zone" id="file2DropZone" onclick="document.getElementById('file2').click()">
-                        <i class="fas fa-cloud-upload-alt"></i>
-                        <p>Click to upload or drag & drop</p>
-                        <small style="font-size: 11px; margin-top: 5px; opacity: 0.8;">.txt, .py, .js, .json, .csv, .xml, .html, .css, .md (Max 1MB)</small>
-                        <span id="file2Name" class="file-name"></span>
-                    </div>
-                    {{ form.file2 }}
                 </div>
             </div>
             
@@ -458,7 +305,7 @@
             
             <!-- Compare Button -->
             <button type="submit" class="comparison-button">
-                <i class="fas fa-exchange-alt"></i> Compare
+                <i class="fas fa-exchange-alt"></i> Compare Texts
             </button>
         </form>
     </div>
@@ -502,10 +349,11 @@
     </div>
     {% endif %}
 
-    <!-- History -->
+    <!-- History Section -->
     {% if history %}
     <div class="history-section">
-        <h3 style="color: #333; margin-bottom: 20px;">📜 Recent Comparisons (Last 10)</h3>
+        <h2 style="color: #333; margin-bottom: 20px;">📜 Comparison History</h2>
+        
         <table class="history-table">
             <thead>
                 <tr>
@@ -520,13 +368,14 @@
                 <tr>
                     <td>
                         <span class="history-badge">
-                            {% if item.comparison_type == 'character' %}📄{% elif item.comparison_type == 'word' %}📝{% else %}📋{% endif %}
                             {{ item.get_comparison_type_display }}
                         </span>
                     </td>
-                    <td>{{ item.similarity_percentage|floatformat:1 }}%</td>
-                    <td>{{ item.differences_count }} lines</td>
-                    <td>{{ item.created_at|date:"M d, Y H:i" }}</td>
+                    <td>
+                        <strong>{{ item.similarity_percentage|floatformat:2 }}%</strong>
+                    </td>
+                    <td>{{ item.differences_count }} differences</td>
+                    <td style="font-size: 12px; color: #999;">{{ item.created_at|date:"H:i" }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -536,77 +385,15 @@
 </div>
 
 <script>
-    function toggleInputType() {
-        const inputType = document.querySelector('input[name="inputType"]:checked').value;
-        const textInputsContainer = document.getElementById('textInputsContainer');
-        const fileInputsContainer = document.getElementById('fileInputsContainer');
-        const sectionTitle = document.getElementById('sectionTitle');
-        const inputTypeHidden = document.getElementById('inputTypeHidden');
-        
-        inputTypeHidden.value = inputType;
-        
-        if (inputType === 'file') {
-            textInputsContainer.style.display = 'none';
-            fileInputsContainer.style.display = 'grid';
-            sectionTitle.textContent = '📁 Compare Files';
-        } else {
-            textInputsContainer.style.display = 'grid';
-            fileInputsContainer.style.display = 'none';
-            sectionTitle.textContent = '📝 Compare Texts';
-        }
+    // Copy result button
+    function copyToClipboard(text) {
+        const textarea = document.createElement("textarea");
+        textarea.value = text;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textarea);
+        alert('Copy successful!');
     }
-    
-    // File upload handling
-    function setupFileDropZone(dropZoneId, fileInputId, fileNameId) {
-        const dropZone = document.getElementById(dropZoneId);
-        const fileInput = document.getElementById(fileInputId);
-        const fileName = document.getElementById(fileNameId);
-        
-        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-            dropZone.addEventListener(eventName, preventDefaults, false);
-        });
-        
-        function preventDefaults(e) {
-            e.preventDefault();
-            e.stopPropagation();
-        }
-        
-        ['dragenter', 'dragover'].forEach(eventName => {
-            dropZone.addEventListener(eventName, () => {
-                dropZone.classList.add('dragover');
-            });
-        });
-        
-        ['dragleave', 'drop'].forEach(eventName => {
-            dropZone.addEventListener(eventName, () => {
-                dropZone.classList.remove('dragover');
-            });
-        });
-        
-        dropZone.addEventListener('drop', (e) => {
-            const dt = e.dataTransfer;
-            const files = dt.files;
-            fileInput.files = files;
-            updateFileName(files[0], fileNameId);
-        });
-        
-        fileInput.addEventListener('change', (e) => {
-            if (e.target.files[0]) {
-                updateFileName(e.target.files[0], fileNameId);
-            }
-        });
-    }
-    
-    function updateFileName(file, fileNameId) {
-        const fileName = document.getElementById(fileNameId);
-        if (file) {
-            const size = (file.size / 1024).toFixed(2);
-            fileName.textContent = `✓ ${file.name} (${size} KB)`;
-        }
-    }
-    
-    // Initialize
-    setupFileDropZone('file1DropZone', 'file1', 'file1Name');
-    setupFileDropZone('file2DropZone', 'file2', 'file2Name');
 </script>
 {% endblock %}
