@@ -42,16 +42,16 @@
         font-weight: 600;
         margin: 0;
         font-size: 15px;
-        color: #333;
+        color: var(--text-light);
     }
     
     .comparison-section {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #0096ff 0%, #00d4ff 50%, #00ff88 100%);
         border-radius: 15px;
         padding: 30px;
         margin-bottom: 30px;
         color: white;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 10px 30px rgba(0, 150, 255, 0.3);
     }
     
     .comparison-section h3 {
@@ -580,17 +580,17 @@
                         <tr style="border-bottom: 1px solid rgba(0, 150, 255, 0.15); background: rgba(0, 150, 255, 0.05);">
                             <td style="padding: 12px; color: var(--text-light);">📄 {{ filename }}</td>
                             <td style="padding: 12px; text-align: center;">
-                                <span style="{% if similarity >= 80 %}color: #4CAF50;{% elif similarity >= 50 %}color: #FF9800;{% else %}color: #F44336;{% endif %} font-weight: 700; font-size: 16px;">
+                                <span style="{% if similarity >= 80 %}color: #00ff88;{% elif similarity >= 50 %}color: #ffd700;{% else %}color: #ff6b6b;{% endif %} font-weight: 700; font-size: 16px;">
                                     {{ similarity }}%
                                 </span>
                             </td>
                             <td style="padding: 12px; text-align: center;">
                                 {% if similarity >= 80 %}
-                                    <span style="background: #c8e6c9; color: #2e7d32; padding: 4px 12px; border-radius: 50px; font-size: 12px; font-weight: 700;">✓ Similar</span>
+                                    <span style="background: rgba(0, 255, 136, 0.2); color: #00ff88; padding: 4px 12px; border-radius: 50px; font-size: 12px; font-weight: 700; border: 1px solid rgba(0, 255, 136, 0.4);">✓ Similar</span>
                                 {% elif similarity >= 50 %}
-                                    <span style="background: #ffe0b2; color: #e65100; padding: 4px 12px; border-radius: 50px; font-size: 12px; font-weight: 700;">⚠ Changed</span>
+                                    <span style="background: rgba(255, 215, 0, 0.2); color: #ffd700; padding: 4px 12px; border-radius: 50px; font-size: 12px; font-weight: 700; border: 1px solid rgba(255, 215, 0, 0.4);">⚠ Changed</span>
                                 {% else %}
-                                    <span style="background: #ffcdd2; color: #c62828; padding: 4px 12px; border-radius: 50px; font-size: 12px; font-weight: 700;">✗ Different</span>
+                                    <span style="background: rgba(255, 107, 107, 0.2); color: #ff6b6b; padding: 4px 12px; border-radius: 50px; font-size: 12px; font-weight: 700; border: 1px solid rgba(255, 107, 107, 0.4);">✗ Different</span>
                                 {% endif %}
                             </td>
                         </tr>
@@ -603,8 +603,8 @@
             <h5 style="color: var(--text-light); margin-bottom: 15px;">📋 Detailed Differences</h5>
             <div style="display: grid; gap: 20px;">
                 {% for filename, diff in comparison_result.detailed_comparisons.items %}
-                <div style="border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
-                    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px; font-weight: 700;">
+                <div style="border: 1px solid rgba(0, 150, 255, 0.2); border-radius: 8px; overflow: hidden;">
+                    <div style="background: linear-gradient(135deg, #0096ff 0%, #00d4ff 100%); color: white; padding: 15px; font-weight: 700;">
                         <i class="fas fa-file"></i> {{ filename }} 
                         <span style="float: right; font-size: 14px; opacity: 0.9;">{{ comparison_result.similarity_data|get_item:filename }}% similar</span>
                     </div>
@@ -629,12 +629,12 @@
                     <div class="stat-value">{{ comparison_result.differences }}</div>
                     <div class="stat-label">Differences</div>
                 </div>
-                <div class="stat-box" style="border-left-color: #4CAF50;">
-                    <div class="stat-value" style="color: #4CAF50;">{{ comparison_result.similarity }}%</div>
+                <div class="stat-box" style="border-left-color: #00ff88;">
+                    <div class="stat-value" style="color: #00ff88;">{{ comparison_result.similarity }}%</div>
                     <div class="stat-label">Similarity</div>
                 </div>
-                <div class="stat-box" style="border-left-color: #FF9800;">
-                    <div class="stat-value" style="color: #FF9800;">{{ comparison_result.type }}</div>
+                <div class="stat-box" style="border-left-color: #00d4ff;">
+                    <div class="stat-value" style="color: #00d4ff;">{{ comparison_result.type }}</div>
                     <div class="stat-label">Mode</div>
                 </div>
             </div>
