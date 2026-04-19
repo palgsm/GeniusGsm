@@ -305,6 +305,62 @@
   </div>
 
   <div class="card-service">
+    <div class="card-title">🔐 Hash & Encoding</div>
+    <p class="card-description">
+      Encrypt and encode your data safely. Support for MD5, SHA256, SHA512, Base64, URL encoding, and more. Perfect for hashing passwords and encoding sensitive information.
+    </p>
+    <a href="{% url 'hashtools:index' %}" class="btn btn-primary w-100" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none;">Hash Now</a>
+  </div>
+
+  <div class="card-service">
+    <div class="card-title">🌐 DNS Lookup</div>
+    <p class="card-description">
+      Query DNS records (A, AAAA, MX, NS, SOA, CNAME, TXT). Get complete domain information and DNS propagation details. Essential for domain troubleshooting and diagnostics.
+    </p>
+    <a href="{% url 'dnstools:index' %}" class="btn btn-primary w-100" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: #0a0e27; border: none;">Query DNS</a>
+  </div>
+
+  <div class="card-service">
+    <div class="card-title">🏢 Domain Checker</div>
+    <p class="card-description">
+      Check domain reputation with WHOIS, DNS records, and SSL certificates. Verify domain history, registration details, and nameserver configuration instantly.
+    </p>
+    <a href="{% url 'domainchecker:index' %}" class="btn btn-primary w-100" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none;">Check Domain</a>
+  </div>
+
+  <div class="card-service">
+    <div class="card-title">✉️ Email Verifier</div>
+    <p class="card-description">
+      Verify email addresses instantly. Check MX records, detect temporary email services, and validate domain configuration. Ensure email addresses are genuine.
+    </p>
+    <a href="{% url 'emailverifier:index' %}" class="btn btn-primary w-100" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; border: none;">Verify Email</a>
+  </div>
+
+  <div class="card-service">
+    <div class="card-title">🔒 SSL Checker</div>
+    <p class="card-description">
+      Check SSL certificate validity, expiration dates, and issuer information. Ensure your website has proper SSL/TLS configuration for secure connections.
+    </p>
+    <a href="{% url 'sslchecker:index' %}" class="btn btn-primary w-100" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; border: none;">Check SSL</a>
+  </div>
+
+  <div class="card-service">
+    <div class="card-title">🔑 Password Strength</div>
+    <p class="card-description">
+      Analyze password strength with detailed feedback. Get recommendations for creating stronger passwords. Estimate how long it would take to crack your password.
+    </p>
+    <a href="{% url 'passwordchecker:index' %}" class="btn btn-primary w-100" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none;">Check Password</a>
+  </div>
+
+  <div class="card-service">
+    <div class="card-title">🗺️ Geolocation</div>
+    <p class="card-description">
+      Find geographical location of any IP address. Get country, city, timezone, and ISP information. Identify VPNs and proxy services with accuracy.
+    </p>
+    <a href="{% url 'geolocation:index' %}" class="btn btn-primary w-100" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: #0a0e27; border: none;">Locate IP</a>
+  </div>
+
+  <div class="card-service">
     <div class="card-title">📚 Blog & Resources</div>
     <p class="card-description">
       Read expert guides and tutorials on cybersecurity, IP analysis, URL verification, and internet tools. Stay updated with the latest security trends and best practices.
