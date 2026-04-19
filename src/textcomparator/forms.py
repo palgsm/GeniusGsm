@@ -89,12 +89,6 @@ class TextComparatorForm(forms.Form):
         required=False
     )
     
-    # For multiple files, we'll use a simple FileField and handle multiple in template/JS
-    compare_files = forms.CharField(
-        widget=forms.HiddenInput(),
-        required=False
-    )
-    
     comparison_type = forms.ChoiceField(
         choices=COMPARISON_TYPES,
         widget=forms.Select(attrs={
