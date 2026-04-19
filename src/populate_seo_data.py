@@ -169,4 +169,4 @@ for data in SEO_DATA:
         config.save()
         print(f"✅ Updated SEO config for {config.get_app_name_display()}")
 
-print(f"\n✨ شامل: تم تحميل {len(SEO_DATA)} تطبيقات SEO بنجاح!")
+print(f"\n✨ Done: Successfully loaded {len(SEO_DATA)} SEO applications!")

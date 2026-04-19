@@ -54,7 +54,7 @@ def custom_logout(request):
 @login_required(login_url='/admin/login/')
 def dashboard(request):
     """
-    Show الداشبورد الرئيسي مع معلومات الجلسة والـ Token والإحصائيات
+    Display main dashboard with session, token and statistics information
     """
     # #  
     session_timeout_minutes = settings.SESSION_COOKIE_AGE // 60  # #    

@@ -153,7 +153,7 @@ class UsageStatsAdmin(admin.ModelAdmin):
             '<span style="background-color: #00ff88; color: #0a0e27;">{}</span>',
             obj.total_emails_received
         )
-    emails_count.short_description = 'الرسائل'
+    emails_count.short_description = 'Emails'
     
     def has_add_permission(self, request):
         return False

@@ -4,13 +4,13 @@ from tempmail.models import TempInbox, TempEmail
 
 
 class Command(BaseCommand):
-    help = 'تنظيف صناديق البريد والرسائل المنتهية الصلاحية'
+    help = 'Clean up expired mailboxes and emails'
 
     def add_arguments(self, parser):
         parser.add_argument(
             '--force',
             action='store_true',
-            help='فرض الDelete بدون تأكيد',
+            help='Force delete without confirmation',
         )
 
     def handle(self, *args, **options):
@@ -22,19 +22,19 @@ class Command(BaseCommand):
         count = expired_inboxes.count()
         
         if count == 0:
-            self.stdout.write(self.style.SUCCESS('لا توجد صناديق منتهية الصلاحية'))
+            self.stdout.write(self.style.SUCCESS('No expired mailboxes found'))
             return
         
         self.stdout.write(
-            self.style.WARNING(f'تم العثور على {count} صناديق منتهية الصلاحية')
+            self.style.WARNING(f'Found {count} expired mailboxes')
         )
         
         if options['force']:
             expired_inboxes.delete()
             self.stdout.write(
-                self.style.SUCCESS(f'تم Delete {count} صندوق بريد')
+                self.style.SUCCESS(f'Deleted {count} mailboxes')
             )
         else:
             self.stdout.write(
-                'استخدم --force لتأكيد الDelete 🗑️'
+                'Use --force to confirm deletion'
             )

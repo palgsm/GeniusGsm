@@ -61,7 +61,7 @@ class IPGroupDeleteView(DeleteView):
     success_url = reverse_lazy('ipbulk:group_list')
     
     def delete(self, request, *args, **kwargs):
-        messages.success(request, "تم Delete المجموعة successfully")
+        messages.success(request, "Group deleted successfully")
         return super().delete(request, *args, **kwargs)
 
 
@@ -114,13 +114,13 @@ def bulk_import_view(request):
             
             messages.success(
                 request,
-                f"Successfully imported {successful} نطاق IP successfully من أصل {import_log.total_records} in country {dict(IPRange.COUNTRY_CHOICES).get(country, 'Unknown')}"
+                f"Successfully imported {successful} IP ranges out of {import_log.total_records} in country {dict(IPRange.COUNTRY_CHOICES).get(country, 'Unknown')}"
             )
             
             if failed_items:
                 messages.warning(
                     request,
-                    f"Failed to import {len(failed_items)} نطاق. Check format"
+                    f"Failed to import {len(failed_items)} ranges. Check format"
                 )
             
             return redirect('ipbulk:group_detail', pk=group.pk)
@@ -197,7 +197,7 @@ def country_ranges_view(request):
 
 
 def add_ip_range_view(request, group_id):
-    """Add نطاق IP جديد إلى مجموعة"""
+    """Add a new IP range to group"""
     group = get_object_or_404(IPGroup, pk=group_id)
     
     if request.method == 'POST':
@@ -207,10 +207,10 @@ def add_ip_range_view(request, group_id):
             ip_range.group = group
             try:
                 ip_range.save()
-                messages.success(request, f"تم Add النطاق '{ip_range.cidr}' successfully")
+                messages.success(request, f"Range '{ip_range.cidr}' added successfully")
                 return redirect('ipbulk:group_detail', pk=group.pk)
             except Exception as e:
-                messages.error(request, f"خطأ: {str(e)}")
+                messages.error(request, f"Error: {str(e)}")
     else:
         form = IPRangeForm()
     
@@ -221,13 +221,13 @@ def add_ip_range_view(request, group_id):
 
 
 def delete_ip_range_view(request, pk):
-    """Delete نطاق IP"""
+    """Delete an IP range"""
     ip_range = get_object_or_404(IPRange, pk=pk)
     group_id = ip_range.group.id
     
     if request.method == 'POST':
         ip_range.delete()
-        messages.success(request, "تم Delete النطاق successfully")
+        messages.success(request, "Range deleted successfully")
         return redirect('ipbulk:group_detail', pk=group_id)
     
     return render(request, 'ipbulk/range_confirm_delete.html', {
@@ -237,8 +237,8 @@ def delete_ip_range_view(request, pk):
 
 def get_ip_geolocation(ip_address):
     """
-    احصل على موقع IP من GeoIP2 API (MaxMind)
-    تدعم Data الحقيقية والدقيقة
+    Get IP location from GeoIP2 API (MaxMind)
+    Supports real-time and accurate data
     """
     try:
         # #  GeoIP2 API -    
@@ -264,7 +264,7 @@ def get_ip_geolocation(ip_address):
 
 
 def bulk_ip_lookup_view(request):
-    """اSearch عن عناوين IP متعددة مع معلومات الموقع الجغرافي من GeoIP2"""
+    """Search for multiple IP addresses with geolocation information from GeoIP2""""
     results = None
     found_count = 0
     not_found_count = 0

@@ -71,13 +71,13 @@ class TempInboxViewSet(viewsets.ModelViewSet):
     
     @action(detail=False, methods=['post'], permission_classes=[AllowAny])
     def create_inbox(self, request):
-        """Create inbox جديد"""
+        """Create new inbox"""
         domain_id = request.data.get('domain_id')
         ttl = request.data.get('ttl', 3600)  # Default: 1 hour (in seconds)
         
         if not domain_id:
             return Response(
-                {'error': 'domain_id مطلوب'},
+                {'error': 'domain_id is required'},
                 status=status.HTTP_400_BAD_REQUEST
             )
         
@@ -92,7 +92,7 @@ class TempInboxViewSet(viewsets.ModelViewSet):
             domain = TempMailDomain.objects.get(id=domain_id, is_active=True)
         except TempMailDomain.DoesNotExist:
             return Response(
-                {'error': 'Domain غير موجود أو معطل'},
+                {'error': 'Domain not found or inactive'},
                 status=status.HTTP_404_NOT_FOUND
             )
         
@@ -122,7 +122,7 @@ class TempInboxViewSet(viewsets.ModelViewSet):
     
     @action(detail=True, methods=['get'], permission_classes=[AllowAny])
     def emails(self, request, id=None):
-        """الحصول على جميع رسائل الـ inbox"""
+        """Get all emails in the inbox"""
         inbox = self.get_object()
         emails = inbox.tempemail_set.all().order_by('-received_at')
         serializer = TempEmailSerializer(emails, many=True)
@@ -130,18 +130,18 @@ class TempInboxViewSet(viewsets.ModelViewSet):
     
     @action(detail=True, methods=['post'], permission_classes=[AllowAny])
     def mark_as_read(self, request, id=None):
-        """وضع علامة جميع الرسائل كـ مقروء"""
+        """Mark all emails in inbox as read"""
         inbox = self.get_object()
         inbox.tempemail_set.update(read=True)
-        return Response({'message': 'جميع الرسائل معلمة كمقروء'})
+        return Response({'message': 'All emails marked as read'})
     
     @action(detail=True, methods=['delete'], permission_classes=[AllowAny])
     def delete_inbox(self, request, id=None):
-        """Delete الـ inbox"""
+        """Delete the inbox"""
         inbox = self.get_object()
         email = inbox.email
         inbox.delete()
-        return Response({'message': f'تم Delete {email}'})
+        return Response({'message': f'Inbox {email} deleted successfully'})
 
 
 class TempEmailViewSet(viewsets.ReadOnlyModelViewSet):
@@ -152,7 +152,7 @@ class TempEmailViewSet(viewsets.ReadOnlyModelViewSet):
     
     @action(detail=True, methods=['post'], permission_classes=[AllowAny])
     def mark_as_read(self, request, id=None):
-        """وضع علامة الرسالة كـ مقروء"""
+        """Mark email as read"""
         email = self.get_object()
         email.read = True
         email.save()
@@ -161,11 +161,11 @@ class TempEmailViewSet(viewsets.ReadOnlyModelViewSet):
     
     @action(detail=True, methods=['delete'], permission_classes=[AllowAny])
     def delete_email(self, request, id=None):
-        """Delete الرسالة"""
+        """Delete email"""
         email = self.get_object()
         subject = email.subject
         email.delete()
-        return Response({'message': f'تم Delete الرسالة: {subject}'})
+        return Response({'message': f'Email deleted: {subject}'})
 
 
 class TempEmailAttachmentViewSet(viewsets.ReadOnlyModelViewSet):
@@ -175,7 +175,7 @@ class TempEmailAttachmentViewSet(viewsets.ReadOnlyModelViewSet):
     
     @action(detail=True, methods=['get'], permission_classes=[AllowAny])
     def download(self, request, pk=None):
-        """Upload الملف المرفق"""
+        """Download attachment"""""
         attachment = self.get_object()
         if attachment.data:
             response = Response(
@@ -184,7 +184,7 @@ class TempEmailAttachmentViewSet(viewsets.ReadOnlyModelViewSet):
             )
             response['Content-Disposition'] = f'attachment; filename="{attachment.filename}"'
             return response
-        return Response({'error': 'الملف غير موجود'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'error': 'File not found'}, status=status.HTTP_404_NOT_FOUND)
 
 
 class APIKeyViewSet(viewsets.ModelViewSet):
@@ -199,7 +199,7 @@ class APIKeyViewSet(viewsets.ModelViewSet):
     
     @action(detail=False, methods=['post'])
     def create_key(self, request):
-        """Create مفتاح API جديد"""
+        """Create new API key"""
         name = request.data.get('name', 'API Key')
         
         api_key = APIKey.objects.create(
@@ -213,16 +213,16 @@ class APIKeyViewSet(viewsets.ModelViewSet):
     
     @action(detail=True, methods=['post'])
     def deactivate(self, request, pk=None):
-        """تعطيل المفتاح"""
+        """Deactivate API key"""
         api_key = self.get_object()
         if api_key.user != request.user:
             return Response(
-                {'error': 'غير مصرح'},
+                {'error': 'Unauthorized'},
                 status=status.HTTP_403_FORBIDDEN
             )
         api_key.is_active = False
         api_key.save()
-        return Response({'message': 'تم تعطيل المفتاح'})
+        return Response({'message': 'API key deactivated'})
 
 
 class UsageStatsViewSet(viewsets.ReadOnlyModelViewSet):
@@ -234,7 +234,7 @@ class UsageStatsViewSet(viewsets.ReadOnlyModelViewSet):
     
     @action(detail=False, methods=['get'])
     def my_stats(self, request):
-        """إحصائياتي الشخصية"""
+        """My personal statistics"""
         stats, created = UsageStats.objects.get_or_create(user=request.user)
         serializer = self.get_serializer(stats)
         return Response(serializer.data)
