@@ -555,7 +555,20 @@
     <!-- Results -->
     {% if comparison_result %}
     <div class="results-section">
-        <h2 style="color: var(--text-light); margin-bottom: 20px;">📊 Comparison Results</h2>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2 style="color: var(--text-light); margin: 0;">📊 Comparison Results</h2>
+            <div style="display: flex; gap: 10px;">
+                <button type="button" onclick="copyResultsToClipboard()" class="comparison-button" style="width: auto; padding: 10px 20px; background: linear-gradient(135deg, #00d4ff 0%, #00ff88 100%); font-size: 14px;">
+                    <i class="fas fa-copy"></i> Copy Results
+                </button>
+                <button type="button" onclick="downloadResults('txt')" class="comparison-button" style="width: auto; padding: 10px 20px; background: linear-gradient(135deg, #0096ff 0%, #00d4ff 100%); font-size: 14px;">
+                    <i class="fas fa-download"></i> Download TXT
+                </button>
+                <button type="button" onclick="downloadResults('json')" class="comparison-button" style="width: auto; padding: 10px 20px; background: linear-gradient(135deg, #ffd700 0%, #ffaa00 100%); font-size: 14px;">
+                    <i class="fas fa-download"></i> Download JSON
+                </button>
+            </div>
+        </div>
         
         {% if comparison_result.mode == 'multi' %}
             <!-- Multi-File Results -->
@@ -837,5 +850,95 @@
     setupFileDropZone('file2DropZone', 'file2', 'file2Name');
     setupFileDropZone('baseFileDropZone', 'baseFile', 'baseFileName');
     setupFileDropZone('compareFilesDropZone', 'compareFilesInput', 'compareFilesNames');
+    
+    // Copy Results to Clipboard
+    function copyResultsToClipboard() {
+        const resultsSection = document.querySelector('.results-section');
+        if (!resultsSection) {
+            alert('No results to copy');
+            return;
+        }
+        
+        let textToCopy = '';
+        
+        // Extract all visible text from results section
+        const allText = resultsSection.innerText;
+        textToCopy = allText;
+        
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            // Show notification
+            const button = event.target;
+            const originalText = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-check"></i> Copied!';
+            button.style.background = 'linear-gradient(135deg, #00ff88 0%, #00d4ff 100%)';
+            
+            setTimeout(() => {
+                button.innerHTML = originalText;
+                button.style.background = 'linear-gradient(135deg, #00d4ff 0%, #00ff88 100%)';
+            }, 2000);
+        }).catch(err => {
+            console.error('Failed to copy:', err);
+            alert('Failed to copy results to clipboard');
+        });
+    }
+    
+    // Download Results as File
+    function downloadResults(format) {
+        // Get comparison data from the page
+        const resultsSection = document.querySelector('.results-section');
+        const similaritySpan = resultsSection ? resultsSection.querySelector('[style*="color: #00ff88"]') : null;
+        const diffSection = resultsSection ? resultsSection.querySelector('.diff-container') : null;
+        
+        // Extract data
+        let text1 = document.getElementById('id_text1') ? document.getElementById('id_text1').value : '';
+        let text2 = document.getElementById('id_text2') ? document.getElementById('id_text2').value : '';
+        let similarity = similaritySpan ? parseInt(similaritySpan.textContent) : 0;
+        let diffOutput = diffSection ? diffSection.innerText : '';
+        
+        // Get comparison type from the form
+        let comparisonType = document.getElementById('id_comparison_type') ? document.getElementById('id_comparison_type').value : 'character';
+        
+        // Count differences from diff output
+        let differences = (diffOutput.match(/^[+-]/gm) || []).length;
+        
+        const data = {
+            text1: text1,
+            text2: text2,
+            type: comparisonType,
+            similarity: similarity,
+            differences: differences,
+            diff_output: diffOutput,
+            format: format
+        };
+        
+        // Send request to download
+        fetch('{% url "textcomparator:download_results" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => {
+            if (!response.ok) throw new Error('Download failed');
+            return response.blob();
+        })
+        .then(blob => {
+            // Create download link
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `comparison_results_${new Date().getTime()}.${format}`;
+            document.body.appendChild(link);
+            link.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(link);
+        })
+        .catch(err => {
+            console.error('Download error:', err);
+            alert('Failed to download file');
+        });
+    }
 </script>
 {% endblock %}

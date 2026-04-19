@@ -1,10 +1,11 @@
 from django.shortcuts import render
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.views.decorators.http import require_http_methods
 import difflib
 import json
 from .models import TextComparison, MultiFileComparison
 from .forms import TextComparatorForm
+from datetime import datetime
 
 
 def calculate_similarity(text1, text2):
@@ -389,5 +390,67 @@ def api_compare(request):
             'similarity': round(similarity, 2),
             'diff': '\n'.join(diff_result[:100])  # Limit to first 100 lines
         })
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+
+@require_http_methods(["POST"])
+def download_comparison_results(request):
+    """Download comparison results as a file (TXT or JSON)"""
+    try:
+        data = json.loads(request.body)
+        file_format = data.get('format', 'txt')  # 'txt' or 'json'
+        
+        # Extract comparison data from request
+        comparison_data = {
+            'text1': data.get('text1', ''),
+            'text2': data.get('text2', ''),
+            'type': data.get('type', 'character'),
+            'similarity': data.get('similarity', 0),
+            'differences': data.get('differences', 0),
+            'diff_output': data.get('diff_output', ''),
+            'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        }
+        
+        if file_format == 'json':
+            # Generate JSON file
+            content = json.dumps(comparison_data, indent=2, ensure_ascii=False)
+            filename = f'comparison_results_{datetime.now().strftime("%Y%m%d_%H%M%S")}.json'
+            content_type = 'application/json'
+        else:
+            # Generate TXT file
+            content = f"""═══════════════════════════════════════════════════════════════
+                    TEXT COMPARISON RESULTS
+═══════════════════════════════════════════════════════════════
+
+Generated: {comparison_data['timestamp']}
+Comparison Type: {comparison_data['type'].upper()}
+Similarity: {comparison_data['similarity']}%
+Differences Found: {comparison_data['differences']}
+
+───────────────────────────────────────────────────────────────
+TEXT 1 (Preview - First 500 chars):
+───────────────────────────────────────────────────────────────
+{comparison_data['text1'][:500]}
+
+───────────────────────────────────────────────────────────────
+TEXT 2 (Preview - First 500 chars):
+───────────────────────────────────────────────────────────────
+{comparison_data['text2'][:500]}
+
+───────────────────────────────────────────────────────────────
+DETAILED DIFFERENCES:
+───────────────────────────────────────────────────────────────
+{comparison_data['diff_output']}
+
+═══════════════════════════════════════════════════════════════
+"""
+            filename = f'comparison_results_{datetime.now().strftime("%Y%m%d_%H%M%S")}.txt'
+            content_type = 'text/plain'
+        
+        response = HttpResponse(content, content_type=content_type)
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+        return response
+        
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
