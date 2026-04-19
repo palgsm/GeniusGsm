@@ -13,6 +13,7 @@ class TextComparatorForm(forms.Form):
     INPUT_TYPES = [
         ('text', 'Text Input'),
         ('file', 'File Upload'),
+        ('multi', 'Multiple Files (1 vs Many)'),
     ]
     
     # Input type selector
@@ -76,6 +77,24 @@ class TextComparatorForm(forms.Form):
         required=False
     )
     
+    # Multiple file uploads (note: compare_files will be handled specially in views)
+    base_file = forms.FileField(
+        widget=forms.FileInput(attrs={
+            'class': 'form-control',
+            'id': 'baseFile',
+            'accept': '.txt,.py,.js,.json,.csv,.xml,.html,.css,.md,.log',
+            'style': 'display:none;'
+        }),
+        label='Base File (One)',
+        required=False
+    )
+    
+    # For multiple files, we'll use a simple FileField and handle multiple in template/JS
+    compare_files = forms.CharField(
+        widget=forms.HiddenInput(),
+        required=False
+    )
+    
     comparison_type = forms.ChoiceField(
         choices=COMPARISON_TYPES,
         widget=forms.Select(attrs={
@@ -84,3 +103,5 @@ class TextComparatorForm(forms.Form):
         }),
         label='Comparison Mode'
     )
+
+

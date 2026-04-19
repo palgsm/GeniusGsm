@@ -2,7 +2,8 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 import difflib
-from .models import TextComparison
+import json
+from .models import TextComparison, MultiFileComparison
 from .forms import TextComparatorForm
 
 
@@ -62,9 +63,30 @@ def perform_comparison(text1, text2, comparison_type):
     return results, differences
 
 
+def perform_multi_comparison(base_content, base_filename, compare_files_data, comparison_type):
+    """
+    Perform comparison of one base file with multiple files
+    
+    Returns:
+        - similarity_data: dict with filename -> similarity percentage
+        - detailed_comparisons: dict with filename -> diff output
+    """
+    similarity_data = {}
+    detailed_comparisons = {}
+    
+    for filename, content in compare_files_data.items():
+        similarity = calculate_similarity(base_content, content)
+        diff, _ = perform_comparison(base_content, content, comparison_type)
+        
+        similarity_data[filename] = round(similarity, 2)
+        detailed_comparisons[filename] = '\n'.join(diff)
+    
+    return similarity_data, detailed_comparisons
+
+
 @require_http_methods(["GET", "POST"])
 def textcomparator_view(request):
-    """Main text comparator view - supports both text and file uploads"""
+    """Main text comparator view - supports text, dual files, and multi-file comparisons"""
     
     form = TextComparatorForm()
     comparison_result = None
@@ -79,7 +101,101 @@ def textcomparator_view(request):
             comparison_type = form.cleaned_data['comparison_type']
             
             # Get text content based on input type
-            if input_type == 'file':
+            if input_type == 'multi':
+                # Handle multi-file comparison (1 base file vs multiple comparison files)
+                base_file = request.FILES.get('base_file')
+                compare_files = request.FILES.getlist('compare_files')
+                
+                if not base_file or not compare_files:
+                    form.add_error(None, "Base file and at least one comparison file are required")
+                    context = {
+                        'form': form,
+                        'comparison_result': None,
+                        'similarity': None,
+                        'history': history,
+                        'page_title': 'Text & File Comparator',
+                        'page_description': 'Compare texts and files to find differences'
+                    }
+                    return render(request, 'textcomparator/index.html', context)
+                
+                try:
+                    # Read base file
+                    if base_file.size > 1048576:
+                        form.add_error(None, "Base file size must be less than 1MB")
+                        context = {
+                            'form': form,
+                            'comparison_result': None,
+                            'similarity': None,
+                            'history': history,
+                            'page_title': 'Text & File Comparator',
+                            'page_description': 'Compare texts and files to find differences'
+                        }
+                        return render(request, 'textcomparator/index.html', context)
+                    
+                    base_content = base_file.read().decode('utf-8', errors='replace')
+                    base_file_name = base_file.name
+                    
+                    # Read comparison files
+                    compare_files_data = {}
+                    comparison_file_names = []
+                    
+                    for compare_file in compare_files:
+                        if compare_file.size > 1048576:
+                            form.add_error(None, f"File '{compare_file.name}' exceeds 1MB limit")
+                            context = {
+                                'form': form,
+                                'comparison_result': None,
+                                'similarity': None,
+                                'history': history,
+                                'page_title': 'Text & File Comparator',
+                                'page_description': 'Compare texts and files to find differences'
+                            }
+                            return render(request, 'textcomparator/index.html', context)
+                        
+                        file_content = compare_file.read().decode('utf-8', errors='replace')
+                        compare_files_data[compare_file.name] = file_content
+                        comparison_file_names.append(compare_file.name)
+                    
+                    # Perform multi-file comparison
+                    similarity_data, detailed_comparisons = perform_multi_comparison(
+                        base_content, base_file_name, compare_files_data, comparison_type
+                    )
+                    
+                    # Store multi-file comparison
+                    MultiFileComparison.objects.create(
+                        base_file_name=base_file_name,
+                        comparison_file_names=', '.join(comparison_file_names),
+                        comparison_type=comparison_type,
+                        total_files=len(compare_files) + 1,
+                        similarity_data=similarity_data
+                    )
+                    
+                    comparison_result = {
+                        'mode': 'multi',
+                        'base_file_name': base_file_name,
+                        'comparison_files': comparison_file_names,
+                        'comparison_type': comparison_type,
+                        'similarity_data': similarity_data,
+                        'detailed_comparisons': detailed_comparisons,
+                        'total_files': len(compare_files) + 1
+                    }
+                    
+                except Exception as e:
+                    form.add_error(None, f"Error processing files: {str(e)}")
+                    context = {
+                        'form': form,
+                        'comparison_result': None,
+                        'similarity': None,
+                        'history': history,
+                        'page_title': 'Text & File Comparator',
+                        'page_description': 'Compare texts and files to find differences'
+                    }
+                    return render(request, 'textcomparator/index.html', context)
+                
+                # Refresh history
+                history = TextComparison.objects.all()[:10]
+            
+            elif input_type == 'file':
                 # Read from uploaded files
                 file1 = request.FILES.get('file1')
                 file2 = request.FILES.get('file2')

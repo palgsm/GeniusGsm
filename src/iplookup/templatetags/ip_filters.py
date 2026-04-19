@@ -18,3 +18,13 @@ def length_is(value, arg):
         return len(value) == expected
     except Exception:
         return False
+
+
+@register.filter(name='get_item')
+def get_item(dictionary, key):
+    """Get an item from a dictionary using a key."""
+    try:
+        return dictionary.get(key) if isinstance(dictionary, dict) else dictionary[key]
+    except (KeyError, TypeError, AttributeError):
+        return None
+

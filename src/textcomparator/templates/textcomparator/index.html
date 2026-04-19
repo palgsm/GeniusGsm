@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load ip_filters %}
 
 {% block title %}Text & File Comparator - GeniusGsm{% endblock %}
 
@@ -108,6 +109,40 @@
         gap: 20px;
         margin-bottom: 20px;
         display: none;
+    }
+    
+    /* Multi-File Mode */
+    .multi-file-inputs {
+        display: none;
+        margin-bottom: 20px;
+    }
+    
+    .multi-file-row {
+        display: grid;
+        grid-template-columns: 1fr 1.5fr;
+        gap: 20px;
+        margin-bottom: 20px;
+    }
+    
+    .multi-file-base,
+    .multi-file-compare {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .multi-file-base label,
+    .multi-file-compare label {
+        color: white;
+        font-weight: 700;
+        margin-bottom: 10px;
+        font-size: 14px;
+    }
+    
+    .multi-file-description {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 12px;
+        margin-bottom: 8px;
+        font-style: italic;
     }
     
     .file-input-group {
@@ -393,6 +428,10 @@
             <input type="radio" id="fileInput" name="inputType" value="file" onchange="toggleInputType()">
             <label for="fileInput">📁 File Upload</label>
         </div>
+        <div class="input-option">
+            <input type="radio" id="multiInput" name="inputType" value="multi" onchange="toggleInputType()">
+            <label for="multiInput">📂 Multiple Files (1 vs Many)</label>
+        </div>
     </div>
 
     <!-- Comparison Tool -->
@@ -450,6 +489,36 @@
                 </div>
             </div>
             
+            <!-- Multi-File Inputs (Hidden by default) -->
+            <div class="multi-file-inputs" id="multiFileInputsContainer">
+                <div class="multi-file-row">
+                    <div class="multi-file-base">
+                        <label>🔵 Base File (One)</label>
+                        <p class="multi-file-description">Select one file as the base for comparison</p>
+                        <div class="file-drop-zone" id="baseFileDropZone" onclick="document.getElementById('baseFile').click()">
+                            <i class="fas fa-file-upload"></i>
+                            <p>Click to upload or drag & drop</p>
+                            <small style="font-size: 11px; margin-top: 5px; opacity: 0.8;">Max 1MB</small>
+                            <span id="baseFileName" class="file-name"></span>
+                        </div>
+                        {{ form.base_file }}
+                    </div>
+                    
+                    <div class="multi-file-compare">
+                        <label>🟢 Files to Compare (Multiple)</label>
+                        <p class="multi-file-description">Select one or more files to compare against the base file</p>
+                        <div class="file-drop-zone" id="compareFilesDropZone" onclick="document.getElementById('compareFilesInput').click()" style="background: rgba(0, 0, 0, 0.15); border-style: dotted;">
+                            <i class="fas fa-files"></i>
+                            <p>Click to upload or drag & drop</p>
+                            <small style="font-size: 11px; margin-top: 5px; opacity: 0.8;">Multiple files allowed (Max 1MB each)</small>
+                            <div id="compareFilesNames" class="file-name" style="margin-top: 10px;"></div>
+                        </div>
+                        <!-- Raw HTML5 input with multiple attribute -->
+                        <input type="file" id="compareFilesInput" name="compare_files" multiple accept=".txt,.py,.js,.json,.csv,.xml,.html,.css,.md,.log" style="display:none;">
+                    </div>
+                </div>
+            </div>
+            
             <!-- Comparison Options -->
             <div class="comparison-options">
                 <label for="comparisonType">Comparison Mode</label>
@@ -468,37 +537,96 @@
     <div class="results-section">
         <h2 style="color: #333; margin-bottom: 20px;">📊 Comparison Results</h2>
         
-        <!-- Results Header with Similarity -->
-        <div class="results-header">
-            <h4 style="color: #333; margin: 0;">Differences Found: <strong style="color: #667eea;">{{ comparison_result.differences }}</strong></h4>
-            <div class="similarity-badge {% if comparison_result.similarity >= 80 %}similarity-high{% elif comparison_result.similarity >= 50 %}similarity-medium{% else %}similarity-low{% endif %}">
-                ⭐ {{ comparison_result.similarity }}% Similar
+        {% if comparison_result.mode == 'multi' %}
+            <!-- Multi-File Results -->
+            <div class="results-header">
+                <h4 style="color: #333; margin: 0;">
+                    🔵 Base File: <strong style="color: #667eea;">{{ comparison_result.base_file_name }}</strong>
+                </h4>
             </div>
-        </div>
-        
-        <!-- Statistics -->
-        <div class="stats">
-            <div class="stat-box">
-                <div class="stat-value">{{ comparison_result.differences }}</div>
-                <div class="stat-label">Differences</div>
+            
+            <div style="background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%); padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+                <h5 style="color: #333; margin-top: 0;">📋 Similarity Matrix (vs {{ comparison_result.total_files|add:-1 }} file{{ comparison_result.total_files|add:-1|pluralize }})</h5>
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="background: white; border-bottom: 2px solid #d0d0d0;">
+                            <th style="padding: 12px; text-align: left; color: #333; font-weight: 700;">File Name</th>
+                            <th style="padding: 12px; text-align: center; color: #333; font-weight: 700;">Similarity %</th>
+                            <th style="padding: 12px; text-align: center; color: #333; font-weight: 700;">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for filename, similarity in comparison_result.similarity_data.items %}
+                        <tr style="border-bottom: 1px solid #e0e0e0; background: white;">
+                            <td style="padding: 12px; color: #666;">📄 {{ filename }}</td>
+                            <td style="padding: 12px; text-align: center;">
+                                <span style="{% if similarity >= 80 %}color: #4CAF50;{% elif similarity >= 50 %}color: #FF9800;{% else %}color: #F44336;{% endif %} font-weight: 700; font-size: 16px;">
+                                    {{ similarity }}%
+                                </span>
+                            </td>
+                            <td style="padding: 12px; text-align: center;">
+                                {% if similarity >= 80 %}
+                                    <span style="background: #c8e6c9; color: #2e7d32; padding: 4px 12px; border-radius: 50px; font-size: 12px; font-weight: 700;">✓ Similar</span>
+                                {% elif similarity >= 50 %}
+                                    <span style="background: #ffe0b2; color: #e65100; padding: 4px 12px; border-radius: 50px; font-size: 12px; font-weight: 700;">⚠ Changed</span>
+                                {% else %}
+                                    <span style="background: #ffcdd2; color: #c62828; padding: 4px 12px; border-radius: 50px; font-size: 12px; font-weight: 700;">✗ Different</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
-            <div class="stat-box" style="border-left-color: #4CAF50;">
-                <div class="stat-value" style="color: #4CAF50;">{{ comparison_result.similarity }}%</div>
-                <div class="stat-label">Similarity</div>
+            
+            <!-- Detailed Comparisons -->
+            <h5 style="color: #333; margin-bottom: 15px;">📋 Detailed Differences</h5>
+            <div style="display: grid; gap: 20px;">
+                {% for filename, diff in comparison_result.detailed_comparisons.items %}
+                <div style="border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
+                    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px; font-weight: 700;">
+                        <i class="fas fa-file"></i> {{ filename }} 
+                        <span style="float: right; font-size: 14px; opacity: 0.9;">{{ comparison_result.similarity_data|get_item:filename }}% similar</span>
+                    </div>
+                    <div class="diff-container" style="margin: 0; max-height: 350px;">
+                        <pre class="diff-text">{{ diff }}</pre>
+                    </div>
+                </div>
+                {% endfor %}
             </div>
-            <div class="stat-box" style="border-left-color: #FF9800;">
-                <div class="stat-value" style="color: #FF9800;">{{ comparison_result.type }}</div>
-                <div class="stat-label">Mode</div>
+        {% else %}
+            <!-- Single File Pair Results -->
+            <div class="results-header">
+                <h4 style="color: #333; margin: 0;">Differences Found: <strong style="color: #667eea;">{{ comparison_result.differences }}</strong></h4>
+                <div class="similarity-badge {% if comparison_result.similarity >= 80 %}similarity-high{% elif comparison_result.similarity >= 50 %}similarity-medium{% else %}similarity-low{% endif %}">
+                    ⭐ {{ comparison_result.similarity }}% Similar
+                </div>
             </div>
-        </div>
-        
-        <!-- Diff Output -->
-        <div>
-            <h4 style="color: #333; margin-top: 20px; margin-bottom: 10px;">📋 Detailed Differences</h4>
-            <div class="diff-container">
-                <pre class="diff-text">{{ comparison_result.diff }}</pre>
+            
+            <!-- Statistics -->
+            <div class="stats">
+                <div class="stat-box">
+                    <div class="stat-value">{{ comparison_result.differences }}</div>
+                    <div class="stat-label">Differences</div>
+                </div>
+                <div class="stat-box" style="border-left-color: #4CAF50;">
+                    <div class="stat-value" style="color: #4CAF50;">{{ comparison_result.similarity }}%</div>
+                    <div class="stat-label">Similarity</div>
+                </div>
+                <div class="stat-box" style="border-left-color: #FF9800;">
+                    <div class="stat-value" style="color: #FF9800;">{{ comparison_result.type }}</div>
+                    <div class="stat-label">Mode</div>
+                </div>
             </div>
-        </div>
+            
+            <!-- Diff Output -->
+            <div>
+                <h4 style="color: #333; margin-top: 20px; margin-bottom: 10px;">📋 Detailed Differences</h4>
+                <div class="diff-container">
+                    <pre class="diff-text">{{ comparison_result.diff }}</pre>
+                </div>
+            </div>
+        {% endif %}
     </div>
     {% endif %}
 
@@ -540,18 +668,25 @@
         const inputType = document.querySelector('input[name="inputType"]:checked').value;
         const textInputsContainer = document.getElementById('textInputsContainer');
         const fileInputsContainer = document.getElementById('fileInputsContainer');
+        const multiFileInputsContainer = document.getElementById('multiFileInputsContainer');
         const sectionTitle = document.getElementById('sectionTitle');
         const inputTypeHidden = document.getElementById('inputTypeHidden');
         
         inputTypeHidden.value = inputType;
         
+        // Hide all containers first
+        textInputsContainer.style.display = 'none';
+        fileInputsContainer.style.display = 'none';
+        multiFileInputsContainer.style.display = 'none';
+        
         if (inputType === 'file') {
-            textInputsContainer.style.display = 'none';
             fileInputsContainer.style.display = 'grid';
             sectionTitle.textContent = '📁 Compare Files';
+        } else if (inputType === 'multi') {
+            multiFileInputsContainer.style.display = 'block';
+            sectionTitle.textContent = '📂 Compare Multiple Files (1 vs Many)';
         } else {
             textInputsContainer.style.display = 'grid';
-            fileInputsContainer.style.display = 'none';
             sectionTitle.textContent = '📝 Compare Texts';
         }
     }
@@ -587,11 +722,17 @@
             const dt = e.dataTransfer;
             const files = dt.files;
             fileInput.files = files;
-            updateFileName(files[0], fileNameId);
+            if (fileInput.id === 'compareFilesInput') {
+                updateMultipleFileNames(files, fileNameId);
+            } else {
+                updateFileName(files[0], fileNameId);
+            }
         });
         
         fileInput.addEventListener('change', (e) => {
-            if (e.target.files[0]) {
+            if (fileInput.id === 'compareFilesInput') {
+                updateMultipleFileNames(e.target.files, fileNameId);
+            } else if (e.target.files[0]) {
                 updateFileName(e.target.files[0], fileNameId);
             }
         });
@@ -605,8 +746,23 @@
         }
     }
     
+    function updateMultipleFileNames(files, fileNameId) {
+        const fileNamesDiv = document.getElementById(fileNameId);
+        if (files.length > 0) {
+            let filesList = '<div style="text-align: left; margin-top: 10px;">';
+            for (let i = 0; i < files.length; i++) {
+                const size = (files[i].size / 1024).toFixed(2);
+                filesList += `<div style="margin-bottom: 5px;">✓ ${files[i].name} (${size} KB)</div>`;
+            }
+            filesList += '</div>';
+            fileNamesDiv.innerHTML = filesList;
+        }
+    }
+    
     // Initialize
     setupFileDropZone('file1DropZone', 'file1', 'file1Name');
     setupFileDropZone('file2DropZone', 'file2', 'file2Name');
+    setupFileDropZone('baseFileDropZone', 'baseFile', 'baseFileName');
+    setupFileDropZone('compareFilesDropZone', 'compareFilesInput', 'compareFilesNames');
 </script>
 {% endblock %}
