@@ -377,7 +377,27 @@
   </div>
 
   <div class="card-service">
-    <div class="card-title">📚 Blog & Resources</div>
+    <div class="card-title">� Malware URL Scanner</div>
+    <p class="card-description">
+      Check if a URL is safe or contains malware, phishing threats, or other suspicious content. Get instant safety ratings from multiple threat databases.
+    </p>
+    <a href="{% url 'urlmalwarescanner:index' %}" class="btn btn-primary w-100" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; border: none;">Scan URL</a>
+  </div>
+
+  <div class="card-service">    <div class="card-title">🔍 Subdomain Finder</div>
+    <p class="card-description">
+      Discover all subdomains and hidden servers associated with a domain. Identify active servers, check HTTP status codes, and uncover infrastructure information.
+    </p>
+    <a href="{% url 'subdomainfinder:index' %}" class="btn btn-primary w-100" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none;">Find Subdomains</a>
+  </div>
+  <div class="card-service">
+    <div class="card-title">🔴 Vulnerability Scanner</div>
+    <p class="card-description">
+      Scan software and versions for known CVEs and vulnerabilities. Get detailed information about security threats, CVSS scores, and remediation advice.
+    </p>
+    <a href="{% url 'vulnerabilityscanner:index' %}" class="btn btn-primary w-100" style="background: linear-gradient(135deg, #ff6b6b 0%, #ff0000 100%); color: white; border: none;">Scan Now</a>
+  </div>
+  <div class="card-service">    <div class="card-title">�📚 Blog & Resources</div>
     <p class="card-description">
       Read expert guides and tutorials on cybersecurity, IP analysis, URL verification, and internet tools. Stay updated with the latest security trends and best practices.
     </p>

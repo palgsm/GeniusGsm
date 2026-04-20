@@ -64,6 +64,9 @@ urlpatterns = [
     path('passwordchecker/', _include('passwordchecker.urls')),
     path('geolocation/', _include('geolocation.urls')),
     path('comparator/', _include('textcomparator.urls')),
+    path('scanurlmalware/', _include('urlmalwarescanner.urls')),  # URL Malware Scanner - Phase 1
+    path('subdomains/', _include('subdomainfinder.urls')),  # Subdomain Finder - Phase 1
+    path('vulnerable/', _include('vulnerabilityscanner.urls')),  # Vulnerability Scanner - Phase 1
     path('blog/', _include('blog.urls')),  # Blog for content marketing
 ]
 

@@ -157,6 +157,22 @@
         <priority>0.8</priority>
     </url>
 
+    <!-- Tool 21: Subdomain Finder - Discover all subdomains of a domain -->
+    <url>
+        <loc>https://geniusgsm.com/subdomains/</loc>
+        <lastmod>2026-04-20</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.9</priority>
+    </url>
+
+    <!-- Tool 22: Vulnerability Scanner - Scan software for CVEs and vulnerabilities -->
+    <url>
+        <loc>https://geniusgsm.com/vulnerable/</loc>
+        <lastmod>2026-04-20</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.9</priority>
+    </url>
+
     <!-- VERIFICATION TOOLS CATEGORY -->
     
     <!-- Tool 17: Email Verifier - Verify email addresses and check validity -->

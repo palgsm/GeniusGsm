@@ -264,7 +264,7 @@ def get_ip_geolocation(ip_address):
 
 
 def bulk_ip_lookup_view(request):
-    """Search for multiple IP addresses with geolocation information from GeoIP2""""
+    """Search for multiple IP addresses with geolocation information from GeoIP2"""
     results = None
     found_count = 0
     not_found_count = 0

@@ -21,12 +21,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-3vhuy_mg#g=p=se2whryr9vmeb5-50ed5%u2o=h7=iabm8n=r7'
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-3vhuy_mg#g=p=se2whryr9vmeb5-50ed5%u2o=h7=iabm8n=r7')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# Use environment variable to control debug mode
+# Set DJANGO_DEBUG=1 for development, unset or 0 for production
+DEBUG = os.environ.get('DJANGO_DEBUG', '1') == '1'
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'geniusgsm.com', '*.geniusgsm.com', 'www.geniusgsm.com']
+# Determine if running in production
+IS_PRODUCTION = not DEBUG
+
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'geniusgsm.com', '*.geniusgsm.com', 'www.geniusgsm.com', 'testserver']
 
 # CSRF trusted origins for HTTPS
 CSRF_TRUSTED_ORIGINS = [
@@ -37,13 +42,13 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 # CSRF and Session cookies secure settings
-# Only set secure cookies in production (when DEBUG=False)
-CSRF_COOKIE_SECURE = not DEBUG
-SESSION_COOKIE_SECURE = not DEBUG
-CSRF_COOKIE_HTTPONLY = False  # JavaScript needs to read CSRF token
-SESSION_COOKIE_HTTPONLY = True
-CSRF_COOKIE_SAMESITE = 'Lax'
-SESSION_COOKIE_SAMESITE = 'Lax'
+# Only set secure cookies in production (when IS_PRODUCTION=True)
+CSRF_COOKIE_SECURE = IS_PRODUCTION  # Require HTTPS for CSRF cookies in production
+SESSION_COOKIE_SECURE = IS_PRODUCTION  # Require HTTPS for session cookies in production
+CSRF_COOKIE_HTTPONLY = True  # Prevent JavaScript access to CSRF token (defense against XSS+CSRF)
+SESSION_COOKIE_HTTPONLY = True  # Prevent JavaScript access to session cookies
+CSRF_COOKIE_SAMESITE = 'Strict'  # Strict SameSite policy to prevent CSRF
+SESSION_COOKIE_SAMESITE = 'Strict'  # Strict SameSite policy
 
 # Application definition
 
@@ -80,6 +85,9 @@ INSTALLED_APPS = [
     'passwordchecker',  # Password Strength Analyzer
     'geolocation',  # IP Geolocation
     'textcomparator',  # Text & File Comparator
+    'urlmalwarescanner',  # URL Malware Scanner - Phase 1
+    'subdomainfinder',  # Subdomain Finder - Phase 1
+    'vulnerabilityscanner',  # Vulnerability Scanner - Phase 1
 ]
 
 MIDDLEWARE = [
@@ -197,9 +205,11 @@ SECURE_CONTENT_SECURITY_POLICY = {
 SECURE_HSTS_SECONDS = 31536000  # 1 year
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
-SECURE_SSL_REDIRECT = not DEBUG  # Only redirect to HTTPS in production
+SECURE_SSL_REDIRECT = IS_PRODUCTION  # Force HTTPS redirect in production
 X_FRAME_OPTIONS = 'DENY'
 SECURE_REFERRER_POLICY = 'no-referrer-when-downgrade'
+X_CONTENT_TYPE_OPTIONS = 'nosniff'  # Prevent MIME type sniffing attacks
+SECURE_BROWSER_XSS_FILTER = True  # Enable XSS filter in browsers (for older browsers)
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/

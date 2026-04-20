@@ -1,0 +1,490 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Subdomain Finder - GeniusGSM{% endblock %}
+
+{% block content %}
+<style>
+    :root {
+        --primary: #00d4ff;
+        --secondary: #0099cc;
+        --success: #00ff89;
+        --warning: #ffaa00;
+        --danger: #ff3366;
+        --light-dark: #1a2332;
+        --dark: #0f1419;
+    }
+
+    .subdomain-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 20px;
+        min-height: calc(100vh - 200px);
+    }
+
+    .subdomain-header {
+        text-align: center;
+        margin-bottom: 50px;
+        animation: slideDown 0.6s ease-out;
+    }
+
+    .subdomain-header h1 {
+        font-size: 2.5rem;
+        color: var(--primary);
+        margin-bottom: 10px;
+        text-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+    }
+
+    .subdomain-header p {
+        color: #999;
+        font-size: 1.1rem;
+    }
+
+    .form-section {
+        background: linear-gradient(135deg, rgba(15, 20, 25, 0.8), rgba(26, 35, 50, 0.8));
+        border: 2px solid rgba(0, 212, 255, 0.2);
+        border-radius: 15px;
+        padding: 30px;
+        margin-bottom: 30px;
+        backdrop-filter: blur(10px);
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        color: var(--primary);
+        font-weight: 600;
+        font-size: 1rem;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 12px 16px;
+        background: rgba(0, 0, 0, 0.3);
+        border: 2px solid rgba(0, 212, 255, 0.3);
+        border-radius: 8px;
+        color: #fff;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+        background: rgba(0, 212, 255, 0.05);
+    }
+
+    .form-help-text {
+        font-size: 0.85rem;
+        color: #999;
+        margin-top: 5px;
+    }
+
+    .btn-submit {
+        width: 100%;
+        padding: 14px 20px;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        border: none;
+        border-radius: 8px;
+        color: #000;
+        font-weight: 700;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(0, 212, 255, 0.4);
+    }
+
+    .btn-submit:active {
+        transform: translateY(0);
+    }
+
+    .results-section {
+        background: linear-gradient(135deg, rgba(15, 20, 25, 0.8), rgba(26, 35, 50, 0.8));
+        border: 2px solid rgba(0, 212, 255, 0.2);
+        border-radius: 15px;
+        padding: 30px;
+        margin-bottom: 30px;
+    }
+
+    .results-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid rgba(0, 212, 255, 0.2);
+    }
+
+    .results-header h2 {
+        color: var(--primary);
+        font-size: 1.8rem;
+        margin: 0;
+    }
+
+    .stats-badges {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .stat-badge {
+        background: rgba(0, 212, 255, 0.1);
+        border: 1px solid rgba(0, 212, 255, 0.3);
+        padding: 8px 16px;
+        border-radius: 20px;
+        color: var(--primary);
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    .stat-badge.active {
+        background: rgba(0, 255, 137, 0.1);
+        border-color: rgba(0, 255, 137, 0.3);
+        color: var(--success);
+    }
+
+    .table-responsive {
+        overflow-x: auto;
+    }
+
+    .results-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .results-table thead {
+        background: rgba(0, 212, 255, 0.05);
+        border-bottom: 2px solid rgba(0, 212, 255, 0.2);
+    }
+
+    .results-table th {
+        padding: 15px;
+        text-align: left;
+        color: var(--primary);
+        font-weight: 700;
+    }
+
+    .results-table tbody tr {
+        border-bottom: 1px solid rgba(0, 212, 255, 0.1);
+        transition: background 0.2s ease;
+    }
+
+    .results-table tbody tr:hover {
+        background: rgba(0, 212, 255, 0.05);
+    }
+
+    .results-table td {
+        padding: 12px 15px;
+        color: #ccc;
+    }
+
+    .subdomain-name {
+        color: var(--primary);
+        font-weight: 600;
+        word-break: break-all;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    .status-active {
+        background: rgba(0, 255, 137, 0.2);
+        color: var(--success);
+        border: 1px solid rgba(0, 255, 137, 0.3);
+    }
+
+    .status-redirect {
+        background: rgba(255, 170, 0, 0.2);
+        color: var(--warning);
+        border: 1px solid rgba(255, 170, 0, 0.3);
+    }
+
+    .status-forbidden {
+        background: rgba(255, 51, 102, 0.2);
+        color: var(--danger);
+        border: 1px solid rgba(255, 51, 102, 0.3);
+    }
+
+    .status-timeout {
+        background: rgba(150, 150, 150, 0.2);
+        color: #999;
+        border: 1px solid rgba(150, 150, 150, 0.3);
+    }
+
+    .status-unknown {
+        background: rgba(100, 100, 100, 0.2);
+        color: #888;
+        border: 1px solid rgba(100, 100, 100, 0.3);
+    }
+
+    .ip-address {
+        font-family: 'Monaco', 'Courier New', monospace;
+        background: rgba(0, 0, 0, 0.2);
+        padding: 3px 8px;
+        border-radius: 4px;
+        color: var(--primary);
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #888;
+    }
+
+    .empty-state svg {
+        width: 100px;
+        height: 100px;
+        margin-bottom: 20px;
+        opacity: 0.5;
+    }
+
+    .empty-state h3 {
+        color: #999;
+        margin-bottom: 10px;
+    }
+
+    .recent-scans {
+        background: linear-gradient(135deg, rgba(15, 20, 25, 0.8), rgba(26, 35, 50, 0.8));
+        border: 2px solid rgba(0, 212, 255, 0.2);
+        border-radius: 15px;
+        padding: 25px;
+    }
+
+    .recent-scans h3 {
+        color: var(--primary);
+        margin-bottom: 20px;
+    }
+
+    .scan-item {
+        padding: 12px;
+        background: rgba(0, 0, 0, 0.2);
+        border-left: 3px solid var(--primary);
+        border-radius: 6px;
+        margin-bottom: 10px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .scan-item:hover {
+        background: rgba(0, 212, 255, 0.05);
+        border-left-color: var(--success);
+    }
+
+    .scan-item-domain {
+        color: var(--primary);
+        font-weight: 600;
+    }
+
+    .scan-item-info {
+        font-size: 0.9rem;
+        color: #888;
+        margin-top: 5px;
+    }
+
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .subdomain-header h1 {
+            font-size: 1.8rem;
+        }
+
+        .results-table {
+            font-size: 0.9rem;
+        }
+
+        .results-table th, .results-table td {
+            padding: 8px;
+        }
+
+        .stats-badges {
+            flex-direction: column;
+        }
+
+        .stat-badge {
+            width: 100%;
+            text-align: center;
+        }
+    }
+</style>
+
+<div class="subdomain-container">
+    <!-- Header -->
+    <div class="subdomain-header">
+        <h1>🔍 Subdomain Finder</h1>
+        <p>Discover all subdomains and hidden servers</p>
+    </div>
+
+    <!-- Form Section -->
+    <div class="form-section">
+        <form method="post" action="{% url 'subdomainfinder:index' %}">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                {{ form.domain.label_tag }}
+                {{ form.domain }}
+                {% if form.domain.help_text %}
+                    <div class="form-help-text">{{ form.domain.help_text }}</div>
+                {% endif %}
+                {% if form.domain.errors %}
+                    <div class="text-danger" style="color: #ff3366; margin-top: 5px;">
+                        {{ form.domain.errors }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <button type="submit" class="btn-submit">
+                🔎 Scan for Subdomains
+            </button>
+        </form>
+    </div>
+
+    <!-- Results Section -->
+    {% if results %}
+    <div class="results-section">
+        <div class="results-header">
+            <div>
+                <h2>📊 Scan Results</h2>
+                <p style="color: #888; margin: 5px 0 0 0;">Domain: <code style="color: var(--primary);">{{ domain }}</code></p>
+            </div>
+            <div class="stats-badges">
+                <div class="stat-badge">
+                    Total: <strong>{{ total_found }}</strong>
+                </div>
+                <div class="stat-badge active">
+                    Active: <strong>{{ active_count }}</strong>
+                </div>
+                <div class="stat-badge">
+                    Time: <strong>{{ execution_time|floatformat:2 }}s</strong>
+                </div>
+            </div>
+        </div>
+
+        {% if results %}
+        <div class="table-responsive">
+            <table class="results-table">
+                <thead>
+                    <tr>
+                        <th>Subdomain</th>
+                        <th>IP Address</th>
+                        <th>Status</th>
+                        <th>Code</th>
+                        <th>Server</th>
+                        <th>Title</th>
+                        <th>Response Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for result in results %}
+                    <tr>
+                        <td class="subdomain-name">
+                            {{ result.subdomain }}.{{ domain }}
+                        </td>
+                        <td>
+                            {% if result.ip_address %}
+                                <span class="ip-address">{{ result.ip_address }}</span>
+                            {% else %}
+                                <span style="color: #666;">-</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="status-badge status-{{ result.status }}">
+                                {{ result.get_status_display }}
+                            </span>
+                        </td>
+                        <td>
+                            {% if result.status_code %}
+                                <strong>{{ result.status_code }}</strong>
+                            {% else %}
+                                <span style="color: #666;">-</span>
+                            {% endif %}
+                        </td>
+                        <td style="max-width: 200px; word-break: break-word;">
+                            {% if result.server_header %}
+                                {{ result.server_header }}
+                            {% else %}
+                                <span style="color: #666;">-</span>
+                            {% endif %}
+                        </td>
+                        <td style="max-width: 250px; word-break: break-word;">
+                            {% if result.title %}
+                                <small>{{ result.title }}</small>
+                            {% else %}
+                                <span style="color: #666;">-</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if result.response_time %}
+                                {{ result.response_time|floatformat:2 }}s
+                            {% else %}
+                                <span style="color: #666;">-</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <!-- Recent Scans -->
+    {% if recent_scans %}
+    <div class="recent-scans">
+        <h3>📌 Recent Scans</h3>
+        {% for scan in recent_scans %}
+        <div class="scan-item">
+            <div class="scan-item-domain">{{ scan.domain }}</div>
+            <div class="scan-item-info">
+                Found {{ scan.count }} scan{{ scan.count|pluralize }} • Latest: {{ scan.latest_date|date:"M d, Y H:i" }}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Empty State -->
+    {% if not results and request.method == 'POST' %}
+    <div class="empty-state">
+        <h3>No results found</h3>
+        <p>Try another domain or check the format</p>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+    // Highlight rows when clicked
+    document.querySelectorAll('.results-table tbody tr').forEach(row => {
+        row.addEventListener('click', function() {
+            this.style.background = 'rgba(0, 212, 255, 0.1)';
+            setTimeout(() => {
+                this.style.background = '';
+            }, 300);
+        });
+    });
+</script>
+{% endblock %}
